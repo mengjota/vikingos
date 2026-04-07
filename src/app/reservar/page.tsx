@@ -3,13 +3,176 @@
 import { useState } from "react";
 import Link from "next/link";
 
+/* ── Iconos SVG animados por servicio ─────────────────── */
+
+const IconScissors = ({ active }: { active: boolean }) => (
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8"
+    strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12">
+    {/* hoja superior — fija */}
+    <circle cx="7" cy="7" r="3.5" />
+    <line x1="10" y1="9.5" x2="27" y2="26" />
+    {/* hoja inferior — animada */}
+    <g className={active ? "animate-scissors-blade" : ""} style={{ transformOrigin: "7px 25px" }}>
+      <circle cx="7" cy="25" r="3.5" />
+      <line x1="10" y1="22.5" x2="27" y2="6" />
+    </g>
+    {/* tornillo central */}
+    <circle cx="16" cy="16" r="1.2" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+const IconRazorBlade = ({ active }: { active: boolean }) => (
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8"
+    strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12 overflow-visible">
+    {/* cuerpo de la navaja */}
+    <rect x="3" y="11" width="26" height="10" rx="1.5" />
+    {/* filo superior */}
+    <line x1="3" y1="14" x2="29" y2="14" strokeWidth="1" opacity="0.5" />
+    {/* agujero central */}
+    <rect x="13" y="13" width="6" height="6" rx="0.5" />
+    {/* mango */}
+    <line x1="8" y1="11" x2="8" y2="21" strokeWidth="1" opacity="0.4" />
+    <line x1="24" y1="11" x2="24" y2="21" strokeWidth="1" opacity="0.4" />
+    {/* destello animado */}
+    {active && (
+      <line
+        x1="6" y1="13" x2="11" y2="19"
+        className="animate-razor-gleam"
+        stroke="#f0e6c8"
+        strokeWidth="1.5"
+        opacity="0.7"
+      />
+    )}
+  </svg>
+);
+
+const IconCombScissors = ({ active }: { active: boolean }) => (
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8"
+    strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12">
+    {/* peine */}
+    <g className={active ? "animate-comb" : ""}>
+      <rect x="2" y="14" width="16" height="4" rx="1" />
+      <line x1="5"  y1="14" x2="5"  y2="10" />
+      <line x1="8"  y1="14" x2="8"  y2="10" />
+      <line x1="11" y1="14" x2="11" y2="10" />
+      <line x1="14" y1="14" x2="14" y2="10" />
+    </g>
+    {/* tijeras pequeñas */}
+    <circle cx="24" cy="10" r="2.5" />
+    <circle cx="24" cy="22" r="2.5" />
+    <line x1="26" y1="11.8" x2="30" y2="20" />
+    <line x1="26" y1="20.2" x2="30" y2="12" />
+    <circle cx="28" cy="16" r="0.8" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+const IconBeard = ({ active }: { active: boolean }) => (
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8"
+    strokeLinecap="round" strokeLinejoin="round"
+    className={`w-12 h-12 ${active ? "animate-beard" : ""}`}>
+    {/* cabeza */}
+    <circle cx="16" cy="9" r="5" />
+    {/* hombros */}
+    <path d="M6 30 C6 22 10 20 16 20 C22 20 26 22 26 30" />
+    {/* barba */}
+    <path d="M10 14 C10 19 13 22 16 22 C19 22 22 19 22 14" />
+    <line x1="16" y1="20" x2="16" y2="23" />
+    <line x1="13" y1="21" x2="12" y2="24" />
+    <line x1="19" y1="21" x2="20" y2="24" />
+  </svg>
+);
+
+const IconChildScissors = ({ active }: { active: boolean }) => (
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8"
+    strokeLinecap="round" strokeLinejoin="round"
+    className={`w-12 h-12 ${active ? "animate-bounce-soft" : ""}`}>
+    {/* tijeras pequeñas */}
+    <circle cx="8" cy="8" r="3" />
+    <circle cx="8" cy="20" r="3" />
+    <line x1="10.5" y1="10" x2="26" y2="24" />
+    <line x1="10.5" y1="18" x2="26" y2="8" />
+    <circle cx="17" cy="16" r="1" fill="currentColor" stroke="none" />
+    {/* estrellita de "niño" */}
+    <path d="M26 26 L27 24 L28 26 L26.5 25 L27.5 25 Z" fill="currentColor" stroke="none" />
+    <circle cx="26" cy="10" r="1" fill="currentColor" stroke="none" opacity="0.6" />
+    <circle cx="29" cy="12" r="0.7" fill="currentColor" stroke="none" opacity="0.4" />
+  </svg>
+);
+
+const IconCrown = ({ active }: { active: boolean }) => (
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8"
+    strokeLinecap="round" strokeLinejoin="round"
+    className={`w-12 h-12 ${active ? "animate-crown" : ""}`}>
+    {/* base */}
+    <rect x="4" y="22" width="24" height="4" rx="1" />
+    {/* corona */}
+    <path d="M4 22 L4 12 L10 17 L16 6 L22 17 L28 12 L28 22" />
+    {/* joyas */}
+    <circle cx="4"  cy="12" r="1.5" fill="currentColor" stroke="none" />
+    <circle cx="16" cy="6"  r="1.5" fill="currentColor" stroke="none" />
+    <circle cx="28" cy="12" r="1.5" fill="currentColor" stroke="none" />
+    {/* brillo */}
+    <line x1="13" y1="9" x2="15" y2="11" strokeWidth="1" opacity="0.5" />
+  </svg>
+);
+
+/* ── Datos de servicios ───────────────────────────────── */
+
 const servicios = [
-  { id: 1, nombre: "Corte del Guerrero", descripcion: "Corte clásico con tijera y máquina. Lavado y secado incluidos.", precio: "Q80", duracion: "45 min", icono: "ᚱ" },
-  { id: 2, nombre: "Ritual de Navaja", descripcion: "Afeitado completo con navaja recta, toalla caliente y bálsamo.", precio: "Q120", duracion: "60 min", icono: "ᛉ", popular: true },
-  { id: 3, nombre: "Corte & Barba", descripcion: "La combinación completa. Corte de cabello más escultura de barba.", precio: "Q150", duracion: "75 min", icono: "ᛊ" },
-  { id: 4, nombre: "La Barba del Norte", descripcion: "Tratamiento completo de barba: lavado, acondicionado y aceite vikingo.", precio: "Q100", duracion: "45 min", icono: "ᚾ" },
-  { id: 5, nombre: "Corte de Niño Guerrero", descripcion: "Para los pequeños valientes. Corte suave y paciencia garantizada.", precio: "Q60", duracion: "30 min", icono: "ᚲ" },
-  { id: 6, nombre: "El Paquete del Jarl", descripcion: "Corte, navaja completa, tratamiento de barba y aceite premium.", precio: "Q220", duracion: "120 min", icono: "ᚷ" },
+  {
+    id: 1,
+    nombre: "Corte del Guerrero",
+    descripcion: "Corte clásico con tijera y máquina. Lavado y secado incluidos.",
+    precio: "Q80",
+    duracion: "45 min",
+    Icon: IconScissors,
+    popular: false,
+  },
+  {
+    id: 2,
+    nombre: "Ritual de Navaja",
+    descripcion: "Afeitado completo con navaja recta, toalla caliente y bálsamo.",
+    precio: "Q120",
+    duracion: "60 min",
+    Icon: IconRazorBlade,
+    popular: true,
+  },
+  {
+    id: 3,
+    nombre: "Corte & Barba",
+    descripcion: "La combinación completa. Corte de cabello más escultura de barba.",
+    precio: "Q150",
+    duracion: "75 min",
+    Icon: IconCombScissors,
+    popular: false,
+  },
+  {
+    id: 4,
+    nombre: "La Barba del Norte",
+    descripcion: "Tratamiento completo de barba: lavado, acondicionado y aceite vikingo.",
+    precio: "Q100",
+    duracion: "45 min",
+    Icon: IconBeard,
+    popular: false,
+  },
+  {
+    id: 5,
+    nombre: "Corte de Niño Guerrero",
+    descripcion: "Para los pequeños valientes. Corte suave y paciencia garantizada.",
+    precio: "Q60",
+    duracion: "30 min",
+    Icon: IconChildScissors,
+    popular: false,
+  },
+  {
+    id: 6,
+    nombre: "El Paquete del Jarl",
+    descripcion: "Corte, navaja completa, tratamiento de barba y aceite premium.",
+    precio: "Q220",
+    duracion: "120 min",
+    Icon: IconCrown,
+    popular: false,
+  },
 ];
 
 const barberos = [
@@ -20,6 +183,8 @@ const barberos = [
 ];
 
 const horas = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+
+/* ── Página principal ────────────────────────────────── */
 
 export default function ReservarPage() {
   const [paso, setPaso] = useState<1 | 2 | 3>(1);
@@ -34,26 +199,26 @@ export default function ReservarPage() {
   const servicio = servicios.find((s) => s.id === servicioId);
   const barbero = barberos.find((b) => b.id === barberoId);
 
+  /* Pantalla de confirmación */
   if (confirmado) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "#0f0d0a" }}>
         <div className="text-center max-w-lg">
-          <span className="text-[#c8921a] text-7xl block mb-6">ᚢ</span>
-          <h2
-            className="text-[#f0e6c8] text-4xl font-black mb-4"
-            style={{ fontFamily: "var(--font-cinzel-decorative)" }}
-          >
+          <div className="animate-crown text-[#c8921a] mx-auto mb-6 w-16 h-16">
+            <IconCrown active={true} />
+          </div>
+          <h2 className="text-[#f0e6c8] text-4xl font-black mb-4" style={{ fontFamily: "var(--font-cinzel-decorative)" }}>
             ¡Pacto Sellado!
           </h2>
           <p className="text-[#b8a882] italic text-lg mb-8" style={{ fontFamily: "var(--font-im-fell)" }}>
             Tu silla en Invictus Barberia te espera.
           </p>
           <div className="border border-[#c8921a]/40 p-8 text-left space-y-4 mb-8" style={{ backgroundColor: "#1a1510" }}>
-            <Row label="Servicio" value={`${servicio?.nombre} — ${servicio?.precio}`} />
-            <Row label="Maestro" value={barbero?.name ?? ""} />
-            <Row label="Fecha" value={`${fecha} a las ${hora}`} />
-            <Row label="Nombre" value={nombre} />
-            <Row label="Teléfono" value={telefono} />
+            <Row label="Servicio"  value={`${servicio?.nombre} — ${servicio?.precio}`} />
+            <Row label="Maestro"   value={barbero?.name ?? ""} />
+            <Row label="Fecha"     value={`${fecha} a las ${hora}`} />
+            <Row label="Nombre"    value={nombre} />
+            <Row label="Teléfono"  value={telefono} />
           </div>
           <p className="text-[#b8a882]/40 text-xs mb-6" style={{ fontFamily: "var(--font-cinzel)" }}>
             Te contactaremos para confirmar tu cita.
@@ -61,7 +226,7 @@ export default function ReservarPage() {
           <div className="flex gap-4 justify-center">
             <button
               onClick={() => { setConfirmado(false); setPaso(1); setServicioId(null); setBarberoId(null); setFecha(""); setHora(""); setNombre(""); setTelefono(""); }}
-              className="border border-[#c8921a]/50 text-[#c8921a] text-xs tracking-widest uppercase px-8 py-3 hover:bg-[#c8921a] hover:text-[#0f0d0a] transition-all"
+              className="btn-glow border border-[#c8921a]/50 text-[#c8921a] text-xs tracking-widest uppercase px-8 py-3 hover:bg-[#c8921a] hover:text-[#0f0d0a] transition-all"
               style={{ fontFamily: "var(--font-cinzel)" }}
             >
               Nueva Reserva
@@ -81,8 +246,10 @@ export default function ReservarPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#0f0d0a" }}>
-      {/* Header de la página */}
+
+      {/* Header */}
       <div className="relative border-b border-[#5c3a1e]/40 px-6 py-8">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#c8921a]/60 to-transparent" />
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex flex-col leading-none">
             <span className="text-[#c8921a] text-xl font-black tracking-[0.2em]" style={{ fontFamily: "var(--font-cinzel-decorative)" }}>
@@ -100,8 +267,8 @@ export default function ReservarPage() {
       </div>
 
       {/* Indicador de pasos */}
-      <div className="border-b border-[#5c3a1e]/30 px-6 py-6">
-        <div className="max-w-5xl mx-auto flex items-center justify-center gap-0">
+      <div className="border-b border-[#5c3a1e]/30 px-6 py-6" style={{ backgroundColor: "#0f0d0a" }}>
+        <div className="max-w-5xl mx-auto flex items-center justify-center">
           {[
             { num: 1, label: "Elige Servicio" },
             { num: 2, label: "Elige Maestro" },
@@ -111,9 +278,11 @@ export default function ReservarPage() {
               <div className="flex flex-col items-center gap-1">
                 <div
                   className={`w-9 h-9 flex items-center justify-center border-2 text-sm font-bold transition-all duration-300 ${
-                    paso === p.num ? "border-[#c8921a] bg-[#c8921a] text-[#0f0d0a]"
-                    : paso > p.num ? "border-[#c8921a] text-[#c8921a]"
-                    : "border-[#5c3a1e] text-[#5c3a1e]"
+                    paso === p.num
+                      ? "border-[#c8921a] bg-[#c8921a] text-[#0f0d0a] shadow-[0_0_14px_rgba(200,146,26,0.6)]"
+                      : paso > p.num
+                      ? "border-[#c8921a] text-[#c8921a]"
+                      : "border-[#5c3a1e] text-[#5c3a1e]"
                   }`}
                   style={{ fontFamily: "var(--font-cinzel)" }}
                 >
@@ -127,7 +296,7 @@ export default function ReservarPage() {
                 </span>
               </div>
               {i < 2 && (
-                <div className={`w-16 md:w-28 h-px mb-5 mx-2 transition-colors duration-300 ${paso > p.num ? "bg-[#c8921a]" : "bg-[#5c3a1e]"}`} />
+                <div className={`w-16 md:w-28 h-px mb-5 mx-2 transition-all duration-500 ${paso > p.num ? "bg-[#c8921a]" : "bg-[#5c3a1e]/50"}`} />
               )}
             </div>
           ))}
@@ -137,59 +306,89 @@ export default function ReservarPage() {
       {/* Contenido */}
       <div className="max-w-5xl mx-auto px-6 py-12">
 
-        {/* PASO 1 — Servicios */}
+        {/* ── PASO 1: Servicios ── */}
         {paso === 1 && (
           <div>
             <p className="text-[#b8a882]/60 text-center text-sm italic mb-10" style={{ fontFamily: "var(--font-im-fell)" }}>
               Elige el rito que deseas recibir hoy.
             </p>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-              {servicios.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setServicioId(s.id)}
-                  className={`relative p-6 border text-left transition-all duration-300 group ${
-                    servicioId === s.id
-                      ? "border-[#c8921a] bg-[#2d1f0e]"
-                      : "border-[#5c3a1e]/50 hover:border-[#c8921a]/50 bg-[#1a1510]"
-                  }`}
-                >
-                  {s.popular && (
-                    <span className="absolute -top-3 left-4 bg-[#c8921a] text-[#0f0d0a] text-[9px] tracking-widest uppercase px-3 py-0.5 font-bold" style={{ fontFamily: "var(--font-cinzel)" }}>
-                      El Más Pedido
-                    </span>
-                  )}
-                  {/* Check de selección */}
-                  {servicioId === s.id && (
-                    <div className="absolute top-3 right-3 w-5 h-5 bg-[#c8921a] flex items-center justify-center">
-                      <span className="text-[#0f0d0a] text-xs font-black">✓</span>
+              {servicios.map((s) => {
+                const isSelected = servicioId === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => setServicioId(s.id)}
+                    className={`relative p-6 border text-left transition-all duration-300 group
+                      ${isSelected
+                        ? "border-[#c8921a] bg-[#2d1f0e] shadow-[0_0_24px_rgba(200,146,26,0.2)]"
+                        : "border-[#5c3a1e]/50 hover:border-[#c8921a]/60 hover:shadow-[0_0_16px_rgba(200,146,26,0.1)] bg-[#1a1510]"
+                      }`}
+                  >
+                    {/* Badge popular */}
+                    {s.popular && (
+                      <span
+                        className="badge-pulse absolute -top-3 left-4 bg-[#c8921a] text-[#0f0d0a] text-[9px] tracking-widest uppercase px-3 py-0.5 font-bold"
+                        style={{ fontFamily: "var(--font-cinzel)" }}
+                      >
+                        El Más Pedido
+                      </span>
+                    )}
+
+                    {/* Check */}
+                    {isSelected && (
+                      <div className="absolute top-3 right-3 w-5 h-5 bg-[#c8921a] flex items-center justify-center shadow-[0_0_8px_rgba(200,146,26,0.8)]">
+                        <span className="text-[#0f0d0a] text-xs font-black">✓</span>
+                      </div>
+                    )}
+
+                    {/* Ícono SVG animado */}
+                    <div className={`mb-4 transition-all duration-300
+                      ${isSelected
+                        ? "text-[#c8921a] drop-shadow-[0_0_8px_rgba(200,146,26,0.8)] scale-110"
+                        : "text-[#c8921a]/40 group-hover:text-[#c8921a]/80 group-hover:scale-105"
+                      }`}
+                    >
+                      <s.Icon active={isSelected} />
                     </div>
-                  )}
-                  <span className={`text-3xl block mb-3 ${servicioId === s.id ? "text-[#c8921a]" : "text-[#c8921a]/40 group-hover:text-[#c8921a]/70"} transition-colors`}>
-                    {s.icono}
-                  </span>
-                  <h3 className="text-[#f0e6c8] text-sm font-bold mb-1" style={{ fontFamily: "var(--font-cinzel)" }}>
-                    {s.nombre}
-                  </h3>
-                  <p className="text-[#b8a882]/60 text-xs italic leading-relaxed mb-4" style={{ fontFamily: "var(--font-im-fell)" }}>
-                    {s.descripcion}
-                  </p>
-                  <div className="flex items-center justify-between pt-3 border-t border-[#5c3a1e]/40">
-                    <span className="text-[#c8921a] font-black text-lg" style={{ fontFamily: "var(--font-cinzel-decorative)" }}>
-                      {s.precio}
-                    </span>
-                    <span className="text-[#b8a882]/40 text-[9px] uppercase tracking-widest" style={{ fontFamily: "var(--font-cinzel)" }}>
-                      {s.duracion}
-                    </span>
-                  </div>
-                </button>
-              ))}
+
+                    <h3
+                      className="text-[#f0e6c8] text-sm font-bold mb-1"
+                      style={{ fontFamily: "var(--font-cinzel)" }}
+                    >
+                      {s.nombre}
+                    </h3>
+                    <p
+                      className="text-[#b8a882]/60 text-xs italic leading-relaxed mb-4"
+                      style={{ fontFamily: "var(--font-im-fell)" }}
+                    >
+                      {s.descripcion}
+                    </p>
+                    <div className="flex items-center justify-between pt-3 border-t border-[#5c3a1e]/40">
+                      <span
+                        className="text-[#c8921a] font-black text-lg"
+                        style={{ fontFamily: "var(--font-cinzel-decorative)" }}
+                      >
+                        {s.precio}
+                      </span>
+                      <span
+                        className="text-[#b8a882]/40 text-[9px] uppercase tracking-widest"
+                        style={{ fontFamily: "var(--font-cinzel)" }}
+                      >
+                        {s.duracion}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
+
             <div className="flex justify-end">
               <button
                 onClick={() => servicioId && setPaso(2)}
                 disabled={!servicioId}
-                className="bg-[#c8921a] text-[#0f0d0a] px-12 py-4 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b] transition-all duration-300"
+                className="btn-glow bg-[#c8921a] text-[#0f0d0a] px-12 py-4 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b]"
                 style={{ fontFamily: "var(--font-cinzel)" }}
               >
                 Siguiente →
@@ -198,7 +397,7 @@ export default function ReservarPage() {
           </div>
         )}
 
-        {/* PASO 2 — Barbero */}
+        {/* ── PASO 2: Barbero ── */}
         {paso === 2 && (
           <div>
             <p className="text-[#b8a882]/60 text-center text-sm italic mb-10" style={{ fontFamily: "var(--font-im-fell)" }}>
@@ -211,11 +410,11 @@ export default function ReservarPage() {
                   onClick={() => setBarberoId(b.id)}
                   className={`p-6 border text-center transition-all duration-300 ${
                     barberoId === b.id
-                      ? "border-[#c8921a] bg-[#2d1f0e]"
+                      ? "border-[#c8921a] bg-[#2d1f0e] shadow-[0_0_20px_rgba(200,146,26,0.2)]"
                       : "border-[#5c3a1e]/50 hover:border-[#c8921a]/50 bg-[#1a1510]"
                   }`}
                 >
-                  <span className={`text-4xl block mb-3 ${barberoId === b.id ? "text-[#c8921a]" : "text-[#5c3a1e]"} transition-colors`}>
+                  <span className={`text-4xl block mb-3 transition-all duration-300 ${barberoId === b.id ? "text-[#c8921a] drop-shadow-[0_0_8px_rgba(200,146,26,0.8)]" : "text-[#5c3a1e]"}`}>
                     {b.rune}
                   </span>
                   <p className="text-[#f0e6c8] text-sm font-bold mb-1" style={{ fontFamily: "var(--font-cinzel)" }}>
@@ -234,7 +433,7 @@ export default function ReservarPage() {
               <button
                 onClick={() => barberoId !== null && setPaso(3)}
                 disabled={barberoId === null}
-                className="bg-[#c8921a] text-[#0f0d0a] px-12 py-4 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b] transition-all"
+                className="btn-glow bg-[#c8921a] text-[#0f0d0a] px-12 py-4 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b]"
                 style={{ fontFamily: "var(--font-cinzel)" }}
               >
                 Siguiente →
@@ -243,7 +442,7 @@ export default function ReservarPage() {
           </div>
         )}
 
-        {/* PASO 3 — Fecha y confirmación */}
+        {/* ── PASO 3: Fecha y confirmación ── */}
         {paso === 3 && (
           <div>
             {/* Resumen */}
@@ -266,7 +465,7 @@ export default function ReservarPage() {
                   value={fecha}
                   onChange={(e) => setFecha(e.target.value)}
                   min={new Date().toISOString().split("T")[0]}
-                  className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors"
+                  className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors focus:shadow-[0_0_10px_rgba(200,146,26,0.2)]"
                   style={{ fontFamily: "var(--font-cinzel)", colorScheme: "dark" }}
                 />
               </div>
@@ -277,7 +476,11 @@ export default function ReservarPage() {
                     <button
                       key={h}
                       onClick={() => setHora(h)}
-                      className={`py-2 text-xs border transition-all duration-200 ${hora === h ? "border-[#c8921a] bg-[#c8921a] text-[#0f0d0a] font-bold" : "border-[#5c3a1e] text-[#b8a882] hover:border-[#c8921a]/50"}`}
+                      className={`py-2 text-xs border transition-all duration-200 ${
+                        hora === h
+                          ? "border-[#c8921a] bg-[#c8921a] text-[#0f0d0a] font-bold shadow-[0_0_10px_rgba(200,146,26,0.5)]"
+                          : "border-[#5c3a1e] text-[#b8a882] hover:border-[#c8921a]/50"
+                      }`}
                       style={{ fontFamily: "var(--font-cinzel)" }}
                     >
                       {h}
@@ -292,7 +495,7 @@ export default function ReservarPage() {
                   placeholder="Nombre del guerrero"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
-                  className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors placeholder:text-[#5c3a1e]"
+                  className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors focus:shadow-[0_0_10px_rgba(200,146,26,0.2)] placeholder:text-[#5c3a1e]"
                   style={{ fontFamily: "var(--font-cinzel)" }}
                 />
               </div>
@@ -303,7 +506,7 @@ export default function ReservarPage() {
                   placeholder="Número de contacto"
                   value={telefono}
                   onChange={(e) => setTelefono(e.target.value)}
-                  className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors placeholder:text-[#5c3a1e]"
+                  className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors focus:shadow-[0_0_10px_rgba(200,146,26,0.2)] placeholder:text-[#5c3a1e]"
                   style={{ fontFamily: "var(--font-cinzel)" }}
                 />
               </div>
@@ -320,7 +523,7 @@ export default function ReservarPage() {
               <button
                 onClick={() => { if (fecha && hora && nombre && telefono) setConfirmado(true); }}
                 disabled={!fecha || !hora || !nombre || !telefono}
-                className="bg-[#c8921a] text-[#0f0d0a] px-12 py-4 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b] transition-all hover:shadow-[0_0_20px_rgba(200,146,26,0.4)]"
+                className="btn-glow bg-[#c8921a] text-[#0f0d0a] px-12 py-4 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b]"
                 style={{ fontFamily: "var(--font-cinzel)" }}
               >
                 Sellar el Pacto ᚢ

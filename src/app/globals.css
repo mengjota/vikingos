@@ -52,6 +52,53 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
 }
 
+/* ── Animaciones de iconos de servicios ──────────────── */
+
+/* Tijeras: la hoja inferior gira para abrir/cerrar */
+@keyframes scissors-cut {
+  0%, 100% { transform: rotate(0deg); }
+  40%       { transform: rotate(22deg); }
+  60%       { transform: rotate(22deg); }
+}
+.animate-scissors-blade { animation: scissors-cut 1.8s ease-in-out infinite; transform-origin: 6px 6px; }
+
+/* Navaja: destello que cruza la hoja */
+@keyframes razor-gleam {
+  0%   { opacity: 0; transform: translateX(-120%); }
+  30%  { opacity: 1; }
+  60%  { opacity: 0; transform: translateX(120%); }
+  100% { opacity: 0; transform: translateX(120%); }
+}
+.animate-razor-gleam { animation: razor-gleam 2.2s ease-in-out infinite; }
+
+/* Peine: se desliza levemente de izquierda a derecha */
+@keyframes comb-slide {
+  0%, 100% { transform: translateX(0px); }
+  50%       { transform: translateX(4px); }
+}
+.animate-comb { animation: comb-slide 1.6s ease-in-out infinite; }
+
+/* Barba: pulso de escala suave */
+@keyframes beard-pulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(1.08); opacity: 0.85; }
+}
+.animate-beard { animation: beard-pulse 2s ease-in-out infinite; }
+
+/* Niño: rebota suavemente */
+@keyframes child-bounce {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-4px); }
+}
+.animate-bounce-soft { animation: child-bounce 1.4s ease-in-out infinite; }
+
+/* Corona: flota arriba y abajo + brilla */
+@keyframes crown-float {
+  0%, 100% { transform: translateY(0px);   filter: drop-shadow(0 0 4px rgba(200,146,26,0.4)); }
+  50%       { transform: translateY(-5px);  filter: drop-shadow(0 0 12px rgba(200,146,26,0.9)); }
+}
+.animate-crown { animation: crown-float 2s ease-in-out infinite; }
+
 /* ── Animaciones globales ─────────────────────────────── */
 
 /* Shimmer sweep que recorre el botón */

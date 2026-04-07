@@ -493,87 +493,175 @@ export default function ReservarPage() {
 
         {/* ── PASO 3: Fecha y confirmación ── */}
         {paso === 3 && (
-          <div>
-            {/* Resumen */}
-            <div className="border border-[#5c3a1e]/50 p-5 mb-8 flex flex-wrap gap-6" style={{ backgroundColor: "#1a1510" }}>
+          <div className="relative">
+
+            {/* Luz ambiental de fondo */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full pointer-events-none"
+              style={{ background: "radial-gradient(ellipse, rgba(200,146,26,0.06) 0%, transparent 70%)" }}
+            />
+
+            {/* Resumen con glow */}
+            <div
+              className="relative border p-5 mb-8 flex flex-wrap gap-8 overflow-hidden"
+              style={{
+                backgroundColor: "#141209",
+                borderColor: "rgba(200,146,26,0.45)",
+                boxShadow: "0 0 20px rgba(200,146,26,0.08), inset 0 0 20px rgba(200,146,26,0.04)",
+              }}
+            >
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#c8921a] to-transparent" />
               <div>
-                <span className="text-[#c8921a] text-[9px] uppercase tracking-widest block mb-1" style={{ fontFamily: "var(--font-cinzel)" }}>Servicio</span>
-                <span className="text-[#f0e6c8] text-sm" style={{ fontFamily: "var(--font-cinzel)" }}>{servicio?.nombre} — {servicio?.precio}</span>
+                <span className="text-[#c8921a]/70 text-[9px] uppercase tracking-widest block mb-1" style={{ fontFamily: "var(--font-cinzel)" }}>Servicio</span>
+                <span className="text-[#e8b84b] text-sm font-bold" style={{ fontFamily: "var(--font-cinzel)", textShadow: "0 0 8px rgba(200,146,26,0.5)" }}>
+                  {servicio?.nombre} — {servicio?.precio}
+                </span>
               </div>
               <div>
-                <span className="text-[#c8921a] text-[9px] uppercase tracking-widest block mb-1" style={{ fontFamily: "var(--font-cinzel)" }}>Maestro</span>
-                <span className="text-[#f0e6c8] text-sm" style={{ fontFamily: "var(--font-cinzel)" }}>{barbero?.name}</span>
+                <span className="text-[#c8921a]/70 text-[9px] uppercase tracking-widest block mb-1" style={{ fontFamily: "var(--font-cinzel)" }}>Maestro</span>
+                <span className="text-[#e8b84b] text-sm font-bold" style={{ fontFamily: "var(--font-cinzel)", textShadow: "0 0 8px rgba(200,146,26,0.5)" }}>
+                  {barbero?.name}
+                </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 relative">
+
+              {/* Fecha */}
               <div>
-                <label className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2" style={{ fontFamily: "var(--font-cinzel)" }}>Fecha</label>
+                <label
+                  className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
+                  style={{ fontFamily: "var(--font-cinzel)", textShadow: "0 0 6px rgba(200,146,26,0.4)" }}
+                >
+                  Fecha
+                </label>
                 <input
                   type="date"
                   value={fecha}
                   onChange={(e) => setFecha(e.target.value)}
                   min={new Date().toISOString().split("T")[0]}
-                  className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors focus:shadow-[0_0_10px_rgba(200,146,26,0.2)]"
-                  style={{ fontFamily: "var(--font-cinzel)", colorScheme: "dark" }}
+                  className="w-full px-4 py-3 text-[#f0e6c8] focus:outline-none transition-all duration-300"
+                  style={{
+                    fontFamily: "var(--font-cinzel)",
+                    colorScheme: "dark",
+                    backgroundColor: "#141209",
+                    border: fecha ? "1px solid rgba(200,146,26,0.7)" : "1px solid rgba(92,58,30,0.6)",
+                    boxShadow: fecha
+                      ? "0 0 16px rgba(200,146,26,0.2), inset 0 0 12px rgba(200,146,26,0.05)"
+                      : "inset 0 0 6px rgba(0,0,0,0.3)",
+                  }}
                 />
               </div>
+
+              {/* Hora */}
               <div>
-                <label className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2" style={{ fontFamily: "var(--font-cinzel)" }}>Hora</label>
+                <label
+                  className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
+                  style={{ fontFamily: "var(--font-cinzel)", textShadow: "0 0 6px rgba(200,146,26,0.4)" }}
+                >
+                  Hora
+                </label>
                 <div className="grid grid-cols-3 gap-2">
-                  {horas.map((h) => (
-                    <button
-                      key={h}
-                      onClick={() => setHora(h)}
-                      className={`py-2 text-xs border transition-all duration-200 ${
-                        hora === h
-                          ? "border-[#c8921a] bg-[#c8921a] text-[#0f0d0a] font-bold shadow-[0_0_10px_rgba(200,146,26,0.5)]"
-                          : "border-[#5c3a1e] text-[#b8a882] hover:border-[#c8921a]/50"
-                      }`}
-                      style={{ fontFamily: "var(--font-cinzel)" }}
-                    >
-                      {h}
-                    </button>
-                  ))}
+                  {horas.map((h) => {
+                    const isHora = hora === h;
+                    return (
+                      <button
+                        key={h}
+                        onClick={() => setHora(h)}
+                        className="service-card py-2.5 text-xs border text-center transition-all duration-200"
+                        style={{
+                          fontFamily: "var(--font-cinzel)",
+                          backgroundColor: isHora ? "#c8921a" : "#141209",
+                          borderColor: isHora ? "#c8921a" : "rgba(92,58,30,0.5)",
+                          color: isHora ? "#0f0d0a" : "#b8a882",
+                          fontWeight: isHora ? "700" : "400",
+                          boxShadow: isHora
+                            ? "0 0 18px rgba(200,146,26,0.7), 0 0 40px rgba(200,146,26,0.25), inset 0 0 10px rgba(255,220,100,0.2)"
+                            : undefined,
+                          textShadow: isHora ? "0 0 6px rgba(0,0,0,0.5)" : "none",
+                        }}
+                      >
+                        {h}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
+
+              {/* Nombre */}
               <div>
-                <label className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2" style={{ fontFamily: "var(--font-cinzel)" }}>Tu Nombre</label>
+                <label
+                  className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
+                  style={{ fontFamily: "var(--font-cinzel)", textShadow: "0 0 6px rgba(200,146,26,0.4)" }}
+                >
+                  Tu Nombre
+                </label>
                 <input
                   type="text"
                   placeholder="Nombre del guerrero"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
-                  className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors focus:shadow-[0_0_10px_rgba(200,146,26,0.2)] placeholder:text-[#5c3a1e]"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  className="w-full px-4 py-3 text-[#f0e6c8] focus:outline-none transition-all duration-300 placeholder:text-[#5c3a1e]/80"
+                  style={{
+                    fontFamily: "var(--font-cinzel)",
+                    backgroundColor: "#141209",
+                    border: nombre ? "1px solid rgba(200,146,26,0.7)" : "1px solid rgba(92,58,30,0.6)",
+                    boxShadow: nombre
+                      ? "0 0 16px rgba(200,146,26,0.2), inset 0 0 12px rgba(200,146,26,0.05)"
+                      : "inset 0 0 6px rgba(0,0,0,0.3)",
+                  }}
                 />
               </div>
+
+              {/* Teléfono */}
               <div>
-                <label className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2" style={{ fontFamily: "var(--font-cinzel)" }}>Teléfono</label>
+                <label
+                  className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
+                  style={{ fontFamily: "var(--font-cinzel)", textShadow: "0 0 6px rgba(200,146,26,0.4)" }}
+                >
+                  Teléfono
+                </label>
                 <input
                   type="tel"
                   placeholder="Número de contacto"
                   value={telefono}
                   onChange={(e) => setTelefono(e.target.value)}
-                  className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors focus:shadow-[0_0_10px_rgba(200,146,26,0.2)] placeholder:text-[#5c3a1e]"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  className="w-full px-4 py-3 text-[#f0e6c8] focus:outline-none transition-all duration-300 placeholder:text-[#5c3a1e]/80"
+                  style={{
+                    fontFamily: "var(--font-cinzel)",
+                    backgroundColor: "#141209",
+                    border: telefono ? "1px solid rgba(200,146,26,0.7)" : "1px solid rgba(92,58,30,0.6)",
+                    boxShadow: telefono
+                      ? "0 0 16px rgba(200,146,26,0.2), inset 0 0 12px rgba(200,146,26,0.05)"
+                      : "inset 0 0 6px rgba(0,0,0,0.3)",
+                  }}
                 />
               </div>
             </div>
 
-            <p className="text-[#b8a882]/40 text-xs text-center italic mb-8" style={{ fontFamily: "var(--font-im-fell)" }}>
+            <p className="text-[#b8a882]/50 text-xs text-center italic mb-10" style={{ fontFamily: "var(--font-im-fell)" }}>
               Sin registro. Sin contraseña. Solo tu nombre y número.
             </p>
 
-            <div className="flex justify-between">
-              <button onClick={() => setPaso(2)} className="border border-[#5c3a1e] text-[#b8a882] px-8 py-3 text-xs tracking-widest uppercase hover:border-[#c8921a]/50 transition-all" style={{ fontFamily: "var(--font-cinzel)" }}>
+            <div className="flex justify-between items-center">
+              <button
+                onClick={() => setPaso(2)}
+                className="border border-[#5c3a1e] text-[#b8a882] px-8 py-3 text-xs tracking-widest uppercase hover:border-[#c8921a]/50 hover:text-[#c8921a] transition-all duration-300"
+                style={{ fontFamily: "var(--font-cinzel)" }}
+              >
                 ← Atrás
               </button>
               <button
                 onClick={() => { if (fecha && hora && nombre && telefono) setConfirmado(true); }}
                 disabled={!fecha || !hora || !nombre || !telefono}
-                className="btn-glow bg-[#c8921a] text-[#0f0d0a] px-12 py-4 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b]"
-                style={{ fontFamily: "var(--font-cinzel)" }}
+                className="btn-glow relative px-14 py-4 text-xs tracking-[0.3em] uppercase font-bold disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300"
+                style={{
+                  fontFamily: "var(--font-cinzel)",
+                  backgroundColor: (!fecha || !hora || !nombre || !telefono) ? "#5c3a1e" : "#c8921a",
+                  color: (!fecha || !hora || !nombre || !telefono) ? "#b8a882" : "#0f0d0a",
+                  boxShadow: (!fecha || !hora || !nombre || !telefono)
+                    ? "none"
+                    : "0 0 28px rgba(200,146,26,0.7), 0 0 60px rgba(200,146,26,0.3), inset 0 0 20px rgba(255,220,100,0.15)",
+                }}
               >
                 Sellar el Pacto ᚢ
               </button>

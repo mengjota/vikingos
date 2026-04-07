@@ -3,45 +3,108 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 
-/* ── Icono Tijeras ─────────────────────────────────────── */
+/* ── Icono Tijeras Realistas ───────────────────────────── */
 function IconScissors() {
   return (
-    <svg width="48" height="48" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="64" height="64" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Hoja superior */}
-      <g className="scissor-top" style={{ transformOrigin: "12px 14px" }}>
-        <line x1="12" y1="14" x2="26" y2="5"  stroke="currentColor" strokeWidth="2"   strokeLinecap="round" />
-        <circle cx="7" cy="9"  r="4.5" stroke="currentColor" strokeWidth="2"   fill="none" />
-        <circle cx="7" cy="9"  r="1.2" fill="currentColor" />
+      <g className="scissor-top" style={{ transformOrigin: "30px 30px" }}>
+        {/* Aro del dedo — exterior */}
+        <circle cx="10" cy="13" r="8"  stroke="#c8921a" strokeWidth="2.5" fill="rgba(200,146,26,0.08)" />
+        {/* Aro del dedo — interior hueco */}
+        <circle cx="10" cy="13" r="4"  stroke="#c8921a" strokeWidth="1.2" fill="rgba(200,146,26,0.15)" />
+        {/* Reflejo del aro (3D) */}
+        <path d="M5 9 Q7 6 11 7" stroke="rgba(255,220,100,0.5)" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+        {/* Mango (shank) hacia el pivote */}
+        <path d="M17 15 L30 28" stroke="#c8921a" strokeWidth="3.5" strokeLinecap="round"/>
+        {/* Sombra del mango (3D) */}
+        <path d="M18 16 L31 29" stroke="rgba(0,0,0,0.4)" strokeWidth="2" strokeLinecap="round"/>
+        {/* Hoja (blade) hacia la punta */}
+        <path d="M30 28 L56 10" stroke="#c8921a" strokeWidth="2" strokeLinecap="round"/>
+        {/* Filo de la hoja (highlight) */}
+        <path d="M30 28 L56 12" stroke="rgba(255,220,100,0.4)" strokeWidth="0.8" strokeLinecap="round"/>
       </g>
+
       {/* Hoja inferior */}
-      <g className="scissor-bottom" style={{ transformOrigin: "12px 14px" }}>
-        <line x1="12" y1="14" x2="26" y2="23" stroke="currentColor" strokeWidth="2"   strokeLinecap="round" />
-        <circle cx="7" cy="19" r="4.5" stroke="currentColor" strokeWidth="2"   fill="none" />
-        <circle cx="7" cy="19" r="1.2" fill="currentColor" />
+      <g className="scissor-bottom" style={{ transformOrigin: "30px 30px" }}>
+        {/* Aro del dedo — exterior */}
+        <circle cx="10" cy="47" r="8"  stroke="#c8921a" strokeWidth="2.5" fill="rgba(200,146,26,0.08)" />
+        {/* Aro del dedo — interior */}
+        <circle cx="10" cy="47" r="4"  stroke="#c8921a" strokeWidth="1.2" fill="rgba(200,146,26,0.15)" />
+        {/* Reflejo */}
+        <path d="M5 43 Q7 40 11 41" stroke="rgba(255,220,100,0.5)" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
+        {/* Mango */}
+        <path d="M17 45 L30 32" stroke="#c8921a" strokeWidth="3.5" strokeLinecap="round"/>
+        {/* Sombra mango */}
+        <path d="M18 46 L31 33" stroke="rgba(0,0,0,0.4)" strokeWidth="2" strokeLinecap="round"/>
+        {/* Hoja */}
+        <path d="M30 32 L56 50" stroke="#c8921a" strokeWidth="2" strokeLinecap="round"/>
+        {/* Filo highlight */}
+        <path d="M30 32 L56 48" stroke="rgba(255,220,100,0.4)" strokeWidth="0.8" strokeLinecap="round"/>
       </g>
-      {/* Perno */}
-      <circle cx="12" cy="14" r="1.8" fill="currentColor" />
+
+      {/* Tornillo pivote */}
+      <circle cx="30" cy="30" r="4.5" fill="#c8921a"/>
+      <circle cx="30" cy="30" r="2.5" fill="#0f0d0a"/>
+      <circle cx="30" cy="30" r="1"   fill="#c8921a" opacity="0.6"/>
+      {/* Reflejo del tornillo */}
+      <circle cx="28.5" cy="28.5" r="1" fill="rgba(255,220,100,0.6)"/>
     </svg>
   );
 }
 
-/* ── Icono Máquina (clippers) ──────────────────────────── */
+/* ── Icono Máquina Realista (clippers) ─────────────────── */
 function IconClippers() {
   return (
-    <svg className="icon-clipper" width="48" height="48" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Cuerpo */}
-      <rect x="4" y="6" width="20" height="13" rx="3" stroke="currentColor" strokeWidth="2" fill="none" />
-      {/* Botón power */}
-      <circle cx="14" cy="12" r="2.5" fill="currentColor" opacity="0.7" />
-      {/* Cuchilla base */}
-      <line x1="4" y1="19" x2="24" y2="19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-      {/* Dientes */}
-      <line x1="7"  y1="19" x2="7"  y2="24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="11" y1="19" x2="11" y2="24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="15" y1="19" x2="15" y2="24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="19" y1="19" x2="19" y2="24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <svg width="64" height="64" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Sombra del cuerpo (profundidad 3D) */}
+      <rect x="10" y="10" width="40" height="28" rx="6" fill="rgba(0,0,0,0.5)"/>
+
+      {/* Cuerpo principal */}
+      <rect x="8" y="8" width="40" height="28" rx="6" fill="#1a1209" stroke="#c8921a" strokeWidth="2"/>
+
+      {/* Cara superior (highlight 3D) */}
+      <rect x="8" y="8" width="40" height="9" rx="6" fill="rgba(200,146,26,0.12)"/>
+      <path d="M9 11 Q28 9 47 11" stroke="rgba(255,220,100,0.3)" strokeWidth="1" fill="none"/>
+
+      {/* Detalle de grip lateral izquierdo */}
+      <line x1="10" y1="18" x2="10" y2="32" stroke="rgba(200,146,26,0.25)" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="13" y1="18" x2="13" y2="32" stroke="rgba(200,146,26,0.15)" strokeWidth="1"   strokeLinecap="round"/>
+
+      {/* Botón power (centro) */}
+      <circle cx="28" cy="22" r="5.5" fill="rgba(0,0,0,0.4)" />
+      <circle cx="28" cy="22" r="4.5" stroke="#c8921a" strokeWidth="1.5" fill="rgba(200,146,26,0.15)"/>
+      <circle cx="28" cy="22" r="2.5" fill="#c8921a"/>
+      <circle cx="27" cy="21" r="1"   fill="rgba(255,220,100,0.7)"/>
+
+      {/* LED indicador */}
+      <circle cx="42" cy="13" r="2.5" fill="#c8921a"/>
+      <circle cx="42" cy="13" r="1.5" fill="rgba(255,240,150,0.9)"/>
+
       {/* Cable */}
-      <path d="M14 6 Q14 2 19 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      <path d="M28 8 Q28 3 36 3 Q44 3 44 8" stroke="#c8921a" strokeWidth="2" strokeLinecap="round" fill="none"/>
+      <path d="M29 8 Q29 4 37 4 Q44 4 44 9"  stroke="rgba(255,220,100,0.2)" strokeWidth="0.8" fill="none"/>
+
+      {/* Base de la cuchilla */}
+      <rect x="6" y="36" width="44" height="6" rx="2" fill="#c8921a"/>
+      <rect x="6" y="36" width="44" height="3" rx="2" fill="rgba(255,220,100,0.2)"/>
+
+      {/* Dientes de la cuchilla */}
+      <g className="icon-blade">
+        <rect x="9"  y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
+        <rect x="16" y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
+        <rect x="23" y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
+        <rect x="30" y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
+        <rect x="37" y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
+        <rect x="44" y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
+        {/* Highlights de dientes (filo) */}
+        <rect x="9"  y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
+        <rect x="16" y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
+        <rect x="23" y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
+        <rect x="30" y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
+        <rect x="37" y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
+        <rect x="44" y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
+      </g>
     </svg>
   );
 }
@@ -191,7 +254,7 @@ export default function Hero() {
           {/* Botón 1: Solo iconos 3D → Reservar */}
           <Link
             href="/reservar"
-            className="btn-tools group relative overflow-hidden flex items-center gap-5 px-10 py-5"
+            className="btn-tools group relative overflow-hidden flex items-center gap-6 px-12 py-6"
             style={{
               background: "linear-gradient(145deg, #d9a020 0%, #c8921a 50%, #a87215 100%)",
               boxShadow: "0 6px 0 rgba(80,40,0,0.9), 0 0 25px rgba(200,146,26,0.5), 0 0 55px rgba(200,146,26,0.2)",
@@ -203,8 +266,8 @@ export default function Hero() {
               className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
               style={{ background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%)" }}
             />
-            <span className="relative z-10"><IconScissors /></span>
-            <span className="relative z-10"><IconClippers /></span>
+            <span className="relative z-10 scissors-float"><IconScissors /></span>
+            <span className="relative z-10 clippers-float"><IconClippers /></span>
           </Link>
 
           {/* Botón 2: INVICTUS → Nosotros (fondo transparente) */}

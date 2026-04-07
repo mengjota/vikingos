@@ -268,25 +268,54 @@ body {
   pointer-events: none;
 }
 
-/* Tijeras del botón 1: cada hoja gira en dirección opuesta */
-@keyframes scissorTop {
-  0%, 100% { transform: rotate(0deg); }
-  50%       { transform: rotate(-22deg); }
+/* Tijeras 3D: hojas opuestas + efecto profundidad */
+@keyframes scissorTop3D {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  40%       { transform: rotate(-28deg) scale(1.08); }
+  60%       { transform: rotate(-28deg) scale(1.08); }
 }
-@keyframes scissorBottom {
-  0%, 100% { transform: rotate(0deg); }
-  50%       { transform: rotate(22deg); }
+@keyframes scissorBottom3D {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  40%       { transform: rotate(28deg) scale(1.08); }
+  60%       { transform: rotate(28deg) scale(1.08); }
 }
-.btn-tools:hover .scissor-top    { animation: scissorTop    0.55s ease-in-out infinite; transform-origin: 50% 50%; }
-.btn-tools:hover .scissor-bottom { animation: scissorBottom 0.55s ease-in-out infinite; transform-origin: 50% 50%; }
+.btn-tools .scissor-top    {
+  animation: scissorTop3D    1.4s ease-in-out infinite;
+  transform-origin: 55% 52%;
+  filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.7)) drop-shadow(0 0 6px rgba(200,146,26,0.5));
+}
+.btn-tools .scissor-bottom {
+  animation: scissorBottom3D 1.4s ease-in-out infinite;
+  transform-origin: 55% 52%;
+  filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.7)) drop-shadow(0 0 6px rgba(200,146,26,0.5));
+}
+.btn-tools:hover .scissor-top,
+.btn-tools:hover .scissor-bottom {
+  filter: drop-shadow(3px 5px 0 rgba(0,0,0,0.9)) drop-shadow(0 0 14px rgba(200,146,26,1));
+}
 
-/* Máquina: vibra al hover */
-@keyframes clipperBuzz {
-  0%, 100% { transform: translateX(0)    rotate(0deg); }
-  25%       { transform: translateX(-2px) rotate(-2deg); }
-  75%       { transform: translateX(2px)  rotate(2deg); }
+/* Máquina 3D: vibración + profundidad */
+@keyframes clipper3D {
+  0%, 100% { transform: translateX(0)    translateY(0)    rotate(0deg); }
+  20%       { transform: translateX(-2px) translateY(-1px) rotate(-3deg); }
+  40%       { transform: translateX(2px)  translateY(0)    rotate(3deg); }
+  60%       { transform: translateX(-1px) translateY(-1px) rotate(-2deg); }
+  80%       { transform: translateX(1px)  translateY(0)    rotate(2deg); }
 }
-.btn-tools:hover .icon-clipper { animation: clipperBuzz 0.12s linear infinite; }
+.btn-tools .icon-clipper {
+  animation: clipper3D 0.35s linear infinite;
+  filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.7)) drop-shadow(0 0 6px rgba(200,146,26,0.5));
+}
+.btn-tools:hover .icon-clipper {
+  filter: drop-shadow(3px 5px 0 rgba(0,0,0,0.9)) drop-shadow(0 0 14px rgba(200,146,26,1));
+}
+
+/* Efecto 3D press en el botón */
+.btn-tools {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-tools:hover  { transform: translateY(-4px) scale(1.04); }
+.btn-tools:active { transform: translateY(2px)  scale(0.97); }
 
 /* Botón INVICTUS: pulso de glow + texto */
 @keyframes invictusPulse {

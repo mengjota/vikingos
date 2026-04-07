@@ -6,7 +6,7 @@ import Link from "next/link";
 /* ── Icono Tijeras ─────────────────────────────────────── */
 function IconScissors() {
   return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="48" height="48" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Hoja superior */}
       <g className="scissor-top" style={{ transformOrigin: "12px 14px" }}>
         <line x1="12" y1="14" x2="26" y2="5"  stroke="currentColor" strokeWidth="2"   strokeLinecap="round" />
@@ -28,7 +28,7 @@ function IconScissors() {
 /* ── Icono Máquina (clippers) ──────────────────────────── */
 function IconClippers() {
   return (
-    <svg className="icon-clipper" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg className="icon-clipper" width="48" height="48" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Cuerpo */}
       <rect x="4" y="6" width="20" height="13" rx="3" stroke="currentColor" strokeWidth="2" fill="none" />
       {/* Botón power */}
@@ -185,45 +185,39 @@ export default function Hero() {
           <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#c8921a]/60" />
         </div>
 
-        {/* ── BOTONES ── */}
-        <div className="hero-e6 flex flex-col sm:flex-row items-center justify-center gap-5">
+        {/* ── BOTONES ROW 1 ── */}
+        <div className="hero-e6 flex flex-col sm:flex-row items-center justify-center gap-6">
 
-          {/* Botón 1: Tijeras + Máquina → Reservar */}
+          {/* Botón 1: Solo iconos 3D → Reservar */}
           <Link
             href="/reservar"
-            className="btn-tools group relative overflow-hidden flex items-center gap-3 px-8 py-4 font-bold transition-all duration-300"
+            className="btn-tools group relative overflow-hidden flex items-center gap-5 px-10 py-5"
             style={{
-              background: "#c8921a",
+              background: "linear-gradient(145deg, #d9a020 0%, #c8921a 50%, #a87215 100%)",
+              boxShadow: "0 6px 0 rgba(80,40,0,0.9), 0 0 25px rgba(200,146,26,0.5), 0 0 55px rgba(200,146,26,0.2)",
               color: "#0f0d0a",
-              boxShadow: "0 0 18px rgba(200,146,26,0.4), 0 0 40px rgba(200,146,26,0.15)",
             }}
           >
-            {/* Shimmer */}
+            {/* Shimmer sweep */}
             <span
               className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              style={{ background: "linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.22) 50%, transparent 65%)" }}
+              style={{ background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%)" }}
             />
-            {/* Hover glow */}
-            <span
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none"
-              style={{ boxShadow: "inset 0 0 20px rgba(255,255,255,0.05)" }}
-            />
-
-            <span className="relative z-10 text-[#0f0d0a]"><IconScissors /></span>
-            <span
-              className="relative z-10 text-[10px] tracking-[0.35em] uppercase"
-              style={{ fontFamily: "var(--font-barlow)", color: "#0f0d0a" }}
-            >
-              Reservar Servicio
-            </span>
-            <span className="relative z-10 text-[#0f0d0a]"><IconClippers /></span>
+            <span className="relative z-10"><IconScissors /></span>
+            <span className="relative z-10"><IconClippers /></span>
           </Link>
 
-          {/* Botón 2: INVICTUS → Nosotros */}
+          {/* Botón 2: INVICTUS → Nosotros (fondo transparente) */}
           <Link
             href="/nosotros"
-            className="btn-invictus relative flex items-center justify-center px-10 py-4 border-2 border-[#c8921a]"
-            style={{ fontFamily: "var(--font-cinzel-decorative)", color: "#f0e6c8", fontSize: "1rem", letterSpacing: "0.35em" }}
+            className="btn-invictus relative flex items-center justify-center px-10 py-5 border-2 border-[#c8921a]"
+            style={{
+              background: "transparent",
+              fontFamily: "var(--font-cinzel-decorative)",
+              color: "#f0e6c8",
+              fontSize: "1rem",
+              letterSpacing: "0.35em",
+            }}
           >
             {/* Esquinas decorativas */}
             <span className="absolute top-0 left-0   w-3 h-3 border-t-2 border-l-2 border-[#c8921a]" />
@@ -233,6 +227,22 @@ export default function Hero() {
             INVICTUS
           </Link>
 
+        </div>
+
+        {/* ── Iniciar Sesión (centrado debajo) ── */}
+        <div className="hero-e6 mt-6 flex justify-center">
+          <Link
+            href="/login"
+            className="group flex items-center gap-2 px-8 py-3 border border-[#c8921a]/40 text-[#b8a882]/70 text-[10px] tracking-[0.4em] uppercase hover:border-[#c8921a] hover:text-[#c8921a] transition-all duration-300"
+            style={{ fontFamily: "var(--font-barlow)" }}
+          >
+            {/* Icono usuario */}
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+            </svg>
+            Iniciar Sesión
+          </Link>
         </div>
       </div>
 

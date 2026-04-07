@@ -76,7 +76,7 @@ export default function Hero() {
           className="text-[#c8921a] text-xs tracking-[0.6em] uppercase mb-4"
           style={{ fontFamily: "var(--font-barlow)" }}
         >
-          Barbería Artesanal
+          Barbería
         </p>
 
         {/* Título principal */}

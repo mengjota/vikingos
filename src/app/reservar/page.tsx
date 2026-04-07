@@ -259,26 +259,7 @@ export default function ReservarPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#0f0d0a" }}>
-
-      {/* Header */}
-      <div className="relative border-b border-[#5c3a1e]/40 px-6 py-8">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#c8921a]/60 to-transparent" />
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex flex-col leading-none">
-            <span className="text-[#c8921a] text-xl font-black tracking-[0.2em]" style={{ fontFamily: "var(--font-cinzel-decorative)" }}>
-              INVICTUS
-            </span>
-            <span className="text-[#b8a882] text-[9px] tracking-[0.4em] uppercase" style={{ fontFamily: "var(--font-barlow)" }}>
-              Barberia
-            </span>
-          </Link>
-          <h1 className="text-[#f0e6c8] text-lg tracking-[0.3em] uppercase" style={{ fontFamily: "var(--font-barlow)" }}>
-            Reservar Servicio
-          </h1>
-          <div className="w-20" />
-        </div>
-      </div>
+    <div className="min-h-screen pt-24" style={{ backgroundColor: "#0f0d0a" }}>
 
       {/* Indicador de pasos */}
       <div className="border-b border-[#5c3a1e]/30 px-6 py-6" style={{ backgroundColor: "#0f0d0a" }}>

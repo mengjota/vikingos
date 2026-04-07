@@ -2,27 +2,27 @@ import Link from "next/link";
 
 const staff = [
   {
-    nombre: "Björn el Anciano",
+    nombre: "Carlos Mendoza",
     cargo: "Barbero Profesional · Fundador",
     años: 24,
     rune: "ᚠ",
-    bio: "Con más de dos décadas de oficio, Björn es el alma de Invictus. Formado en la tradición del afeitado clásico con navaja recta, ha perfeccionado cada técnica hasta convertirla en ritual. Su filosofía: la silla de un barbero es el trono del cliente.",
+    bio: "Con más de dos décadas de oficio, Carlos es el alma de Invictus. Formado en la tradición del afeitado clásico con navaja recta, ha perfeccionado cada técnica hasta convertirla en ritual. Su filosofía: la silla de un barbero es el trono del cliente.",
     especialidad: "Navaja Clásica · Afeitado Ritual · Barba Nórdica",
   },
   {
-    nombre: "Erik Manos de Hierro",
+    nombre: "Andrés Vega",
     cargo: "Barbero Profesional",
     años: 13,
     rune: "ᚢ",
-    bio: "Erik llegó al gremio forjado en las calles. Sus degradados son tan precisos como una espada bien templada. Especialista en líneas geométricas y skin fade, representa la fusión entre tradición y precisión moderna.",
+    bio: "Andrés llegó al gremio con una precisión innata. Sus degradados son técnicamente impecables. Especialista en líneas geométricas y skin fade, representa la fusión entre tradición y precisión moderna.",
     especialidad: "Skin Fade · Líneas · Diseños Geométricos",
   },
   {
-    nombre: "Ragnar el Joven",
+    nombre: "Sebastián Torres",
     cargo: "Barbero Profesional",
     años: 7,
     rune: "ᚦ",
-    bio: "El más joven del gremio pero no el menos hábil. Ragnar trae vientos frescos del norte: estilos modernos ejecutados con la disciplina y respeto que exige Invictus. Su especialidad es leer al cliente antes de tocar la tijera.",
+    bio: "El más joven del equipo pero no el menos hábil. Sebastián domina los estilos contemporáneos con la disciplina y respeto que exige Invictus. Su especialidad es leer al cliente antes de tocar la tijera.",
     especialidad: "Estilos Modernos · Texturas · Barba Escultural",
   },
 ];
@@ -211,7 +211,7 @@ export default function NosotrosPage() {
                 className="text-[#f0e6c8] text-3xl font-black mb-1"
                 style={{ fontFamily: "var(--font-oswald)" }}
               >
-                Björn el Anciano
+                Carlos Mendoza
               </h3>
               <div className="flex items-center gap-3 my-5">
                 <div className="flex-1 h-px bg-[#5c3a1e]" />
@@ -220,7 +220,7 @@ export default function NosotrosPage() {
               </div>
               <div className="space-y-4 text-[#b8a882]/80 text-base leading-relaxed" style={{ fontFamily: "var(--font-lato)" }}>
                 <p>
-                  Björn empezó en este oficio a los 16 años, aprendiendo de un maestro barbero que ya no existe. No hubo academia, no hubo título enmarcado en la pared. Hubo años de práctica, de errores corregidos, de manos que aprendieron a leer cada tipo de cabello y cada forma de rostro.
+                  Carlos empezó en este oficio a los 16 años, aprendiendo de un maestro barbero que ya no existe. No hubo academia, no hubo título enmarcado en la pared. Hubo años de práctica, de errores corregidos, de manos que aprendieron a leer cada tipo de cabello y cada forma de rostro.
                 </p>
                 <p>
                   Después de más de dos décadas, decidió crear Invictus no como un negocio, sino como un legado. Un espacio donde el oficio se respeta, donde el cliente no es un número en una agenda sino un hombre que merece lo mejor.

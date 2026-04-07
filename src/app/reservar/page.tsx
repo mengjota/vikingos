@@ -177,9 +177,9 @@ const servicios = [
 
 const barberos = [
   { id: 0, name: "Sin preferencia", specialty: "Cualquier maestro disponible", rune: "᛭" },
-  { id: 1, name: "Björn el Anciano", specialty: "Navaja Clásica", rune: "ᚠ" },
-  { id: 2, name: "Erik Manos de Hierro", specialty: "Degradados y Líneas", rune: "ᚢ" },
-  { id: 3, name: "Ragnar el Joven", specialty: "Estilo Moderno", rune: "ᚦ" },
+  { id: 1, name: "Carlos Mendoza", specialty: "Navaja Clásica", rune: "ᚠ" },
+  { id: 2, name: "Andrés Vega", specialty: "Degradados y Líneas", rune: "ᚢ" },
+  { id: 3, name: "Sebastián Torres", specialty: "Estilo Moderno", rune: "ᚦ" },
 ];
 
 const horas = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"];

@@ -3,9 +3,9 @@
 import { useState } from "react";
 
 const barberos = [
-  { id: 1, name: "Björn el Anciano", specialty: "Navaja Clásica", rune: "ᚠ" },
-  { id: 2, name: "Erik Manos de Hierro", specialty: "Degradados", rune: "ᚢ" },
-  { id: 3, name: "Ragnar el Joven", specialty: "Estilo Moderno", rune: "ᚦ" },
+  { id: 1, name: "Carlos Mendoza", specialty: "Navaja Clásica", rune: "ᚠ" },
+  { id: 2, name: "Andrés Vega", specialty: "Degradados", rune: "ᚢ" },
+  { id: 3, name: "Sebastián Torres", specialty: "Estilo Moderno", rune: "ᚦ" },
 ];
 
 const serviciosList = [

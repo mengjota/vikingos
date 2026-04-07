@@ -61,7 +61,7 @@ export default function Navbar() {
         {/* CTA desktop */}
         <a
           href="/reservar"
-          className="hidden md:block border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-xs tracking-[0.3em] uppercase px-6 py-3 transition-all duration-300"
+          className="btn-glow hidden md:block border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-xs tracking-[0.3em] uppercase px-6 py-3"
           style={{ fontFamily: "var(--font-cinzel)" }}
         >
           Reservar Servicio

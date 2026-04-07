@@ -4,9 +4,9 @@ const barbers = [
   {
     id: 1,
     name: "Björn el Anciano",
-    alias: "El Patriarca",
+    alias: "Barbero Profesional",
     years: 24,
-    specialty: "Maestro en Navaja Clásica",
+    specialty: "Especialista en Navaja Clásica",
     badge: "FUNDADOR",
     bio: "Sus manos han trazado más de 50,000 siluetas. La navaja recta es su hacha de guerra.",
     skills: ["Navaja Clásica", "Afeitado Ritual", "Barba Nórdica"],
@@ -16,9 +16,9 @@ const barbers = [
   {
     id: 2,
     name: "Erik Manos de Hierro",
-    alias: "El Artesano",
+    alias: "Barbero Profesional",
     years: 13,
-    specialty: "Maestro en Degradados y Líneas",
+    specialty: "Especialista en Degradados y Líneas",
     badge: "TOP RATED",
     bio: "Forjado en las calles. Sus degradados son tan precisos como una espada templada.",
     skills: ["Skin Fade", "Líneas Afiladas", "Diseños Tribales"],
@@ -28,9 +28,9 @@ const barbers = [
   {
     id: 3,
     name: "Ragnar el Joven",
-    alias: "El Explorador",
+    alias: "Barbero Profesional",
     years: 7,
-    specialty: "Experto en Estilos Modernos",
+    specialty: "Especialista en Estilos Modernos",
     badge: "NUEVO GUERRERO",
     bio: "Trae vientos del norte. Fusiona lo antiguo con lo moderno sin perder el alma del gremio.",
     skills: ["Texturas", "Corte Moderno", "Barba Escultural"],
@@ -103,7 +103,7 @@ export default function ElGremio() {
 function BarberCard({ barber }: { barber: (typeof barbers)[0] }) {
   return (
     <div
-      className="group relative flex flex-col border border-[#5c3a1e]/60 hover:border-[#c8921a]/60 transition-all duration-500 cursor-pointer"
+      className="card-glow group relative flex flex-col border border-[#5c3a1e]/60 hover:border-[#c8921a]/60"
       style={{ backgroundColor: "#1a1510" }}
     >
       {/* Badge */}

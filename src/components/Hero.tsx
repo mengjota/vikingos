@@ -107,7 +107,7 @@ export default function Hero() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
             href="/reservar"
-            className="bg-[#c8921a] text-[#0f0d0a] hover:bg-[#e8b84b] px-10 py-4 text-xs tracking-[0.4em] uppercase font-bold transition-all duration-300 hover:shadow-[0_0_30px_rgba(200,146,26,0.4)]"
+            className="btn-glow bg-[#c8921a] text-[#0f0d0a] hover:bg-[#e8b84b] px-10 py-4 text-xs tracking-[0.4em] uppercase font-bold"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
             Reservar Servicio

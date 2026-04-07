@@ -3,7 +3,7 @@ import Link from "next/link";
 const staff = [
   {
     nombre: "Björn el Anciano",
-    cargo: "Maestro Barbero · Fundador",
+    cargo: "Barbero Profesional · Fundador",
     años: 24,
     rune: "ᚠ",
     bio: "Con más de dos décadas de oficio, Björn es el alma de Invictus. Formado en la tradición del afeitado clásico con navaja recta, ha perfeccionado cada técnica hasta convertirla en ritual. Su filosofía: la silla de un barbero es el trono del cliente.",
@@ -11,7 +11,7 @@ const staff = [
   },
   {
     nombre: "Erik Manos de Hierro",
-    cargo: "Maestro en Degradados",
+    cargo: "Barbero Profesional",
     años: 13,
     rune: "ᚢ",
     bio: "Erik llegó al gremio forjado en las calles. Sus degradados son tan precisos como una espada bien templada. Especialista en líneas geométricas y skin fade, representa la fusión entre tradición y precisión moderna.",
@@ -19,7 +19,7 @@ const staff = [
   },
   {
     nombre: "Ragnar el Joven",
-    cargo: "Estilista · Explorador",
+    cargo: "Barbero Profesional",
     años: 7,
     rune: "ᚦ",
     bio: "El más joven del gremio pero no el menos hábil. Ragnar trae vientos frescos del norte: estilos modernos ejecutados con la disciplina y respeto que exige Invictus. Su especialidad es leer al cliente antes de tocar la tijera.",
@@ -205,7 +205,7 @@ export default function NosotrosPage() {
                 className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
                 style={{ fontFamily: "var(--font-cinzel)" }}
               >
-                Fundador & Maestro Barbero
+                Barbero Profesional · Fundador
               </span>
               <h3
                 className="text-[#f0e6c8] text-3xl font-black mb-1"
@@ -343,7 +343,7 @@ export default function NosotrosPage() {
           </p>
           <Link
             href="/reservar"
-            className="bg-[#c8921a] text-[#0f0d0a] hover:bg-[#e8b84b] px-12 py-4 text-xs tracking-[0.4em] uppercase font-bold transition-all duration-300 hover:shadow-[0_0_30px_rgba(200,146,26,0.4)]"
+            className="btn-glow bg-[#c8921a] text-[#0f0d0a] hover:bg-[#e8b84b] px-12 py-4 text-xs tracking-[0.4em] uppercase font-bold"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
             Reservar Mi Servicio

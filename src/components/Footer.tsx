@@ -15,13 +15,13 @@ export default function Footer() {
               className="text-[#c8921a] text-2xl font-black tracking-[0.2em] mb-2"
               style={{ fontFamily: "var(--font-cinzel-decorative)" }}
             >
-              VIKINGOS
+              INVICTUS
             </h3>
             <p
               className="text-[#b8a882]/60 text-[9px] tracking-[0.5em] uppercase mb-4"
               style={{ fontFamily: "var(--font-cinzel)" }}
             >
-              Barbería Artesanal
+              Barberia
             </p>
             <p
               className="text-[#b8a882]/50 text-sm italic leading-relaxed"
@@ -72,7 +72,7 @@ export default function Footer() {
             <div className="space-y-3 text-[#b8a882]/60 text-sm" style={{ fontFamily: "var(--font-im-fell)" }}>
               <p>📍 Zona 1, Ciudad de Guatemala</p>
               <p>📞 +502 0000-0000</p>
-              <p>📧 vikingos.barberia@gmail.com</p>
+              <p>📧 invictus.barberia@gmail.com</p>
             </div>
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function Footer() {
             className="text-[#b8a882]/30 text-[10px] tracking-widest uppercase"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
-            © 2025 Vikingos Barbería — Todos los derechos reservados
+            © 2025 Invictus Barberia — Todos los derechos reservados
           </p>
           <p
             className="text-[#b8a882]/20 text-[10px] italic"

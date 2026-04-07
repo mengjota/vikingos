@@ -66,13 +66,13 @@ export default function ElGremio() {
           className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
           style={{ fontFamily: "var(--font-cinzel)" }}
         >
-          — Los Guerreros del Filo —
+          — Nuestro Equipo —
         </span>
         <h2
           className="text-[#f0e6c8] text-5xl md:text-7xl font-black leading-none mb-6"
           style={{ fontFamily: "var(--font-cinzel-decorative)" }}
         >
-          El Gremio
+          VIKINGOS BARBERIA
         </h2>
         <p
           className="text-[#b8a882] italic text-lg max-w-xl mx-auto"

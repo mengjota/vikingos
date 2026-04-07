@@ -22,7 +22,7 @@ const imFell = IM_Fell_English({
 });
 
 export const metadata: Metadata = {
-  title: "VIKINGOS — Barbería",
+  title: "INVICTUS BARBERIA",
   description: "Donde el acero se encuentra con el honor. Barbería artesanal con estilo vikingo.",
 };
 

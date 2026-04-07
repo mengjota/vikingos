@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 
 const navLinks = [
-  { label: "El Gremio", href: "#el-gremio" },
+  { label: "Vikingos Barberia", href: "#el-gremio" },
   { label: "Servicios", href: "#servicios" },
-  { label: "Reservar", href: "#reservar" },
+  { label: "Reservar", href: "/reservar" },
 ];
 
 export default function Navbar() {
@@ -33,13 +33,13 @@ export default function Navbar() {
             className="text-[#c8921a] text-2xl font-black tracking-[0.2em] uppercase"
             style={{ fontFamily: "var(--font-cinzel-decorative)" }}
           >
-            VIKINGOS
+            INVICTUS
           </span>
           <span
             className="text-[#b8a882] text-[9px] tracking-[0.5em] uppercase"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
-            Barbería
+            Barberia
           </span>
         </a>
 
@@ -60,11 +60,11 @@ export default function Navbar() {
 
         {/* CTA desktop */}
         <a
-          href="#reservar"
+          href="/reservar"
           className="hidden md:block border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-xs tracking-[0.3em] uppercase px-6 py-3 transition-all duration-300"
           style={{ fontFamily: "var(--font-cinzel)" }}
         >
-          Reservar Silla
+          Reservar Servicio
         </a>
 
         {/* Menú hamburguesa mobile */}
@@ -94,12 +94,12 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="#reservar"
+            href="/reservar"
             onClick={() => setMenuOpen(false)}
             className="border border-[#c8921a] text-[#c8921a] text-xs tracking-[0.3em] uppercase px-6 py-3 text-center"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
-            Reservar Silla
+            Reservar Servicio
           </a>
         </div>
       )}

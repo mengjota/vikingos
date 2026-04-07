@@ -84,7 +84,7 @@ export default function Hero() {
           className="text-[#f0e6c8] text-7xl md:text-9xl font-black leading-none mb-6 tracking-tight"
           style={{ fontFamily: "var(--font-cinzel-decorative)" }}
         >
-          VIKINGOS
+          INVICTUS
         </h1>
 
         {/* Lema */}
@@ -106,18 +106,18 @@ export default function Hero() {
         {/* Botones */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
-            href="#reservar"
+            href="/reservar"
             className="bg-[#c8921a] text-[#0f0d0a] hover:bg-[#e8b84b] px-10 py-4 text-xs tracking-[0.4em] uppercase font-bold transition-all duration-300 hover:shadow-[0_0_30px_rgba(200,146,26,0.4)]"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
-            Reservar Mi Silla
+            Reservar Servicio
           </a>
           <a
             href="#el-gremio"
             className="border border-[#c8921a]/50 text-[#c8921a] hover:border-[#c8921a] px-10 py-4 text-xs tracking-[0.4em] uppercase transition-all duration-300"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
-            Conocer el Gremio
+            Vikingos Barberia
           </a>
         </div>
       </div>

@@ -17,7 +17,7 @@ export default function NosotrosPage() {
         }}
       />
 
-      <div className="relative max-w-3xl mx-auto px-6" style={{ paddingTop: "60px", paddingBottom: "80px" }}>
+      <div style={{ maxWidth: "860px", width: "100%", margin: "0 auto", padding: "60px 24px 80px" }}>
 
         {/* Eyebrow */}
         <p style={{

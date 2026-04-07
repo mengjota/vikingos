@@ -45,7 +45,7 @@ export default function PerfilPage() {
       <div className="fixed inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse 60% 50% at 50% 20%, rgba(200,146,26,0.12) 0%, transparent 70%)" }} />
 
-      <div className="relative max-w-3xl mx-auto">
+      <div style={{ maxWidth: "760px", width: "100%", margin: "0 auto" }}>
 
         {/* Encabezado */}
         <div className="flex items-center justify-between mb-12">

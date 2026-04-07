@@ -91,7 +91,7 @@ export default function ProductosPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#0f0d0a", paddingTop: "100px" }}>
 
-      <div className="max-w-5xl mx-auto px-6 py-16">
+      <div style={{ maxWidth: "1000px", width: "100%", margin: "0 auto", padding: "48px 24px 80px" }}>
 
         {/* Encabezado */}
         <div className="text-center mb-16">

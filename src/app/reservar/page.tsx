@@ -263,7 +263,7 @@ export default function ReservarPage() {
 
       {/* Indicador de pasos */}
       <div className="border-b border-[#5c3a1e]/30 px-6 py-6" style={{ backgroundColor: "#0f0d0a" }}>
-        <div className="max-w-5xl mx-auto flex items-center justify-center">
+        <div style={{ maxWidth: "900px", width: "100%", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
           {[
             { num: 1, label: "Elige Servicio" },
             { num: 2, label: "Elige Maestro" },
@@ -299,7 +299,7 @@ export default function ReservarPage() {
       </div>
 
       {/* Contenido */}
-      <div className="max-w-5xl mx-auto px-6 py-12">
+      <div style={{ maxWidth: "900px", width: "100%", margin: "0 auto", padding: "48px 24px" }}>
 
         {/* ── PASO 1: Servicios ── */}
         {paso === 1 && (

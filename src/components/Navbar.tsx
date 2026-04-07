@@ -37,7 +37,7 @@ export default function Navbar() {
           </span>
           <span
             className="text-[#b8a882] text-[9px] tracking-[0.5em] uppercase"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             Barberia
           </span>
@@ -50,7 +50,7 @@ export default function Navbar() {
               <a
                 href={link.href}
                 className="text-[#b8a882] hover:text-[#c8921a] text-xs tracking-[0.3em] uppercase transition-colors duration-300"
-                style={{ fontFamily: "var(--font-cinzel)" }}
+                style={{ fontFamily: "var(--font-barlow)" }}
               >
                 {link.label}
               </a>
@@ -62,7 +62,7 @@ export default function Navbar() {
         <a
           href="/reservar"
           className="btn-glow hidden md:block border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-xs tracking-[0.3em] uppercase px-6 py-3"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           Reservar Servicio
         </a>
@@ -88,7 +88,7 @@ export default function Navbar() {
               href={link.href}
               onClick={() => setMenuOpen(false)}
               className="text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors"
-              style={{ fontFamily: "var(--font-cinzel)" }}
+              style={{ fontFamily: "var(--font-barlow)" }}
             >
               {link.label}
             </a>
@@ -97,7 +97,7 @@ export default function Navbar() {
             href="/reservar"
             onClick={() => setMenuOpen(false)}
             className="border border-[#c8921a] text-[#c8921a] text-xs tracking-[0.3em] uppercase px-6 py-3 text-center"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             Reservar Servicio
           </a>

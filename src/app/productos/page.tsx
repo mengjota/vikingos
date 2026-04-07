@@ -98,17 +98,17 @@ export default function ProductosPage() {
             <span className="text-[#c8921a] text-xl font-black tracking-[0.2em]" style={{ fontFamily: "var(--font-cinzel-decorative)" }}>
               INVICTUS
             </span>
-            <span className="text-[#b8a882] text-[9px] tracking-[0.4em] uppercase" style={{ fontFamily: "var(--font-cinzel)" }}>
+            <span className="text-[#b8a882] text-[9px] tracking-[0.4em] uppercase" style={{ fontFamily: "var(--font-barlow)" }}>
               Barberia
             </span>
           </Link>
-          <h1 className="text-[#f0e6c8] text-lg tracking-[0.3em] uppercase" style={{ fontFamily: "var(--font-cinzel)" }}>
+          <h1 className="text-[#f0e6c8] text-lg tracking-[0.3em] uppercase" style={{ fontFamily: "var(--font-barlow)" }}>
             Productos
           </h1>
           <Link
             href="/"
             className="text-[#b8a882]/50 hover:text-[#c8921a] text-[10px] tracking-widest uppercase transition-colors"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             ← Volver
           </Link>
@@ -123,7 +123,7 @@ export default function ProductosPage() {
         <div className="text-center mb-16">
           <span
             className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             — Los Arsenales del Guerrero —
           </span>
@@ -135,7 +135,7 @@ export default function ProductosPage() {
           </h2>
           <p
             className="text-[#b8a882]/70 italic text-lg max-w-xl mx-auto"
-            style={{ fontFamily: "var(--font-im-fell)" }}
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             Los mismos productos que usamos en el salón, disponibles para que lleves el ritual a casa.
           </p>
@@ -155,7 +155,7 @@ export default function ProductosPage() {
                 <span className="text-[#c8921a] text-2xl">{cat.icono}</span>
                 <h3
                   className="text-[#f0e6c8] text-2xl font-bold tracking-widest uppercase"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  style={{ fontFamily: "var(--font-oswald)" }}
                 >
                   {cat.nombre}
                 </h3>
@@ -177,7 +177,7 @@ export default function ProductosPage() {
                       <div className="absolute -top-3 left-4">
                         <span
                           className="bg-[#c8921a] text-[#0f0d0a] text-[9px] tracking-widest uppercase px-3 py-0.5 font-bold"
-                          style={{ fontFamily: "var(--font-cinzel)" }}
+                          style={{ fontFamily: "var(--font-barlow)" }}
                         >
                           Favorito del Salón
                         </span>
@@ -186,13 +186,13 @@ export default function ProductosPage() {
 
                     <h4
                       className="text-[#f0e6c8] text-sm font-bold mb-2 leading-tight"
-                      style={{ fontFamily: "var(--font-cinzel)" }}
+                      style={{ fontFamily: "var(--font-oswald)" }}
                     >
                       {prod.nombre}
                     </h4>
                     <p
                       className="text-[#b8a882]/60 text-sm italic leading-relaxed mb-5 flex-1"
-                      style={{ fontFamily: "var(--font-im-fell)" }}
+                      style={{ fontFamily: "var(--font-lato)" }}
                     >
                       {prod.descripcion}
                     </p>
@@ -206,14 +206,14 @@ export default function ProductosPage() {
                         </span>
                         <span
                           className="text-[#b8a882]/40 text-[9px] ml-2 uppercase tracking-widest"
-                          style={{ fontFamily: "var(--font-cinzel)" }}
+                          style={{ fontFamily: "var(--font-barlow)" }}
                         >
                           {prod.volumen}
                         </span>
                       </div>
                       <span
                         className="text-[#b8a882]/30 text-[9px] uppercase tracking-widest"
-                        style={{ fontFamily: "var(--font-cinzel)" }}
+                        style={{ fontFamily: "var(--font-barlow)" }}
                       >
                         Disponible en salón
                       </span>
@@ -233,7 +233,7 @@ export default function ProductosPage() {
           <span className="text-[#c8921a] text-2xl block mb-4">ᚠ</span>
           <p
             className="text-[#b8a882]/70 italic text-base leading-relaxed max-w-xl mx-auto"
-            style={{ fontFamily: "var(--font-im-fell)" }}
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             Todos nuestros productos están disponibles directamente en el salón.
             Si tienes alguna consulta sobre cuál es el indicado para ti, pregúntale a tu barbero en la próxima visita.
@@ -245,7 +245,7 @@ export default function ProductosPage() {
           <Link
             href="/reservar"
             className="btn-glow bg-[#c8921a] text-[#0f0d0a] hover:bg-[#e8b84b] px-12 py-4 text-xs tracking-[0.4em] uppercase font-bold"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             Reservar Mi Servicio
           </Link>

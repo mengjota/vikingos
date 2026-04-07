@@ -14,9 +14,11 @@
   --color-viking-steel: #4a5568;
 
   /* Fuentes */
-  --font-cinzel: var(--font-cinzel);
-  --font-cinzel-decorative: var(--font-cinzel-decorative);
-  --font-im-fell: var(--font-im-fell);
+  --font-cinzel-decorative: var(--font-cinzel-decorative); /* Logo INVICTUS únicamente */
+  --font-oswald: var(--font-oswald);                       /* Títulos de sección y servicio */
+  --font-barlow: var(--font-barlow);                       /* Botones, labels, navegación */
+  --font-lato: var(--font-lato);                           /* Descripciones y cuerpo */
+  --font-im-fell: var(--font-im-fell);                     /* Citas y acentos poéticos */
 }
 
 * {
@@ -32,7 +34,7 @@ html {
 body {
   background-color: #0f0d0a;
   color: #f0e6c8;
-  font-family: var(--font-im-fell), Georgia, serif;
+  font-family: var(--font-lato), sans-serif;
 }
 
 /* Scrollbar vikingo */

@@ -63,27 +63,27 @@ export default function Reservar() {
           </h3>
           <p
             className="text-[#b8a882] italic text-lg mb-8"
-            style={{ fontFamily: "var(--font-im-fell)" }}
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             Tu silla te espera, guerrero.
           </p>
           <div className="border border-[#c8921a]/40 p-8 text-left space-y-3" style={{ backgroundColor: "#1a1510" }}>
-            <p className="text-[#b8a882] text-sm" style={{ fontFamily: "var(--font-cinzel)" }}>
+            <p className="text-[#b8a882] text-sm" style={{ fontFamily: "var(--font-barlow)" }}>
               <span className="text-[#c8921a]">Maestro:</span> {barbero?.name}
             </p>
-            <p className="text-[#b8a882] text-sm" style={{ fontFamily: "var(--font-cinzel)" }}>
+            <p className="text-[#b8a882] text-sm" style={{ fontFamily: "var(--font-barlow)" }}>
               <span className="text-[#c8921a]">Servicio:</span> {servicio?.nombre} — {servicio?.precio}
             </p>
-            <p className="text-[#b8a882] text-sm" style={{ fontFamily: "var(--font-cinzel)" }}>
+            <p className="text-[#b8a882] text-sm" style={{ fontFamily: "var(--font-barlow)" }}>
               <span className="text-[#c8921a]">Fecha:</span> {fecha} a las {hora}
             </p>
-            <p className="text-[#b8a882] text-sm" style={{ fontFamily: "var(--font-cinzel)" }}>
+            <p className="text-[#b8a882] text-sm" style={{ fontFamily: "var(--font-barlow)" }}>
               <span className="text-[#c8921a]">Nombre:</span> {nombre}
             </p>
           </div>
           <p
             className="text-[#b8a882]/50 text-xs mt-6"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             Te contactaremos al {telefono} para confirmar.
           </p>
@@ -96,7 +96,7 @@ export default function Reservar() {
               setFecha(""); setHora(""); setNombre(""); setTelefono("");
             }}
             className="mt-8 border border-[#c8921a]/50 text-[#c8921a] text-xs tracking-widest uppercase px-8 py-3 hover:bg-[#c8921a] hover:text-[#0f0d0a] transition-all duration-300"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             Nueva Reserva
           </button>
@@ -115,7 +115,7 @@ export default function Reservar() {
       <div className="text-center mb-16">
         <span
           className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           — Reclama tu lugar —
         </span>
@@ -146,7 +146,7 @@ export default function Reservar() {
                       ? "border-[#c8921a] bg-[#c8921a]/20 text-[#c8921a]"
                       : "border-[#5c3a1e] text-[#5c3a1e]"
                   }`}
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  style={{ fontFamily: "var(--font-barlow)" }}
                 >
                   <span className="text-sm font-bold">{p.num}</span>
                 </div>
@@ -154,7 +154,7 @@ export default function Reservar() {
                   className={`text-[9px] tracking-widest uppercase whitespace-nowrap ${
                     paso >= p.num ? "text-[#c8921a]" : "text-[#5c3a1e]"
                   }`}
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  style={{ fontFamily: "var(--font-barlow)" }}
                 >
                   {p.label}
                 </span>
@@ -188,10 +188,10 @@ export default function Reservar() {
                   <span className="text-4xl block mb-3" style={{ color: barberoSeleccionado === b.id ? "#c8921a" : "#5c3a1e" }}>
                     {b.rune}
                   </span>
-                  <p className="text-[#f0e6c8] text-sm font-bold mb-1" style={{ fontFamily: "var(--font-cinzel)" }}>
+                  <p className="text-[#f0e6c8] text-sm font-bold mb-1" style={{ fontFamily: "var(--font-barlow)" }}>
                     {b.name}
                   </p>
-                  <p className="text-[#b8a882]/60 text-[10px] uppercase tracking-widest" style={{ fontFamily: "var(--font-cinzel)" }}>
+                  <p className="text-[#b8a882]/60 text-[10px] uppercase tracking-widest" style={{ fontFamily: "var(--font-barlow)" }}>
                     {b.specialty}
                   </p>
                 </button>
@@ -202,7 +202,7 @@ export default function Reservar() {
                 onClick={() => puedeAvanzarPaso1 && setPaso(2)}
                 disabled={!puedeAvanzarPaso1}
                 className="bg-[#c8921a] text-[#0f0d0a] px-10 py-3 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b] transition-all duration-300"
-                style={{ fontFamily: "var(--font-cinzel)" }}
+                style={{ fontFamily: "var(--font-barlow)" }}
               >
                 Siguiente →
               </button>
@@ -226,14 +226,14 @@ export default function Reservar() {
                   style={{ backgroundColor: servicioSeleccionado === s.id ? "#2d1f0e" : "#1a1510" }}
                 >
                   <div className="flex justify-between items-start">
-                    <p className="text-[#f0e6c8] text-sm font-bold" style={{ fontFamily: "var(--font-cinzel)" }}>
+                    <p className="text-[#f0e6c8] text-sm font-bold" style={{ fontFamily: "var(--font-barlow)" }}>
                       {s.nombre}
                     </p>
                     <span className="text-[#c8921a] font-black text-sm" style={{ fontFamily: "var(--font-cinzel-decorative)" }}>
                       {s.precio}
                     </span>
                   </div>
-                  <p className="text-[#b8a882]/50 text-[10px] uppercase tracking-widest mt-1" style={{ fontFamily: "var(--font-cinzel)" }}>
+                  <p className="text-[#b8a882]/50 text-[10px] uppercase tracking-widest mt-1" style={{ fontFamily: "var(--font-barlow)" }}>
                     {s.duracion}
                   </p>
                 </button>
@@ -243,7 +243,7 @@ export default function Reservar() {
               <button
                 onClick={() => setPaso(1)}
                 className="border border-[#5c3a1e] text-[#b8a882] px-8 py-3 text-xs tracking-widest uppercase hover:border-[#c8921a]/50 transition-all duration-300"
-                style={{ fontFamily: "var(--font-cinzel)" }}
+                style={{ fontFamily: "var(--font-barlow)" }}
               >
                 ← Atrás
               </button>
@@ -251,7 +251,7 @@ export default function Reservar() {
                 onClick={() => puedeAvanzarPaso2 && setPaso(3)}
                 disabled={!puedeAvanzarPaso2}
                 className="bg-[#c8921a] text-[#0f0d0a] px-10 py-3 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b] transition-all duration-300"
-                style={{ fontFamily: "var(--font-cinzel)" }}
+                style={{ fontFamily: "var(--font-barlow)" }}
               >
                 Siguiente →
               </button>
@@ -267,7 +267,7 @@ export default function Reservar() {
               <div>
                 <label
                   className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  style={{ fontFamily: "var(--font-barlow)" }}
                 >
                   Fecha
                 </label>
@@ -277,7 +277,7 @@ export default function Reservar() {
                   onChange={(e) => setFecha(e.target.value)}
                   min={new Date().toISOString().split("T")[0]}
                   className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors"
-                  style={{ fontFamily: "var(--font-cinzel)", colorScheme: "dark" }}
+                  style={{ fontFamily: "var(--font-barlow)", colorScheme: "dark" }}
                 />
               </div>
 
@@ -285,7 +285,7 @@ export default function Reservar() {
               <div>
                 <label
                   className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  style={{ fontFamily: "var(--font-barlow)" }}
                 >
                   Hora
                 </label>
@@ -299,7 +299,7 @@ export default function Reservar() {
                           ? "border-[#c8921a] bg-[#c8921a] text-[#0f0d0a] font-bold"
                           : "border-[#5c3a1e] text-[#b8a882] hover:border-[#c8921a]/50"
                       }`}
-                      style={{ fontFamily: "var(--font-cinzel)" }}
+                      style={{ fontFamily: "var(--font-barlow)" }}
                     >
                       {h}
                     </button>
@@ -311,7 +311,7 @@ export default function Reservar() {
               <div>
                 <label
                   className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  style={{ fontFamily: "var(--font-barlow)" }}
                 >
                   Tu Nombre
                 </label>
@@ -321,7 +321,7 @@ export default function Reservar() {
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors placeholder:text-[#5c3a1e]"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  style={{ fontFamily: "var(--font-barlow)" }}
                 />
               </div>
 
@@ -329,7 +329,7 @@ export default function Reservar() {
               <div>
                 <label
                   className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  style={{ fontFamily: "var(--font-barlow)" }}
                 >
                   Teléfono
                 </label>
@@ -339,14 +339,14 @@ export default function Reservar() {
                   value={telefono}
                   onChange={(e) => setTelefono(e.target.value)}
                   className="w-full bg-[#1a1510] border border-[#5c3a1e] text-[#f0e6c8] px-4 py-3 focus:border-[#c8921a] focus:outline-none transition-colors placeholder:text-[#5c3a1e]"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  style={{ fontFamily: "var(--font-barlow)" }}
                 />
               </div>
             </div>
 
             <p
               className="text-[#b8a882]/40 text-xs mb-6 text-center italic"
-              style={{ fontFamily: "var(--font-im-fell)" }}
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               Sin registro. Sin contraseña. Solo tu nombre y número.
             </p>
@@ -355,7 +355,7 @@ export default function Reservar() {
               <button
                 onClick={() => setPaso(2)}
                 className="border border-[#5c3a1e] text-[#b8a882] px-8 py-3 text-xs tracking-widest uppercase hover:border-[#c8921a]/50 transition-all duration-300"
-                style={{ fontFamily: "var(--font-cinzel)" }}
+                style={{ fontFamily: "var(--font-barlow)" }}
               >
                 ← Atrás
               </button>
@@ -363,7 +363,7 @@ export default function Reservar() {
                 onClick={confirmar}
                 disabled={!puedeConfirmar}
                 className="bg-[#c8921a] text-[#0f0d0a] px-10 py-3 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b] transition-all duration-300 hover:shadow-[0_0_20px_rgba(200,146,26,0.4)]"
-                style={{ fontFamily: "var(--font-cinzel)" }}
+                style={{ fontFamily: "var(--font-barlow)" }}
               >
                 Sellar el Pacto ᚢ
               </button>

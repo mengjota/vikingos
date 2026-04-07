@@ -44,7 +44,7 @@ export default function Hero() {
         <div className="w-px h-32 bg-gradient-to-b from-transparent to-[#c8921a]" />
         <span
           className="text-[#c8921a]/50 text-[10px] tracking-[0.4em] uppercase rotate-90 whitespace-nowrap"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           Est. MMXXV
         </span>
@@ -55,7 +55,7 @@ export default function Hero() {
         <div className="w-px h-32 bg-gradient-to-b from-transparent to-[#c8921a]" />
         <span
           className="text-[#c8921a]/50 text-[10px] tracking-[0.4em] uppercase -rotate-90 whitespace-nowrap"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           Honor · Fuerza · Oficio
         </span>
@@ -74,7 +74,7 @@ export default function Hero() {
         {/* Subtítulo superior */}
         <p
           className="text-[#c8921a] text-xs tracking-[0.6em] uppercase mb-4"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           Barbería Artesanal
         </p>
@@ -90,7 +90,7 @@ export default function Hero() {
         {/* Lema */}
         <p
           className="text-[#b8a882] text-xl md:text-2xl italic mb-10 leading-relaxed"
-          style={{ fontFamily: "var(--font-im-fell)" }}
+          style={{ fontFamily: "var(--font-lato)" }}
         >
           &ldquo;Donde el acero se afila con honor<br />
           y el oficio se lleva en la sangre.&rdquo;
@@ -108,14 +108,14 @@ export default function Hero() {
           <a
             href="/reservar"
             className="btn-glow bg-[#c8921a] text-[#0f0d0a] hover:bg-[#e8b84b] px-10 py-4 text-xs tracking-[0.4em] uppercase font-bold"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             Reservar Servicio
           </a>
           <a
             href="/nosotros"
             className="border border-[#c8921a]/50 text-[#c8921a] hover:border-[#c8921a] px-10 py-4 text-xs tracking-[0.4em] uppercase transition-all duration-300"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             Nosotros Invictus
           </a>
@@ -126,7 +126,7 @@ export default function Hero() {
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
         <span
           className="text-[#c8921a]/50 text-[9px] tracking-[0.4em] uppercase"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           Descender
         </span>

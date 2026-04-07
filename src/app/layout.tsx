@@ -1,19 +1,44 @@
 import type { Metadata } from "next";
-import { Cinzel, Cinzel_Decorative, IM_Fell_English } from "next/font/google";
+import {
+  Cinzel_Decorative,
+  Oswald,
+  Barlow_Condensed,
+  Lato,
+  IM_Fell_English,
+} from "next/font/google";
 import "./globals.css";
 
-const cinzel = Cinzel({
-  variable: "--font-cinzel",
-  subsets: ["latin"],
-  weight: ["400", "700", "900"],
-});
-
+// Logo / marca — solo para INVICTUS
 const cinzelDecorative = Cinzel_Decorative({
   variable: "--font-cinzel-decorative",
   subsets: ["latin"],
   weight: ["400", "700", "900"],
 });
 
+// Títulos de sección, nombres de servicio — impacto moderno
+const oswald = Oswald({
+  variable: "--font-oswald",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+// Botones, labels, navegación — limpio y profesional
+const barlowCondensed = Barlow_Condensed({
+  variable: "--font-barlow",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+});
+
+// Descripciones, cuerpo de texto — legible y elegante
+const lato = Lato({
+  variable: "--font-lato",
+  subsets: ["latin"],
+  weight: ["300", "400", "700"],
+  style: ["normal", "italic"],
+});
+
+// Citas y acentos poéticos — toque clásico selectivo
 const imFell = IM_Fell_English({
   variable: "--font-im-fell",
   subsets: ["latin"],
@@ -34,7 +59,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${cinzel.variable} ${cinzelDecorative.variable} ${imFell.variable} h-full antialiased`}
+      className={`${cinzelDecorative.variable} ${oswald.variable} ${barlowCondensed.variable} ${lato.variable} ${imFell.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-viking-black">{children}</body>
     </html>

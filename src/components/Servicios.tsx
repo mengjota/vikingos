@@ -135,7 +135,7 @@ export default function Servicios() {
       <div className="relative text-center mb-20">
         <span
           className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           — Los Ritos del Filo —
         </span>
@@ -147,7 +147,7 @@ export default function Servicios() {
         </h2>
         <p
           className="text-[#b8a882] italic text-lg max-w-xl mx-auto"
-          style={{ fontFamily: "var(--font-im-fell)" }}
+          style={{ fontFamily: "var(--font-lato)" }}
         >
           Cada servicio es un ritual. Cada ritual, una obra de arte.
         </p>
@@ -187,7 +187,7 @@ function ServicioCard({ servicio }: { servicio: (typeof servicios)[0] }) {
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span
             className="badge-pulse bg-[#c8921a] text-[#0f0d0a] text-[9px] tracking-[0.3em] uppercase px-4 py-1 font-bold"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             El Más Pedido
           </span>
@@ -205,7 +205,7 @@ function ServicioCard({ servicio }: { servicio: (typeof servicios)[0] }) {
       {/* Nombre */}
       <h3
         className="text-[#f0e6c8] text-base font-bold mb-2 leading-tight"
-        style={{ fontFamily: "var(--font-cinzel)" }}
+        style={{ fontFamily: "var(--font-oswald)" }}
       >
         {servicio.nombre}
       </h3>
@@ -213,7 +213,7 @@ function ServicioCard({ servicio }: { servicio: (typeof servicios)[0] }) {
       {/* Descripción */}
       <p
         className="text-[#b8a882]/70 text-sm leading-relaxed italic mb-6 flex-1"
-        style={{ fontFamily: "var(--font-im-fell)" }}
+        style={{ fontFamily: "var(--font-lato)" }}
       >
         {servicio.descripcion}
       </p>
@@ -228,7 +228,7 @@ function ServicioCard({ servicio }: { servicio: (typeof servicios)[0] }) {
         </span>
         <span
           className="text-[#b8a882]/40 text-[9px] uppercase tracking-widest"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           {servicio.duracion}
         </span>
@@ -239,7 +239,7 @@ function ServicioCard({ servicio }: { servicio: (typeof servicios)[0] }) {
         href="/reservar"
         className="relative overflow-hidden group/btn flex items-center justify-center gap-2 w-full py-3 border border-[#c8921a]/60 text-[#c8921a] text-[10px] tracking-widest uppercase font-bold transition-all duration-300
           hover:border-[#c8921a] hover:text-[#0f0d0a] hover:shadow-[0_0_20px_rgba(200,146,26,0.5)]"
-        style={{ fontFamily: "var(--font-cinzel)" }}
+        style={{ fontFamily: "var(--font-barlow)" }}
       >
         {/* Fondo que se llena al hover */}
         <span className="absolute inset-0 bg-[#c8921a] translate-x-[-101%] group-hover/btn:translate-x-0 transition-transform duration-300 ease-in-out" />

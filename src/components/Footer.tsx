@@ -19,13 +19,13 @@ export default function Footer() {
             </h3>
             <p
               className="text-[#b8a882]/60 text-[9px] tracking-[0.5em] uppercase mb-4"
-              style={{ fontFamily: "var(--font-cinzel)" }}
+              style={{ fontFamily: "var(--font-barlow)" }}
             >
               Barberia
             </p>
             <p
               className="text-[#b8a882]/50 text-sm italic leading-relaxed"
-              style={{ fontFamily: "var(--font-im-fell)" }}
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               Donde el acero se afila con honor<br />
               y el oficio se lleva en la sangre.
@@ -36,7 +36,7 @@ export default function Footer() {
           <div>
             <h4
               className="text-[#c8921a] text-[10px] tracking-[0.4em] uppercase mb-5"
-              style={{ fontFamily: "var(--font-cinzel)" }}
+              style={{ fontFamily: "var(--font-barlow)" }}
             >
               Horario del Salón
             </h4>
@@ -47,12 +47,12 @@ export default function Footer() {
                 { dia: "Domingo", hora: "Cerrado" },
               ].map((h) => (
                 <div key={h.dia} className="flex justify-between">
-                  <span className="text-[#b8a882]/60 text-xs" style={{ fontFamily: "var(--font-cinzel)" }}>
+                  <span className="text-[#b8a882]/60 text-xs" style={{ fontFamily: "var(--font-barlow)" }}>
                     {h.dia}
                   </span>
                   <span
                     className={`text-xs ${h.hora === "Cerrado" ? "text-[#8b1a1a]" : "text-[#c8921a]"}`}
-                    style={{ fontFamily: "var(--font-cinzel)" }}
+                    style={{ fontFamily: "var(--font-barlow)" }}
                   >
                     {h.hora}
                   </span>
@@ -65,11 +65,11 @@ export default function Footer() {
           <div>
             <h4
               className="text-[#c8921a] text-[10px] tracking-[0.4em] uppercase mb-5"
-              style={{ fontFamily: "var(--font-cinzel)" }}
+              style={{ fontFamily: "var(--font-barlow)" }}
             >
               Ubicación
             </h4>
-            <div className="space-y-3 text-[#b8a882]/60 text-sm" style={{ fontFamily: "var(--font-im-fell)" }}>
+            <div className="space-y-3 text-[#b8a882]/60 text-sm" style={{ fontFamily: "var(--font-lato)" }}>
               <p>📍 Zona 1, Ciudad de Guatemala</p>
               <p>📞 +502 0000-0000</p>
               <p>📧 invictus.barberia@gmail.com</p>
@@ -88,13 +88,13 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p
             className="text-[#b8a882]/30 text-[10px] tracking-widest uppercase"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             © 2025 Invictus Barberia — Todos los derechos reservados
           </p>
           <p
             className="text-[#b8a882]/20 text-[10px] italic"
-            style={{ fontFamily: "var(--font-im-fell)" }}
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             Honor · Fuerza · Oficio
           </p>

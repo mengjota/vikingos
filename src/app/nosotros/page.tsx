@@ -38,17 +38,17 @@ export default function NosotrosPage() {
             <span className="text-[#c8921a] text-xl font-black tracking-[0.2em]" style={{ fontFamily: "var(--font-cinzel-decorative)" }}>
               INVICTUS
             </span>
-            <span className="text-[#b8a882] text-[9px] tracking-[0.4em] uppercase" style={{ fontFamily: "var(--font-cinzel)" }}>
+            <span className="text-[#b8a882] text-[9px] tracking-[0.4em] uppercase" style={{ fontFamily: "var(--font-barlow)" }}>
               Barberia
             </span>
           </Link>
-          <h1 className="text-[#f0e6c8] text-lg tracking-[0.3em] uppercase" style={{ fontFamily: "var(--font-cinzel)" }}>
+          <h1 className="text-[#f0e6c8] text-lg tracking-[0.3em] uppercase" style={{ fontFamily: "var(--font-barlow)" }}>
             Nosotros Invictus
           </h1>
           <Link
             href="/"
             className="text-[#b8a882]/50 hover:text-[#c8921a] text-[10px] tracking-widest uppercase transition-colors"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             ← Volver
           </Link>
@@ -65,7 +65,7 @@ export default function NosotrosPage() {
           <div className="text-center mb-14">
             <span
               className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
-              style={{ fontFamily: "var(--font-cinzel)" }}
+              style={{ fontFamily: "var(--font-barlow)" }}
             >
               — El Origen del Nombre —
             </span>
@@ -87,25 +87,25 @@ export default function NosotrosPage() {
             <div className="space-y-6">
               <p
                 className="text-[#f0e6c8] text-xl italic leading-relaxed"
-                style={{ fontFamily: "var(--font-im-fell)" }}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 &ldquo;Invictus&rdquo; viene del latín: <span className="text-[#c8921a]">invencible, no conquistado, inquebrantable.</span>
               </p>
               <p
                 className="text-[#b8a882]/80 text-base leading-relaxed"
-                style={{ fontFamily: "var(--font-im-fell)" }}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 Cuando el fundador buscó un nombre para su barbería, no quería algo que simplemente describiera el negocio. Quería un nombre que fuera una declaración de principios.
               </p>
               <p
                 className="text-[#b8a882]/80 text-base leading-relaxed"
-                style={{ fontFamily: "var(--font-im-fell)" }}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 En un mundo donde las barberías se multiplican y se olvidan, Invictus nació para permanecer. Para ser el lugar al que los hombres vuelven no porque es el más cercano, sino porque es el mejor.
               </p>
               <p
                 className="text-[#b8a882]/80 text-base leading-relaxed"
-                style={{ fontFamily: "var(--font-im-fell)" }}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 El espíritu vikingo que acompaña nuestra estética no es decorativo. Representa la misma filosofía: <span className="text-[#c8921a] italic">honor en el trabajo, fuerza en el oficio, lealtad al cliente.</span>
               </p>
@@ -124,7 +124,7 @@ export default function NosotrosPage() {
               </span>
               <blockquote
                 className="text-[#f0e6c8] text-2xl italic leading-relaxed mb-6"
-                style={{ fontFamily: "var(--font-im-fell)" }}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 &ldquo;Out of the night that covers me,<br />
                 black as the pit from pole to pole,<br />
@@ -133,13 +133,13 @@ export default function NosotrosPage() {
               </blockquote>
               <p
                 className="text-[#c8921a] text-[10px] tracking-widest uppercase"
-                style={{ fontFamily: "var(--font-cinzel)" }}
+                style={{ fontFamily: "var(--font-barlow)" }}
               >
                 — William Ernest Henley, Invictus (1875)
               </p>
               <p
                 className="text-[#b8a882]/50 text-xs mt-3 italic"
-                style={{ fontFamily: "var(--font-im-fell)" }}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 El poema que inspiró el nombre.
               </p>
@@ -152,7 +152,7 @@ export default function NosotrosPage() {
           <div className="text-center mb-14">
             <span
               className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
-              style={{ fontFamily: "var(--font-cinzel)" }}
+              style={{ fontFamily: "var(--font-barlow)" }}
             >
               — El Hombre Detrás del Acero —
             </span>
@@ -192,7 +192,7 @@ export default function NosotrosPage() {
                 </span>
                 <span
                   className="text-[#b8a882]/60 text-[9px] tracking-widest uppercase"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+                  style={{ fontFamily: "var(--font-barlow)" }}
                 >
                   años de oficio
                 </span>
@@ -203,13 +203,13 @@ export default function NosotrosPage() {
             <div className="md:col-span-2 p-10" style={{ backgroundColor: "#1a1510" }}>
               <span
                 className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
-                style={{ fontFamily: "var(--font-cinzel)" }}
+                style={{ fontFamily: "var(--font-barlow)" }}
               >
                 Barbero Profesional · Fundador
               </span>
               <h3
                 className="text-[#f0e6c8] text-3xl font-black mb-1"
-                style={{ fontFamily: "var(--font-cinzel)" }}
+                style={{ fontFamily: "var(--font-oswald)" }}
               >
                 Björn el Anciano
               </h3>
@@ -218,7 +218,7 @@ export default function NosotrosPage() {
                 <span className="text-[#c8921a]">ᚠ</span>
                 <div className="flex-1 h-px bg-[#5c3a1e]" />
               </div>
-              <div className="space-y-4 text-[#b8a882]/80 text-base leading-relaxed" style={{ fontFamily: "var(--font-im-fell)" }}>
+              <div className="space-y-4 text-[#b8a882]/80 text-base leading-relaxed" style={{ fontFamily: "var(--font-lato)" }}>
                 <p>
                   Björn empezó en este oficio a los 16 años, aprendiendo de un maestro barbero que ya no existe. No hubo academia, no hubo título enmarcado en la pared. Hubo años de práctica, de errores corregidos, de manos que aprendieron a leer cada tipo de cabello y cada forma de rostro.
                 </p>
@@ -234,7 +234,7 @@ export default function NosotrosPage() {
                   <span
                     key={tag}
                     className="border border-[#5c3a1e] text-[#b8a882]/50 text-[9px] tracking-widest uppercase px-3 py-1"
-                    style={{ fontFamily: "var(--font-cinzel)" }}
+                    style={{ fontFamily: "var(--font-barlow)" }}
                   >
                     {tag}
                   </span>
@@ -249,7 +249,7 @@ export default function NosotrosPage() {
           <div className="text-center mb-14">
             <span
               className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
-              style={{ fontFamily: "var(--font-cinzel)" }}
+              style={{ fontFamily: "var(--font-barlow)" }}
             >
               — Cada uno, un maestro —
             </span>
@@ -294,7 +294,7 @@ export default function NosotrosPage() {
                     </span>
                     <span
                       className="text-[#b8a882]/50 text-[9px] tracking-widest uppercase"
-                      style={{ fontFamily: "var(--font-cinzel)" }}
+                      style={{ fontFamily: "var(--font-barlow)" }}
                     >
                       años de oficio
                     </span>
@@ -305,25 +305,25 @@ export default function NosotrosPage() {
                 <div className="p-6">
                   <p
                     className="text-[#c8921a] text-[9px] tracking-widest uppercase mb-1"
-                    style={{ fontFamily: "var(--font-cinzel)" }}
+                    style={{ fontFamily: "var(--font-barlow)" }}
                   >
                     {miembro.cargo}
                   </p>
                   <h3
                     className="text-[#f0e6c8] text-lg font-bold mb-3"
-                    style={{ fontFamily: "var(--font-cinzel)" }}
+                    style={{ fontFamily: "var(--font-oswald)" }}
                   >
                     {miembro.nombre}
                   </h3>
                   <p
                     className="text-[#b8a882]/60 text-sm leading-relaxed italic mb-4"
-                    style={{ fontFamily: "var(--font-im-fell)" }}
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     {miembro.bio}
                   </p>
                   <p
                     className="text-[#c8921a]/60 text-[9px] tracking-wider uppercase border-t border-[#5c3a1e]/40 pt-4"
-                    style={{ fontFamily: "var(--font-cinzel)" }}
+                    style={{ fontFamily: "var(--font-barlow)" }}
                   >
                     {miembro.especialidad}
                   </p>
@@ -337,14 +337,14 @@ export default function NosotrosPage() {
         <div className="text-center mt-20 pt-16 border-t border-[#5c3a1e]/40">
           <p
             className="text-[#b8a882] italic text-lg mb-8"
-            style={{ fontFamily: "var(--font-im-fell)" }}
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             Ahora que nos conoces, ven a conocernos en persona.
           </p>
           <Link
             href="/reservar"
             className="btn-glow bg-[#c8921a] text-[#0f0d0a] hover:bg-[#e8b84b] px-12 py-4 text-xs tracking-[0.4em] uppercase font-bold"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             Reservar Mi Servicio
           </Link>

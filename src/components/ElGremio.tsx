@@ -64,7 +64,7 @@ export default function ElGremio() {
       <div className="relative text-center mb-20">
         <span
           className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           — Nuestro Equipo —
         </span>
@@ -77,7 +77,7 @@ export default function ElGremio() {
         </a>
         <p
           className="text-[#b8a882] italic text-lg max-w-xl mx-auto"
-          style={{ fontFamily: "var(--font-im-fell)" }}
+          style={{ fontFamily: "var(--font-lato)" }}
         >
           Cada barbero lleva consigo años de oficio y una especialidad única.
           Elige a tu maestro.
@@ -110,7 +110,7 @@ function BarberCard({ barber }: { barber: (typeof barbers)[0] }) {
       <div className="absolute top-4 right-4 z-10">
         <span
           className="bg-[#c8921a] text-[#0f0d0a] text-[9px] tracking-[0.2em] uppercase px-3 py-1 font-bold"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           {barber.badge}
         </span>
@@ -141,7 +141,7 @@ function BarberCard({ barber }: { barber: (typeof barbers)[0] }) {
           </span>
           <span
             className="block text-[#b8a882]/70 text-[9px] tracking-[0.3em] uppercase mt-1"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             años de oficio
           </span>
@@ -155,13 +155,13 @@ function BarberCard({ barber }: { barber: (typeof barbers)[0] }) {
       <div className="flex flex-col flex-1 p-6">
         <p
           className="text-[#c8921a]/80 text-[10px] tracking-[0.4em] uppercase mb-1"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           {barber.alias}
         </p>
         <h3
           className="text-[#f0e6c8] text-xl font-bold mb-1"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-oswald)" }}
         >
           {barber.name}
         </h3>
@@ -176,7 +176,7 @@ function BarberCard({ barber }: { barber: (typeof barbers)[0] }) {
         {/* Especialidad */}
         <p
           className="text-[#c8921a] text-[10px] uppercase tracking-widest mb-3"
-          style={{ fontFamily: "var(--font-cinzel)" }}
+          style={{ fontFamily: "var(--font-barlow)" }}
         >
           {barber.specialty}
         </p>
@@ -184,7 +184,7 @@ function BarberCard({ barber }: { barber: (typeof barbers)[0] }) {
         {/* Bio */}
         <p
           className="text-[#b8a882]/70 text-sm leading-relaxed italic mb-4 flex-1"
-          style={{ fontFamily: "var(--font-im-fell)" }}
+          style={{ fontFamily: "var(--font-lato)" }}
         >
           &ldquo;{barber.bio}&rdquo;
         </p>
@@ -195,7 +195,7 @@ function BarberCard({ barber }: { barber: (typeof barbers)[0] }) {
             <span
               key={skill}
               className="border border-[#5c3a1e] text-[#b8a882]/60 text-[9px] tracking-widest uppercase px-2 py-1"
-              style={{ fontFamily: "var(--font-cinzel)" }}
+              style={{ fontFamily: "var(--font-barlow)" }}
             >
               {skill}
             </span>
@@ -206,14 +206,14 @@ function BarberCard({ barber }: { barber: (typeof barbers)[0] }) {
         <div className="flex items-center justify-between pt-4 border-t border-[#5c3a1e]/40">
           <span
             className="text-[#b8a882]/40 text-[9px] uppercase tracking-widest"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             {barber.days}
           </span>
           <a
             href="#reservar"
             className="border border-[#c8921a]/60 text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-[9px] tracking-widest uppercase px-4 py-2 transition-all duration-300"
-            style={{ fontFamily: "var(--font-cinzel)" }}
+            style={{ fontFamily: "var(--font-barlow)" }}
           >
             Elegir
           </a>

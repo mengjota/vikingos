@@ -113,11 +113,11 @@ export default function Hero() {
             Reservar Servicio
           </a>
           <a
-            href="#el-gremio"
+            href="/nosotros"
             className="border border-[#c8921a]/50 text-[#c8921a] hover:border-[#c8921a] px-10 py-4 text-xs tracking-[0.4em] uppercase transition-all duration-300"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
-            Vikingos Barberia
+            Nosotros Invictus
           </a>
         </div>
       </div>

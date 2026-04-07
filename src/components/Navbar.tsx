@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 
 const navLinks = [
-  { label: "Vikingos Barberia", href: "#el-gremio" },
+  { label: "Nosotros Invictus", href: "/nosotros" },
   { label: "Servicios", href: "#servicios" },
-  { label: "Reservar", href: "/reservar" },
+  { label: "Productos", href: "/productos" },
 ];
 
 export default function Navbar() {

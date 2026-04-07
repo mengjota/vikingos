@@ -68,12 +68,13 @@ export default function ElGremio() {
         >
           — Nuestro Equipo —
         </span>
-        <h2
-          className="text-[#f0e6c8] text-5xl md:text-7xl font-black leading-none mb-6"
+        <a
+          href="/nosotros"
+          className="text-[#f0e6c8] hover:text-[#c8921a] text-5xl md:text-7xl font-black leading-none mb-6 block transition-colors duration-300"
           style={{ fontFamily: "var(--font-cinzel-decorative)" }}
         >
-          VIKINGOS BARBERIA
-        </h2>
+          NOSOTROS INVICTUS
+        </a>
         <p
           className="text-[#b8a882] italic text-lg max-w-xl mx-auto"
           style={{ fontFamily: "var(--font-im-fell)" }}

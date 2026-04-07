@@ -70,8 +70,8 @@ export default function Footer() {
               Ubicación
             </h4>
             <div className="space-y-3 text-[#b8a882]/60 text-sm" style={{ fontFamily: "var(--font-lato)" }}>
-              <p>📍 Zona 1, Ciudad de Guatemala</p>
-              <p>📞 +502 0000-0000</p>
+              <p>📍 Loja, Ecuador</p>
+              <p>📞 +593 0000-0000</p>
               <p>📧 invictus.barberia@gmail.com</p>
             </div>
           </div>

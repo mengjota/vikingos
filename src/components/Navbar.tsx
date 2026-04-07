@@ -109,17 +109,6 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="/login"
-            onClick={() => setMenuOpen(false)}
-            className="flex items-center gap-2 text-[#b8a882] hover:text-[#c8921a] text-base tracking-[0.3em] uppercase transition-colors"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m0 0l3-3m-3 3l3 3" />
-            </svg>
-            Iniciar Sesión
-          </a>
-          <a
             href="/reservar"
             onClick={() => setMenuOpen(false)}
             className="border border-[#c8921a] text-[#c8921a] text-sm tracking-[0.3em] uppercase px-6 py-3 text-center"

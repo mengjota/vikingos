@@ -309,79 +309,90 @@ export default function ReservarPage() {
         {/* ── PASO 1: Servicios ── */}
         {paso === 1 && (
           <div>
-            <p className="text-[#b8a882]/60 text-center text-sm italic mb-10" style={{ fontFamily: "var(--font-im-fell)" }}>
+            <p className="text-[#b8a882]/70 text-center text-sm italic mb-10" style={{ fontFamily: "var(--font-im-fell)" }}>
               Elige el rito que deseas recibir hoy.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-              {servicios.map((s) => {
-                const isSelected = servicioId === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => setServicioId(s.id)}
-                    className={`relative p-6 border text-left transition-all duration-300 group
-                      ${isSelected
-                        ? "border-[#c8921a] bg-[#2d1f0e] shadow-[0_0_24px_rgba(200,146,26,0.2)]"
-                        : "border-[#5c3a1e]/50 hover:border-[#c8921a]/60 hover:shadow-[0_0_16px_rgba(200,146,26,0.1)] bg-[#1a1510]"
-                      }`}
-                  >
-                    {/* Badge popular */}
-                    {s.popular && (
-                      <span
-                        className="badge-pulse absolute -top-3 left-4 bg-[#c8921a] text-[#0f0d0a] text-[9px] tracking-widest uppercase px-3 py-0.5 font-bold"
-                        style={{ fontFamily: "var(--font-cinzel)" }}
-                      >
-                        El Más Pedido
-                      </span>
-                    )}
+            {/* Luz ambiental detrás del grid */}
+            <div className="relative">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full pointer-events-none"
+                style={{ background: "radial-gradient(ellipse, rgba(200,146,26,0.07) 0%, transparent 70%)" }}
+              />
 
-                    {/* Check */}
-                    {isSelected && (
-                      <div className="absolute top-3 right-3 w-5 h-5 bg-[#c8921a] flex items-center justify-center shadow-[0_0_8px_rgba(200,146,26,0.8)]">
-                        <span className="text-[#0f0d0a] text-xs font-black">✓</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+                {servicios.map((s) => {
+                  const isSelected = servicioId === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => setServicioId(s.id)}
+                      className={`service-card${isSelected ? " selected" : ""} p-6 border text-left`}
+                      style={{ backgroundColor: isSelected ? "#2a1c0c" : "#141209" }}
+                    >
+                      {/* Línea superior brillante */}
+                      <div className={`absolute top-0 left-0 right-0 h-px transition-all duration-500
+                        ${isSelected
+                          ? "bg-gradient-to-r from-transparent via-[#c8921a] to-transparent opacity-100"
+                          : "bg-gradient-to-r from-transparent via-[#c8921a]/30 to-transparent opacity-60"
+                        }`}
+                      />
+
+                      {/* Badge popular */}
+                      {s.popular && (
+                        <span
+                          className="badge-pulse absolute -top-3 left-4 bg-[#c8921a] text-[#0f0d0a] text-[9px] tracking-widest uppercase px-3 py-0.5 font-bold"
+                          style={{ fontFamily: "var(--font-cinzel)" }}
+                        >
+                          El Más Pedido
+                        </span>
+                      )}
+
+                      {/* Check */}
+                      {isSelected && (
+                        <div className="absolute top-3 right-3 w-6 h-6 bg-[#c8921a] flex items-center justify-center"
+                          style={{ boxShadow: "0 0 12px rgba(200,146,26,1), 0 0 24px rgba(200,146,26,0.5)" }}>
+                          <span className="text-[#0f0d0a] text-xs font-black">✓</span>
+                        </div>
+                      )}
+
+                      {/* Ícono SVG con glow */}
+                      <div className={`icon-glow-idle mb-5 ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]/65"}`}>
+                        <s.Icon active={isSelected} />
                       </div>
-                    )}
 
-                    {/* Ícono SVG animado */}
-                    <div className={`mb-4 transition-all duration-300
-                      ${isSelected
-                        ? "text-[#c8921a] drop-shadow-[0_0_8px_rgba(200,146,26,0.8)] scale-110"
-                        : "text-[#c8921a]/40 group-hover:text-[#c8921a]/80 group-hover:scale-105"
-                      }`}
-                    >
-                      <s.Icon active={isSelected} />
-                    </div>
-
-                    <h3
-                      className="text-[#f0e6c8] text-sm font-bold mb-1"
-                      style={{ fontFamily: "var(--font-cinzel)" }}
-                    >
-                      {s.nombre}
-                    </h3>
-                    <p
-                      className="text-[#b8a882]/60 text-xs italic leading-relaxed mb-4"
-                      style={{ fontFamily: "var(--font-im-fell)" }}
-                    >
-                      {s.descripcion}
-                    </p>
-                    <div className="flex items-center justify-between pt-3 border-t border-[#5c3a1e]/40">
-                      <span
-                        className="text-[#c8921a] font-black text-lg"
-                        style={{ fontFamily: "var(--font-cinzel-decorative)" }}
-                      >
-                        {s.precio}
-                      </span>
-                      <span
-                        className="text-[#b8a882]/40 text-[9px] uppercase tracking-widest"
+                      <h3
+                        className={`text-sm font-bold mb-1 transition-colors duration-300 ${isSelected ? "text-[#e8b84b]" : "text-[#f0e6c8]"}`}
                         style={{ fontFamily: "var(--font-cinzel)" }}
                       >
-                        {s.duracion}
-                      </span>
-                    </div>
-                  </button>
-                );
-              })}
+                        {s.nombre}
+                      </h3>
+                      <p
+                        className="text-[#b8a882]/65 text-xs italic leading-relaxed mb-5"
+                        style={{ fontFamily: "var(--font-im-fell)" }}
+                      >
+                        {s.descripcion}
+                      </p>
+                      <div className={`flex items-center justify-between pt-3 border-t transition-colors duration-300 ${isSelected ? "border-[#c8921a]/50" : "border-[#5c3a1e]/40"}`}>
+                        <span
+                          className={`font-black text-xl transition-all duration-300 ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]"}`}
+                          style={{
+                            fontFamily: "var(--font-cinzel-decorative)",
+                            textShadow: isSelected ? "0 0 12px rgba(200,146,26,0.8)" : "none",
+                          }}
+                        >
+                          {s.precio}
+                        </span>
+                        <span
+                          className="text-[#b8a882]/40 text-[9px] uppercase tracking-widest"
+                          style={{ fontFamily: "var(--font-cinzel)" }}
+                        >
+                          {s.duracion}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="flex justify-end">

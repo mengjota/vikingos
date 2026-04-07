@@ -9,12 +9,12 @@ const barberos = [
 ];
 
 const serviciosList = [
-  { id: 1, nombre: "Corte del Guerrero", precio: "Q80", duracion: "45 min" },
-  { id: 2, nombre: "Ritual de Navaja", precio: "Q120", duracion: "60 min" },
-  { id: 3, nombre: "Corte & Barba", precio: "Q150", duracion: "75 min" },
-  { id: 4, nombre: "La Barba del Norte", precio: "Q100", duracion: "45 min" },
-  { id: 5, nombre: "Corte de Niño Guerrero", precio: "Q60", duracion: "30 min" },
-  { id: 6, nombre: "El Paquete del Jarl", precio: "Q220", duracion: "120 min" },
+  { id: 1, nombre: "Corte del Guerrero", precio: "$80", duracion: "45 min" },
+  { id: 2, nombre: "Ritual de Navaja", precio: "$120", duracion: "60 min" },
+  { id: 3, nombre: "Corte & Barba", precio: "$150", duracion: "75 min" },
+  { id: 4, nombre: "La Barba del Norte", precio: "$100", duracion: "45 min" },
+  { id: 5, nombre: "Corte de Niño Guerrero", precio: "$60", duracion: "30 min" },
+  { id: 6, nombre: "El Paquete del Jarl", precio: "$220", duracion: "120 min" },
 ];
 
 const horasDisponibles = [

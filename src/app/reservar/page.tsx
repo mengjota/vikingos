@@ -575,7 +575,7 @@ export default function ReservarPage() {
                           color: isHora ? "#0f0d0a" : "#b8a882",
                           fontWeight: isHora ? "700" : "400",
                           boxShadow: isHora
-                            ? "0 0 18px rgba(200,146,26,0.7), 0 0 40px rgba(200,146,26,0.25), inset 0 0 10px rgba(255,220,100,0.2)"
+                            ? "0 0 22px rgba(200,146,26,0.95), 0 0 50px rgba(200,146,26,0.45), 0 0 90px rgba(200,146,26,0.18), 0 6px 18px rgba(0,0,0,0.85), inset 0 0 18px rgba(255,220,100,0.12), inset 0 1px 0 rgba(255,220,100,0.3)"
                             : undefined,
                           textShadow: isHora ? "0 0 6px rgba(0,0,0,0.5)" : "none",
                         }}

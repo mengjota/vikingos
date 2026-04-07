@@ -62,7 +62,10 @@ export default function Navbar() {
         <a
           href="/reservar"
           className="btn-glow hidden md:block border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-xs tracking-[0.3em] uppercase px-6 py-3"
-          style={{ fontFamily: "var(--font-barlow)" }}
+          style={{
+            fontFamily: "var(--font-barlow)",
+            boxShadow: "0 0 10px rgba(200,146,26,0.45), 0 0 24px rgba(200,146,26,0.15), 0 4px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(200,146,26,0.18)",
+          }}
         >
           Reservar Servicio
         </a>

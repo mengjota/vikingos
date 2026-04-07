@@ -10,7 +10,7 @@ const navLinks = [
   { label: "Productos", href: "/productos" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ transparentOnTop = false }: { transparentOnTop?: boolean }) {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -36,7 +36,7 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
+        scrolled || !transparentOnTop
           ? "bg-[#0f0d0a]/95 backdrop-blur-sm border-b border-[#c8921a]/20"
           : "bg-transparent"
       }`}

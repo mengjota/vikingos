@@ -233,6 +233,81 @@ body {
   animation: gold-pulse 2.2s ease-in-out infinite;
 }
 
+/* ── Hero: animaciones de entrada ───────────────────── */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-e1 { animation: heroFadeUp 0.8s ease-out 0.1s both; }
+.hero-e2 { animation: heroFadeUp 0.8s ease-out 0.3s both; }
+.hero-e3 { animation: heroFadeUp 1s   ease-out 0.5s both; }
+.hero-e4 { animation: heroFadeUp 0.8s ease-out 0.8s both; }
+.hero-e5 { animation: heroFadeUp 0.8s ease-out 1s   both; }
+.hero-e6 { animation: heroFadeUp 0.8s ease-out 1.2s both; }
+
+/* Ambient glow central del hero */
+@keyframes ambientHero {
+  0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(1); }
+  50%       { opacity: 0.6;  transform: translate(-50%, -50%) scale(1.12); }
+}
+
+/* Partículas flotantes */
+@keyframes particleFloat {
+  0%   { transform: translateY(0)     scale(0); opacity: 0; }
+  10%  { transform: scale(1);         opacity: 1; }
+  90%  { opacity: 0.4; }
+  100% { transform: translateY(-180px) scale(0.6); opacity: 0; }
+}
+.hero-particle {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: #c8921a;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(200,146,26,0.9);
+  animation: particleFloat linear infinite;
+  pointer-events: none;
+}
+
+/* Tijeras del botón 1: cada hoja gira en dirección opuesta */
+@keyframes scissorTop {
+  0%, 100% { transform: rotate(0deg); }
+  50%       { transform: rotate(-22deg); }
+}
+@keyframes scissorBottom {
+  0%, 100% { transform: rotate(0deg); }
+  50%       { transform: rotate(22deg); }
+}
+.btn-tools:hover .scissor-top    { animation: scissorTop    0.55s ease-in-out infinite; transform-origin: 50% 50%; }
+.btn-tools:hover .scissor-bottom { animation: scissorBottom 0.55s ease-in-out infinite; transform-origin: 50% 50%; }
+
+/* Máquina: vibra al hover */
+@keyframes clipperBuzz {
+  0%, 100% { transform: translateX(0)    rotate(0deg); }
+  25%       { transform: translateX(-2px) rotate(-2deg); }
+  75%       { transform: translateX(2px)  rotate(2deg); }
+}
+.btn-tools:hover .icon-clipper { animation: clipperBuzz 0.12s linear infinite; }
+
+/* Botón INVICTUS: pulso de glow + texto */
+@keyframes invictusPulse {
+  0%, 100% {
+    box-shadow: 0 0 18px rgba(200,146,26,0.25), 0 0 40px rgba(200,146,26,0.08);
+    text-shadow: 0 0 10px rgba(200,146,26,0.3);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(200,146,26,0.6), 0 0 70px rgba(200,146,26,0.25), 0 0 110px rgba(200,146,26,0.1);
+    text-shadow: 0 0 20px rgba(200,146,26,0.8), 0 0 40px rgba(200,146,26,0.3);
+  }
+}
+.btn-invictus {
+  animation: invictusPulse 3s ease-in-out infinite;
+  transition: background 0.3s ease, color 0.3s ease, letter-spacing 0.3s ease;
+}
+.btn-invictus:hover {
+  background: rgba(200,146,26,0.08);
+  letter-spacing: 0.5em;
+}
+
 /* Separador rúnico */
 .rune-divider {
   display: flex;

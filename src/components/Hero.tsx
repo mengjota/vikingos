@@ -53,57 +53,65 @@ function IconScissors() {
   );
 }
 
-/* ── Icono Máquina Realista (clippers) ─────────────────── */
+/* ── Máquina de cortar pelo profesional (estilo Wahl/Andis) ─ */
 function IconClippers() {
   return (
-    <svg width="64" height="64" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Sombra del cuerpo (profundidad 3D) */}
-      <rect x="10" y="10" width="40" height="28" rx="6" fill="rgba(0,0,0,0.5)"/>
+    <svg width="52" height="72" viewBox="0 0 52 72" fill="none" xmlns="http://www.w3.org/2000/svg">
 
-      {/* Cuerpo principal */}
-      <rect x="8" y="8" width="40" height="28" rx="6" fill="#1a1209" stroke="#c8921a" strokeWidth="2"/>
+      {/* ── Cuerpo ergonómico ── */}
+      {/* Sombra 3D offset */}
+      <path d="M11 6 Q11 3 26 3 Q41 3 41 6 L43 50 Q43 55 26 55 Q9 55 9 50 Z"
+        fill="rgba(0,0,0,0.55)" transform="translate(2,2)"/>
+      {/* Cuerpo principal - forma ergonómica */}
+      <path d="M11 6 Q11 3 26 3 Q41 3 41 6 L43 50 Q43 55 26 55 Q9 55 9 50 Z"
+        fill="#1a1209" stroke="#c8921a" strokeWidth="2"/>
+      {/* Highlight superior (luz que viene de arriba) */}
+      <path d="M12 6 Q26 4 40 6 L40 14 Q26 12 12 14 Z"
+        fill="rgba(200,146,26,0.12)"/>
+      <path d="M13 7 Q26 5 39 7" stroke="rgba(255,220,100,0.4)" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
 
-      {/* Cara superior (highlight 3D) */}
-      <rect x="8" y="8" width="40" height="9" rx="6" fill="rgba(200,146,26,0.12)"/>
-      <path d="M9 11 Q28 9 47 11" stroke="rgba(255,220,100,0.3)" strokeWidth="1" fill="none"/>
+      {/* ── Borde lateral derecho (arista 3D) ── */}
+      <path d="M41 8 L43 50 Q43 54 41 55" stroke="rgba(200,146,26,0.3)" strokeWidth="1" fill="none"/>
 
-      {/* Detalle de grip lateral izquierdo */}
-      <line x1="10" y1="18" x2="10" y2="32" stroke="rgba(200,146,26,0.25)" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="13" y1="18" x2="13" y2="32" stroke="rgba(200,146,26,0.15)" strokeWidth="1"   strokeLinecap="round"/>
+      {/* ── Grip lines (textura agarre) ── */}
+      <line x1="14" y1="34" x2="38" y2="34" stroke="rgba(200,146,26,0.18)" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="14" y1="38" x2="38" y2="38" stroke="rgba(200,146,26,0.13)" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="14" y1="42" x2="38" y2="42" stroke="rgba(200,146,26,0.08)" strokeWidth="1.5" strokeLinecap="round"/>
 
-      {/* Botón power (centro) */}
-      <circle cx="28" cy="22" r="5.5" fill="rgba(0,0,0,0.4)" />
-      <circle cx="28" cy="22" r="4.5" stroke="#c8921a" strokeWidth="1.5" fill="rgba(200,146,26,0.15)"/>
-      <circle cx="28" cy="22" r="2.5" fill="#c8921a"/>
-      <circle cx="27" cy="21" r="1"   fill="rgba(255,220,100,0.7)"/>
+      {/* ── Switch de encendido (lateral) ── */}
+      <rect x="8" y="22" width="4" height="14" rx="2" fill="#c8921a" opacity="0.9"/>
+      <rect x="8" y="22" width="4" height="7"  rx="2" fill="rgba(255,220,100,0.6)"/>
 
-      {/* LED indicador */}
-      <circle cx="42" cy="13" r="2.5" fill="#c8921a"/>
-      <circle cx="42" cy="13" r="1.5" fill="rgba(255,240,150,0.9)"/>
+      {/* ── Botón power (frente) ── */}
+      <rect x="20" y="12" width="12" height="16" rx="4" fill="rgba(0,0,0,0.3)" stroke="rgba(200,146,26,0.4)" strokeWidth="1.2"/>
+      {/* Símbolo power */}
+      <circle cx="26" cy="18" r="4.5" stroke="#c8921a" strokeWidth="1.5" fill="none"/>
+      <line   x1="26" y1="13.5" x2="26" y2="18" stroke="#c8921a" strokeWidth="1.8" strokeLinecap="round"/>
+      <circle cx="26" cy="18" r="1.5" fill="#c8921a" opacity="0.5"/>
 
-      {/* Cable */}
-      <path d="M28 8 Q28 3 36 3 Q44 3 44 8" stroke="#c8921a" strokeWidth="2" strokeLinecap="round" fill="none"/>
-      <path d="M29 8 Q29 4 37 4 Q44 4 44 9"  stroke="rgba(255,220,100,0.2)" strokeWidth="0.8" fill="none"/>
+      {/* ── LED indicador (verde/dorado) ── */}
+      <circle cx="36" cy="14" r="2.8" fill="rgba(0,0,0,0.4)"/>
+      <circle cx="36" cy="14" r="2"   fill="#c8921a"/>
+      <circle cx="35.2" cy="13.2" r="0.8" fill="rgba(255,240,180,0.9)"/>
 
-      {/* Base de la cuchilla */}
-      <rect x="6" y="36" width="44" height="6" rx="2" fill="#c8921a"/>
-      <rect x="6" y="36" width="44" height="3" rx="2" fill="rgba(255,220,100,0.2)"/>
+      {/* ── Cable (sale de la parte superior) ── */}
+      <path d="M26 3 Q26 0 26 0" stroke="#c8921a" strokeWidth="2.5" strokeLinecap="round"/>
 
-      {/* Dientes de la cuchilla */}
+      {/* ── Ensamble de la cuchilla ── */}
+      {/* Housing base */}
+      <rect x="7" y="55" width="38" height="7" rx="2" fill="#c8921a"/>
+      <rect x="7" y="55" width="38" height="3.5" rx="2" fill="rgba(255,220,100,0.25)"/>
+      {/* Línea divisoria cuchilla fija / móvil */}
+      <line x1="9" y1="59" x2="43" y2="59" stroke="rgba(0,0,0,0.5)" strokeWidth="1"/>
+
+      {/* Dientes de la cuchilla (finos y elegantes) */}
       <g className="icon-blade">
-        <rect x="9"  y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
-        <rect x="16" y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
-        <rect x="23" y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
-        <rect x="30" y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
-        <rect x="37" y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
-        <rect x="44" y="42" width="4" height="10" rx="1.5" fill="#c8921a"/>
-        {/* Highlights de dientes (filo) */}
-        <rect x="9"  y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
-        <rect x="16" y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
-        <rect x="23" y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
-        <rect x="30" y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
-        <rect x="37" y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
-        <rect x="44" y="42" width="2" height="10" rx="1" fill="rgba(255,220,100,0.45)"/>
+        {[9, 13, 17, 21, 25, 29, 33, 37, 41].map((x, i) => (
+          <g key={i}>
+            <rect x={x}   y={62} width={2.5} height={8} rx={1.2} fill="#c8921a"/>
+            <rect x={x}   y={62} width={1.2} height={8} rx={0.8} fill="rgba(255,220,100,0.5)"/>
+          </g>
+        ))}
       </g>
     </svg>
   );

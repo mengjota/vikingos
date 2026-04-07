@@ -1,327 +1,175 @@
-import Link from "next/link";
-
-const staff = [
-  {
-    nombre: "Carlos Mendoza",
-    cargo: "Barbero Profesional · Fundador",
-    años: 24,
-    rune: "ᚠ",
-    bio: "Con más de dos décadas de oficio, Carlos es el alma de Invictus. Formado en la tradición del afeitado clásico con navaja recta, ha perfeccionado cada técnica hasta convertirla en ritual. Su filosofía: la silla de un barbero es el trono del cliente.",
-    especialidad: "Navaja Clásica · Afeitado Ritual · Barba Nórdica",
-  },
-  {
-    nombre: "Andrés Vega",
-    cargo: "Barbero Profesional",
-    años: 13,
-    rune: "ᚢ",
-    bio: "Andrés llegó al gremio con una precisión innata. Sus degradados son técnicamente impecables. Especialista en líneas geométricas y skin fade, representa la fusión entre tradición y precisión moderna.",
-    especialidad: "Skin Fade · Líneas · Diseños Geométricos",
-  },
-  {
-    nombre: "Sebastián Torres",
-    cargo: "Barbero Profesional",
-    años: 7,
-    rune: "ᚦ",
-    bio: "El más joven del equipo pero no el menos hábil. Sebastián domina los estilos contemporáneos con la disciplina y respeto que exige Invictus. Su especialidad es leer al cliente antes de tocar la tijera.",
-    especialidad: "Estilos Modernos · Texturas · Barba Escultural",
-  },
-];
-
 export default function NosotrosPage() {
+  const staff = [
+    { rune: "ᚠ", cargo: "Maestro Barbero · Fundador" },
+    { rune: "ᚢ", cargo: "Maestro Barbero" },
+    { rune: "ᚦ", cargo: "Maestro Barbero" },
+  ];
+
   return (
-    <div className="min-h-screen pt-24" style={{ backgroundColor: "#0f0d0a" }}>
+    <div className="min-h-screen pt-24" style={{ backgroundColor: "#080604" }}>
 
-      <div className="max-w-5xl mx-auto px-6 py-16">
+      {/* Glow de fondo */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 50% at 50% 30%, rgba(200,146,26,0.1) 0%, transparent 65%)",
+        }}
+      />
 
-        {/* SECCIÓN: Por qué INVICTUS */}
-        <div className="mb-28">
-          <div className="text-center mb-14">
-            <span
-              className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
-              style={{ fontFamily: "var(--font-barlow)" }}
-            >
-              — El Origen del Nombre —
-            </span>
-            <h2
-              className="text-[#f0e6c8] text-5xl md:text-6xl font-black leading-none mb-6"
-              style={{ fontFamily: "var(--font-cinzel-decorative)" }}
-            >
-              ¿Por qué INVICTUS?
-            </h2>
-            <div className="flex items-center justify-center gap-4">
-              <div className="h-px w-20 bg-gradient-to-r from-transparent to-[#c8921a]" />
-              <span className="text-[#c8921a]">᛭</span>
-              <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#c8921a]" />
-            </div>
-          </div>
+      <div className="relative max-w-4xl mx-auto px-6 py-16 text-center">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            {/* Texto */}
-            <div className="space-y-6">
-              <p
-                className="text-[#f0e6c8] text-xl italic leading-relaxed"
-                style={{ fontFamily: "var(--font-lato)" }}
-              >
-                &ldquo;Invictus&rdquo; viene del latín: <span className="text-[#c8921a]">invencible, no conquistado, inquebrantable.</span>
-              </p>
-              <p
-                className="text-[#b8a882]/80 text-base leading-relaxed"
-                style={{ fontFamily: "var(--font-lato)" }}
-              >
-                Cuando el fundador buscó un nombre para su barbería, no quería algo que simplemente describiera el negocio. Quería un nombre que fuera una declaración de principios.
-              </p>
-              <p
-                className="text-[#b8a882]/80 text-base leading-relaxed"
-                style={{ fontFamily: "var(--font-lato)" }}
-              >
-                En un mundo donde las barberías se multiplican y se olvidan, Invictus nació para permanecer. Para ser el lugar al que los hombres vuelven no porque es el más cercano, sino porque es el mejor.
-              </p>
-              <p
-                className="text-[#b8a882]/80 text-base leading-relaxed"
-                style={{ fontFamily: "var(--font-lato)" }}
-              >
-                El espíritu vikingo que acompaña nuestra estética no es decorativo. Representa la misma filosofía: <span className="text-[#c8921a] italic">honor en el trabajo, fuerza en el oficio, lealtad al cliente.</span>
-              </p>
-            </div>
+        {/* Eyebrow */}
+        <p
+          className="text-[#c8921a] tracking-[0.7em] uppercase mb-6"
+          style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600 }}
+        >
+          — Nuestra Historia —
+        </p>
 
-            {/* Cita destacada */}
-            <div
-              className="relative p-10 border border-[#c8921a]/30"
-              style={{ backgroundColor: "#1a1510" }}
-            >
-              <span
-                className="absolute -top-5 left-8 text-[#c8921a] text-6xl"
-                style={{ fontFamily: "serif" }}
-              >
-                ᚢ
-              </span>
-              <blockquote
-                className="text-[#f0e6c8] text-2xl italic leading-relaxed mb-6"
-                style={{ fontFamily: "var(--font-lato)" }}
-              >
-                &ldquo;Out of the night that covers me,<br />
-                black as the pit from pole to pole,<br />
-                I am the master of my fate,<br />
-                I am the captain of my soul.&rdquo;
-              </blockquote>
-              <p
-                className="text-[#c8921a] text-[10px] tracking-widest uppercase"
-                style={{ fontFamily: "var(--font-barlow)" }}
-              >
-                — William Ernest Henley, Invictus (1875)
-              </p>
-              <p
-                className="text-[#b8a882]/50 text-xs mt-3 italic"
-                style={{ fontFamily: "var(--font-lato)" }}
-              >
-                El poema que inspiró el nombre.
-              </p>
-            </div>
-          </div>
+        {/* Título principal */}
+        <h1
+          className="text-[#f5ead0] font-black leading-tight mb-8"
+          style={{
+            fontFamily: "var(--font-cinzel-decorative)",
+            fontSize: "clamp(2rem, 5vw, 3.8rem)",
+            textShadow: "0 0 60px rgba(200,146,26,0.35), 0 2px 4px rgba(0,0,0,0.8)",
+            letterSpacing: "0.04em",
+          }}
+        >
+          Somos Invictus
+        </h1>
+
+        {/* Separador */}
+        <div className="flex items-center justify-center gap-5 mb-10">
+          <div className="h-px w-20 bg-gradient-to-r from-transparent to-[#c8921a]/80" />
+          <span className="text-[#c8921a] text-xl">᛭</span>
+          <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#c8921a]/80" />
         </div>
 
-        {/* SECCIÓN: El Jefe */}
-        <div className="mb-28">
-          <div className="text-center mb-14">
-            <span
-              className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
-              style={{ fontFamily: "var(--font-barlow)" }}
-            >
-              — El Hombre Detrás del Acero —
-            </span>
-            <h2
-              className="text-[#f0e6c8] text-5xl md:text-6xl font-black leading-none mb-6"
-              style={{ fontFamily: "var(--font-cinzel-decorative)" }}
-            >
-              El Fundador
-            </h2>
-            <div className="flex items-center justify-center gap-4">
-              <div className="h-px w-20 bg-gradient-to-r from-transparent to-[#c8921a]" />
-              <span className="text-[#c8921a]">᛭</span>
-              <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#c8921a]" />
-            </div>
-          </div>
+        {/* Subtítulo */}
+        <p
+          className="text-[#f0e6c8] mx-auto mb-6"
+          style={{
+            fontFamily: "var(--font-barlow)",
+            fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)",
+            letterSpacing: "0.05em",
+            maxWidth: "680px",
+            lineHeight: 1.6,
+            fontWeight: 500,
+          }}
+        >
+          Una barbería acoplada a la elegancia de los hombres
+        </p>
 
-          <div
-            className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-[#5c3a1e]/60 overflow-hidden"
-          >
-            {/* Foto placeholder */}
+        <p
+          className="text-[#b8a882]/60 mx-auto mb-20"
+          style={{
+            fontFamily: "var(--font-barlow)",
+            fontSize: "clamp(0.85rem, 1.5vw, 1rem)",
+            maxWidth: "520px",
+            lineHeight: 1.8,
+            letterSpacing: "0.02em",
+          }}
+        >
+          Donde cada corte es un ritual y cada cliente merece lo mejor.
+        </p>
+
+        {/* Línea divisora */}
+        <div className="h-px w-full mb-20"
+          style={{ background: "linear-gradient(to right, transparent, rgba(200,146,26,0.3) 30%, rgba(200,146,26,0.3) 70%, transparent)" }} />
+
+        {/* Sección Staff */}
+        <p
+          className="text-[#c8921a] tracking-[0.7em] uppercase mb-4"
+          style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600 }}
+        >
+          — El Equipo —
+        </p>
+
+        <h2
+          className="text-[#f5ead0] font-black mb-14"
+          style={{
+            fontFamily: "var(--font-cinzel-decorative)",
+            fontSize: "clamp(1.6rem, 4vw, 2.8rem)",
+            textShadow: "0 0 40px rgba(200,146,26,0.25)",
+          }}
+        >
+          Maestros del Oficio
+        </h2>
+
+        {/* Cards de staff */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {staff.map((miembro, i) => (
             <div
-              className="relative h-80 md:h-auto flex items-end p-6"
-              style={{ backgroundColor: "#2d1f0e", minHeight: "320px" }}
+              key={i}
+              className="relative border border-[#5c3a1e]/40 p-8 flex flex-col items-center gap-5"
+              style={{
+                backgroundColor: "#0e0b07",
+                boxShadow: "0 0 30px rgba(200,146,26,0.04)",
+              }}
             >
-              <span
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[140px] text-[#c8921a]/10 select-none"
-                style={{ fontFamily: "serif" }}
-              >
-                ᚠ
-              </span>
-              <div className="relative z-10">
-                <span
-                  className="text-[#c8921a] text-5xl font-black leading-none block"
-                  style={{ fontFamily: "var(--font-cinzel-decorative)" }}
-                >
-                  24
-                </span>
-                <span
-                  className="text-[#b8a882]/60 text-[9px] tracking-widest uppercase"
-                  style={{ fontFamily: "var(--font-barlow)" }}
-                >
-                  años de oficio
-                </span>
-              </div>
-            </div>
+              {/* Línea dorada superior */}
+              <div className="absolute top-0 left-0 right-0 h-[2px]"
+                style={{ background: "linear-gradient(to right, transparent, #c8921a 40%, #c8921a 60%, transparent)" }} />
 
-            {/* Contenido del jefe */}
-            <div className="md:col-span-2 p-10" style={{ backgroundColor: "#1a1510" }}>
-              <span
-                className="text-[#c8921a] text-[10px] tracking-widest uppercase block mb-2"
-                style={{ fontFamily: "var(--font-barlow)" }}
+              {/* Avatar placeholder */}
+              <div
+                className="w-20 h-20 border border-[#5c3a1e]/60 flex items-center justify-center"
+                style={{
+                  background: "linear-gradient(135deg, #1a1208, #2a1d0e)",
+                  fontSize: "1.8rem",
+                  color: "rgba(200,146,26,0.4)",
+                }}
               >
-                Barbero Profesional · Fundador
-              </span>
-              <h3
-                className="text-[#f0e6c8] text-3xl font-black mb-1"
-                style={{ fontFamily: "var(--font-oswald)" }}
+                {miembro.rune}
+              </div>
+
+              {/* Nombre placeholder */}
+              <div className="space-y-2 w-full">
+                <div
+                  className="h-4 mx-auto rounded-none"
+                  style={{
+                    width: "70%",
+                    background: "linear-gradient(to right, #2a1d0e, #3a2810, #2a1d0e)",
+                  }}
+                />
+                <div
+                  className="h-3 mx-auto rounded-none"
+                  style={{
+                    width: "50%",
+                    background: "linear-gradient(to right, #1e1508, #2a1d0e, #1e1508)",
+                  }}
+                />
+              </div>
+
+              {/* Cargo */}
+              <p
+                className="text-[#c8921a]/50 tracking-[0.3em] uppercase text-center"
+                style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem" }}
               >
-                Carlos Mendoza
-              </h3>
-              <div className="flex items-center gap-3 my-5">
-                <div className="flex-1 h-px bg-[#5c3a1e]" />
-                <span className="text-[#c8921a]">ᚠ</span>
-                <div className="flex-1 h-px bg-[#5c3a1e]" />
-              </div>
-              <div className="space-y-4 text-[#b8a882]/80 text-base leading-relaxed" style={{ fontFamily: "var(--font-lato)" }}>
-                <p>
-                  Carlos empezó en este oficio a los 16 años, aprendiendo de un maestro barbero que ya no existe. No hubo academia, no hubo título enmarcado en la pared. Hubo años de práctica, de errores corregidos, de manos que aprendieron a leer cada tipo de cabello y cada forma de rostro.
-                </p>
-                <p>
-                  Después de más de dos décadas, decidió crear Invictus no como un negocio, sino como un legado. Un espacio donde el oficio se respeta, donde el cliente no es un número en una agenda sino un hombre que merece lo mejor.
-                </p>
-                <p className="text-[#f0e6c8] italic">
-                  &ldquo;Un corte bien hecho le da al hombre más que un buen aspecto. Le devuelve la confianza.&rdquo;
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-6">
-                {["Navaja Clásica", "Afeitado Ritual", "Barba Nórdica", "Fundador"].map((tag) => (
-                  <span
-                    key={tag}
-                    className="border border-[#5c3a1e] text-[#b8a882]/50 text-[9px] tracking-widest uppercase px-3 py-1"
-                    style={{ fontFamily: "var(--font-barlow)" }}
-                  >
-                    {tag}
-                  </span>
+                {miembro.cargo}
+              </p>
+
+              {/* Bio placeholder */}
+              <div className="space-y-1.5 w-full">
+                {[90, 100, 80, 95, 60].map((w, j) => (
+                  <div key={j}
+                    className="h-2 rounded-none"
+                    style={{
+                      width: `${w}%`,
+                      background: "linear-gradient(to right, #1a1208, #221808, #1a1208)",
+                    }}
+                  />
                 ))}
               </div>
             </div>
-          </div>
+          ))}
         </div>
 
-        {/* SECCIÓN: Staff */}
-        <div>
-          <div className="text-center mb-14">
-            <span
-              className="text-[#c8921a] text-[10px] tracking-[0.6em] uppercase block mb-4"
-              style={{ fontFamily: "var(--font-barlow)" }}
-            >
-              — Cada uno, un maestro —
-            </span>
-            <h2
-              className="text-[#f0e6c8] text-5xl md:text-6xl font-black leading-none mb-6"
-              style={{ fontFamily: "var(--font-cinzel-decorative)" }}
-            >
-              El Staff
-            </h2>
-            <div className="flex items-center justify-center gap-4">
-              <div className="h-px w-20 bg-gradient-to-r from-transparent to-[#c8921a]" />
-              <span className="text-[#c8921a]">᛭</span>
-              <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#c8921a]" />
-            </div>
-          </div>
+        {/* Espacio final */}
+        <div className="mt-24" />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {staff.map((miembro) => (
-              <div
-                key={miembro.nombre}
-                className="border border-[#5c3a1e]/60 hover:border-[#c8921a]/40 transition-all duration-500 overflow-hidden"
-                style={{ backgroundColor: "#1a1510" }}
-              >
-                {/* Zona de foto */}
-                <div
-                  className="relative h-52 flex items-end p-5"
-                  style={{ backgroundColor: "#2d1f0e" }}
-                >
-                  <span
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[100px] text-[#c8921a]/10 select-none"
-                    style={{ fontFamily: "serif" }}
-                  >
-                    {miembro.rune}
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a1510] to-transparent" />
-                  <div className="relative z-10">
-                    <span
-                      className="text-[#c8921a] text-4xl font-black leading-none block"
-                      style={{ fontFamily: "var(--font-cinzel-decorative)" }}
-                    >
-                      {miembro.años}
-                    </span>
-                    <span
-                      className="text-[#b8a882]/50 text-[9px] tracking-widest uppercase"
-                      style={{ fontFamily: "var(--font-barlow)" }}
-                    >
-                      años de oficio
-                    </span>
-                  </div>
-                </div>
-
-                {/* Info */}
-                <div className="p-6">
-                  <p
-                    className="text-[#c8921a] text-[9px] tracking-widest uppercase mb-1"
-                    style={{ fontFamily: "var(--font-barlow)" }}
-                  >
-                    {miembro.cargo}
-                  </p>
-                  <h3
-                    className="text-[#f0e6c8] text-lg font-bold mb-3"
-                    style={{ fontFamily: "var(--font-oswald)" }}
-                  >
-                    {miembro.nombre}
-                  </h3>
-                  <p
-                    className="text-[#b8a882]/60 text-sm leading-relaxed italic mb-4"
-                    style={{ fontFamily: "var(--font-lato)" }}
-                  >
-                    {miembro.bio}
-                  </p>
-                  <p
-                    className="text-[#c8921a]/60 text-[9px] tracking-wider uppercase border-t border-[#5c3a1e]/40 pt-4"
-                    style={{ fontFamily: "var(--font-barlow)" }}
-                  >
-                    {miembro.especialidad}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* CTA final */}
-        <div className="text-center mt-20 pt-16 border-t border-[#5c3a1e]/40">
-          <p
-            className="text-[#b8a882] italic text-lg mb-8"
-            style={{ fontFamily: "var(--font-lato)" }}
-          >
-            Ahora que nos conoces, ven a conocernos en persona.
-          </p>
-          <Link
-            href="/reservar"
-            className="btn-glow bg-[#c8921a] text-[#0f0d0a] hover:bg-[#e8b84b] px-12 py-4 text-xs tracking-[0.4em] uppercase font-bold"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
-            Reservar Mi Servicio
-          </Link>
-        </div>
       </div>
     </div>
   );

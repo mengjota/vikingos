@@ -1,0 +1,43 @@
+export interface Session {
+  name: string;
+  email: string;
+}
+
+export interface Reservation {
+  id: string;
+  servicio: string;
+  precio: string;
+  barbero: string;
+  fecha: string;
+  hora: string;
+  creadaEl: string;
+}
+
+export function getSession(): Session | null {
+  if (typeof window === "undefined") return null;
+  const raw = localStorage.getItem("inv_session");
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch { return null; }
+}
+
+export function logout() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("inv_session");
+}
+
+export function getReservations(email: string): Reservation[] {
+  if (typeof window === "undefined") return [];
+  const raw = localStorage.getItem("inv_reservas_" + email.toLowerCase());
+  if (!raw) return [];
+  try { return JSON.parse(raw); } catch { return []; }
+}
+
+export function saveReservation(email: string, reserva: Omit<Reservation, "id" | "creadaEl">) {
+  const reservas = getReservations(email);
+  reservas.unshift({
+    ...reserva,
+    id: Date.now().toString(),
+    creadaEl: new Date().toLocaleDateString("es-EC"),
+  });
+  localStorage.setItem("inv_reservas_" + email.toLowerCase(), JSON.stringify(reservas));
+}

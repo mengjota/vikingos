@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getSession, saveReservation } from "@/lib/auth";
 
 /* ── Iconos SVG animados por servicio ─────────────────── */
 
@@ -187,6 +189,7 @@ const horas = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "1
 /* ── Página principal ────────────────────────────────── */
 
 export default function ReservarPage() {
+  const router = useRouter();
   const [paso, setPaso] = useState<1 | 2 | 3>(1);
   const [servicioId, setServicioId] = useState<number | null>(null);
   const [barberoId, setBarberoId] = useState<number | null>(null);
@@ -195,6 +198,17 @@ export default function ReservarPage() {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [confirmado, setConfirmado] = useState(false);
+  const [sessionEmail, setSessionEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const s = getSession();
+    if (!s) {
+      router.push("/login");
+      return;
+    }
+    setSessionEmail(s.email);
+    if (!nombre) setNombre(s.name);
+  }, []);
 
   const servicio = servicios.find((s) => s.id === servicioId);
   const barbero = barberos.find((b) => b.id === barberoId);
@@ -232,11 +246,11 @@ export default function ReservarPage() {
               Nueva Reserva
             </button>
             <Link
-              href="/"
-              className="border border-[#5c3a1e] text-[#b8a882] text-xs tracking-widest uppercase px-8 py-3 hover:border-[#c8921a]/50 transition-all"
+              href="/perfil"
+              className="border border-[#c8921a]/50 text-[#c8921a] text-xs tracking-widest uppercase px-8 py-3 hover:bg-[#c8921a] hover:text-[#0f0d0a] transition-all"
               style={{ fontFamily: "var(--font-barlow)" }}
             >
-              Volver al Inicio
+              Ver mis citas
             </Link>
           </div>
         </div>
@@ -651,7 +665,20 @@ export default function ReservarPage() {
                 ← Atrás
               </button>
               <button
-                onClick={() => { if (fecha && hora && nombre && telefono) setConfirmado(true); }}
+                onClick={() => {
+  if (fecha && hora && nombre && telefono) {
+    if (sessionEmail && servicio && barbero) {
+      saveReservation(sessionEmail, {
+        servicio: servicio.nombre,
+        precio: servicio.precio,
+        barbero: barbero.name,
+        fecha,
+        hora,
+      });
+    }
+    setConfirmado(true);
+  }
+}}
                 disabled={!fecha || !hora || !nombre || !telefono}
                 className="btn-glow relative px-14 py-4 text-xs tracking-[0.3em] uppercase font-bold disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300"
                 style={{

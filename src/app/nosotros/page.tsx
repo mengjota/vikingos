@@ -6,7 +6,7 @@ export default function NosotrosPage() {
   ];
 
   return (
-    <div className="min-h-screen pt-24" style={{ backgroundColor: "#080604" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#080604", paddingTop: "100px" }}>
 
       {/* Glow de fondo */}
       <div
@@ -17,159 +17,172 @@ export default function NosotrosPage() {
         }}
       />
 
-      <div className="relative max-w-4xl mx-auto px-6 py-16 text-center">
+      <div className="relative max-w-3xl mx-auto px-6" style={{ paddingTop: "60px", paddingBottom: "80px" }}>
 
         {/* Eyebrow */}
-        <p
-          className="text-[#c8921a] tracking-[0.7em] uppercase mb-6"
-          style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600 }}
-        >
+        <p style={{
+          fontFamily: "var(--font-barlow)",
+          fontSize: "0.75rem",
+          fontWeight: 600,
+          letterSpacing: "0.65em",
+          textTransform: "uppercase",
+          color: "#c8921a",
+          textAlign: "center",
+          marginBottom: "24px",
+        }}>
           — Nuestra Historia —
         </p>
 
         {/* Título principal */}
-        <h1
-          className="text-[#f5ead0] font-black leading-tight mb-8"
-          style={{
-            fontFamily: "var(--font-cinzel-decorative)",
-            fontSize: "clamp(2rem, 5vw, 3.8rem)",
-            textShadow: "0 0 60px rgba(200,146,26,0.35), 0 2px 4px rgba(0,0,0,0.8)",
-            letterSpacing: "0.04em",
-          }}
-        >
+        <h1 style={{
+          fontFamily: "var(--font-cinzel-decorative)",
+          fontSize: "clamp(2.2rem, 5vw, 4rem)",
+          fontWeight: 900,
+          color: "#f5ead0",
+          textAlign: "center",
+          lineHeight: 1.15,
+          textShadow: "0 0 60px rgba(200,146,26,0.35), 0 2px 4px rgba(0,0,0,0.8)",
+          letterSpacing: "0.04em",
+          marginBottom: "32px",
+        }}>
           Somos Invictus
         </h1>
 
         {/* Separador */}
-        <div className="flex items-center justify-center gap-5 mb-10">
-          <div className="h-px w-20 bg-gradient-to-r from-transparent to-[#c8921a]/80" />
-          <span className="text-[#c8921a] text-xl">᛭</span>
-          <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#c8921a]/80" />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "20px", marginBottom: "32px" }}>
+          <div style={{ height: "1px", width: "80px", background: "linear-gradient(to right, transparent, rgba(200,146,26,0.8))" }} />
+          <span style={{ color: "#c8921a", fontSize: "1.2rem" }}>᛭</span>
+          <div style={{ height: "1px", width: "80px", background: "linear-gradient(to left, transparent, rgba(200,146,26,0.8))" }} />
         </div>
 
         {/* Subtítulo */}
-        <p
-          className="text-[#f0e6c8] mx-auto mb-6"
-          style={{
-            fontFamily: "var(--font-barlow)",
-            fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)",
-            letterSpacing: "0.05em",
-            maxWidth: "680px",
-            lineHeight: 1.6,
-            fontWeight: 500,
-          }}
-        >
+        <p style={{
+          fontFamily: "var(--font-barlow)",
+          fontSize: "clamp(1.1rem, 2.5vw, 1.45rem)",
+          fontWeight: 600,
+          color: "#f0e6c8",
+          textAlign: "center",
+          lineHeight: 1.6,
+          letterSpacing: "0.04em",
+          marginBottom: "20px",
+        }}>
           Una barbería acoplada a la elegancia de los hombres
         </p>
 
-        <p
-          className="text-[#b8a882]/60 mx-auto mb-20"
-          style={{
-            fontFamily: "var(--font-barlow)",
-            fontSize: "clamp(0.85rem, 1.5vw, 1rem)",
-            maxWidth: "520px",
-            lineHeight: 1.8,
-            letterSpacing: "0.02em",
-          }}
-        >
+        <p style={{
+          fontFamily: "var(--font-barlow)",
+          fontSize: "clamp(0.85rem, 1.5vw, 1rem)",
+          color: "rgba(184,168,138,0.55)",
+          textAlign: "center",
+          lineHeight: 1.8,
+          letterSpacing: "0.02em",
+          marginBottom: "72px",
+        }}>
           Donde cada corte es un ritual y cada cliente merece lo mejor.
         </p>
 
         {/* Línea divisora */}
-        <div className="h-px w-full mb-20"
-          style={{ background: "linear-gradient(to right, transparent, rgba(200,146,26,0.3) 30%, rgba(200,146,26,0.3) 70%, transparent)" }} />
+        <div style={{
+          height: "1px",
+          background: "linear-gradient(to right, transparent, rgba(200,146,26,0.3) 30%, rgba(200,146,26,0.3) 70%, transparent)",
+          marginBottom: "72px",
+        }} />
 
-        {/* Sección Staff */}
-        <p
-          className="text-[#c8921a] tracking-[0.7em] uppercase mb-4"
-          style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600 }}
-        >
+        {/* Sección Staff — eyebrow */}
+        <p style={{
+          fontFamily: "var(--font-barlow)",
+          fontSize: "0.75rem",
+          fontWeight: 600,
+          letterSpacing: "0.65em",
+          textTransform: "uppercase",
+          color: "#c8921a",
+          textAlign: "center",
+          marginBottom: "16px",
+        }}>
           — El Equipo —
         </p>
 
-        <h2
-          className="text-[#f5ead0] font-black mb-14"
-          style={{
-            fontFamily: "var(--font-cinzel-decorative)",
-            fontSize: "clamp(1.6rem, 4vw, 2.8rem)",
-            textShadow: "0 0 40px rgba(200,146,26,0.25)",
-          }}
-        >
+        {/* Sección Staff — título */}
+        <h2 style={{
+          fontFamily: "var(--font-cinzel-decorative)",
+          fontSize: "clamp(1.6rem, 4vw, 2.8rem)",
+          fontWeight: 900,
+          color: "#f5ead0",
+          textAlign: "center",
+          textShadow: "0 0 40px rgba(200,146,26,0.25)",
+          marginBottom: "56px",
+        }}>
           Maestros del Oficio
         </h2>
 
         {/* Cards de staff */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: "24px",
+        }}>
           {staff.map((miembro, i) => (
-            <div
-              key={i}
-              className="relative border border-[#5c3a1e]/40 p-8 flex flex-col items-center gap-5"
-              style={{
-                backgroundColor: "#0e0b07",
-                boxShadow: "0 0 30px rgba(200,146,26,0.04)",
-              }}
-            >
+            <div key={i} style={{
+              position: "relative",
+              border: "1px solid rgba(92,58,30,0.4)",
+              padding: "32px 24px",
+              backgroundColor: "#0e0b07",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "20px",
+              boxShadow: "0 0 30px rgba(200,146,26,0.04)",
+            }}>
               {/* Línea dorada superior */}
-              <div className="absolute top-0 left-0 right-0 h-[2px]"
-                style={{ background: "linear-gradient(to right, transparent, #c8921a 40%, #c8921a 60%, transparent)" }} />
+              <div style={{
+                position: "absolute", top: 0, left: 0, right: 0, height: "2px",
+                background: "linear-gradient(to right, transparent, #c8921a 40%, #c8921a 60%, transparent)",
+              }} />
 
               {/* Avatar placeholder */}
-              <div
-                className="w-20 h-20 border border-[#5c3a1e]/60 flex items-center justify-center"
-                style={{
-                  background: "linear-gradient(135deg, #1a1208, #2a1d0e)",
-                  fontSize: "1.8rem",
-                  color: "rgba(200,146,26,0.4)",
-                }}
-              >
+              <div style={{
+                width: "80px", height: "80px",
+                border: "1px solid rgba(92,58,30,0.6)",
+                background: "linear-gradient(135deg, #1a1208, #2a1d0e)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "1.8rem",
+                color: "rgba(200,146,26,0.4)",
+              }}>
                 {miembro.rune}
               </div>
 
               {/* Nombre placeholder */}
-              <div className="space-y-2 w-full">
-                <div
-                  className="h-4 mx-auto rounded-none"
-                  style={{
-                    width: "70%",
-                    background: "linear-gradient(to right, #2a1d0e, #3a2810, #2a1d0e)",
-                  }}
-                />
-                <div
-                  className="h-3 mx-auto rounded-none"
-                  style={{
-                    width: "50%",
-                    background: "linear-gradient(to right, #1e1508, #2a1d0e, #1e1508)",
-                  }}
-                />
+              <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+                <div style={{ width: "70%", height: "14px", background: "linear-gradient(to right, #2a1d0e, #3a2810, #2a1d0e)" }} />
+                <div style={{ width: "50%", height: "10px", background: "linear-gradient(to right, #1e1508, #2a1d0e, #1e1508)" }} />
               </div>
 
               {/* Cargo */}
-              <p
-                className="text-[#c8921a]/50 tracking-[0.3em] uppercase text-center"
-                style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem" }}
-              >
+              <p style={{
+                fontFamily: "var(--font-barlow)",
+                fontSize: "0.62rem",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "rgba(200,146,26,0.5)",
+                textAlign: "center",
+              }}>
                 {miembro.cargo}
               </p>
 
               {/* Bio placeholder */}
-              <div className="space-y-1.5 w-full">
+              <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "6px", alignItems: "center" }}>
                 {[90, 100, 80, 95, 60].map((w, j) => (
-                  <div key={j}
-                    className="h-2 rounded-none"
-                    style={{
-                      width: `${w}%`,
-                      background: "linear-gradient(to right, #1a1208, #221808, #1a1208)",
-                    }}
-                  />
+                  <div key={j} style={{
+                    width: `${w}%`, height: "7px",
+                    background: "linear-gradient(to right, #1a1208, #221808, #1a1208)",
+                  }} />
                 ))}
               </div>
             </div>
           ))}
         </div>
 
-        {/* Espacio final */}
-        <div className="mt-24" />
-
+        <div style={{ height: "80px" }} />
       </div>
     </div>
   );

@@ -259,7 +259,7 @@ export default function ReservarPage() {
   }
 
   return (
-    <div className="min-h-screen pt-24" style={{ backgroundColor: "#0f0d0a" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#0f0d0a", paddingTop: "100px" }}>
 
       {/* Indicador de pasos */}
       <div className="border-b border-[#5c3a1e]/30 px-6 py-6" style={{ backgroundColor: "#0f0d0a" }}>

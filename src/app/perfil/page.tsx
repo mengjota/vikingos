@@ -40,7 +40,7 @@ export default function PerfilPage() {
   const inicial = session!.name.charAt(0).toUpperCase();
 
   return (
-    <div className="min-h-screen relative overflow-hidden px-4 py-24" style={{ backgroundColor: "#080604" }}>
+    <div className="min-h-screen relative overflow-hidden px-4" style={{ backgroundColor: "#080604", paddingTop: "100px", paddingBottom: "80px" }}>
       {/* Fondo glow */}
       <div className="fixed inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse 60% 50% at 50% 20%, rgba(200,146,26,0.12) 0%, transparent 70%)" }} />

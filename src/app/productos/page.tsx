@@ -89,7 +89,7 @@ const categorias = [
 
 export default function ProductosPage() {
   return (
-    <div className="min-h-screen pt-24" style={{ backgroundColor: "#0f0d0a" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#0f0d0a", paddingTop: "100px" }}>
 
       <div className="max-w-5xl mx-auto px-6 py-16">
 

@@ -411,31 +411,69 @@ export default function ReservarPage() {
         {/* ── PASO 2: Barbero ── */}
         {paso === 2 && (
           <div>
-            <p className="text-[#b8a882]/60 text-center text-sm italic mb-10" style={{ fontFamily: "var(--font-im-fell)" }}>
+            <p className="text-[#b8a882]/70 text-center text-sm italic mb-10" style={{ fontFamily: "var(--font-im-fell)" }}>
               Elige tu maestro o deja que el destino decida.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-              {barberos.map((b) => (
-                <button
-                  key={b.id}
-                  onClick={() => setBarberoId(b.id)}
-                  className={`p-6 border text-center transition-all duration-300 ${
-                    barberoId === b.id
-                      ? "border-[#c8921a] bg-[#2d1f0e] shadow-[0_0_20px_rgba(200,146,26,0.2)]"
-                      : "border-[#5c3a1e]/50 hover:border-[#c8921a]/50 bg-[#1a1510]"
-                  }`}
-                >
-                  <span className={`text-4xl block mb-3 transition-all duration-300 ${barberoId === b.id ? "text-[#c8921a] drop-shadow-[0_0_8px_rgba(200,146,26,0.8)]" : "text-[#5c3a1e]"}`}>
-                    {b.rune}
-                  </span>
-                  <p className="text-[#f0e6c8] text-sm font-bold mb-1" style={{ fontFamily: "var(--font-cinzel)" }}>
-                    {b.name}
-                  </p>
-                  <p className="text-[#b8a882]/50 text-[10px] uppercase tracking-widest" style={{ fontFamily: "var(--font-cinzel)" }}>
-                    {b.specialty}
-                  </p>
-                </button>
-              ))}
+
+            <div className="relative">
+              {/* Luz ambiental detrás del grid */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] rounded-full pointer-events-none"
+                style={{ background: "radial-gradient(ellipse, rgba(200,146,26,0.07) 0%, transparent 70%)" }}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+                {barberos.map((b) => {
+                  const isSelected = barberoId === b.id;
+                  return (
+                    <button
+                      key={b.id}
+                      onClick={() => setBarberoId(b.id)}
+                      className={`service-card${isSelected ? " selected" : ""} p-6 border text-center`}
+                      style={{ backgroundColor: isSelected ? "#2a1c0c" : "#141209" }}
+                    >
+                      {/* Línea superior brillante */}
+                      <div className={`absolute top-0 left-0 right-0 h-px transition-all duration-500
+                        ${isSelected
+                          ? "bg-gradient-to-r from-transparent via-[#c8921a] to-transparent opacity-100"
+                          : "bg-gradient-to-r from-transparent via-[#c8921a]/30 to-transparent opacity-60"
+                        }`}
+                      />
+
+                      {/* Check */}
+                      {isSelected && (
+                        <div className="absolute top-3 right-3 w-6 h-6 bg-[#c8921a] flex items-center justify-center"
+                          style={{ boxShadow: "0 0 12px rgba(200,146,26,1), 0 0 24px rgba(200,146,26,0.5)" }}>
+                          <span className="text-[#0f0d0a] text-xs font-black">✓</span>
+                        </div>
+                      )}
+
+                      {/* Runa */}
+                      <span
+                        className={`icon-glow-idle text-5xl block mb-4 transition-all duration-300 ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]/55"}`}
+                        style={{ textShadow: isSelected ? "0 0 16px rgba(200,146,26,0.9), 0 0 32px rgba(200,146,26,0.4)" : "none" }}
+                      >
+                        {b.rune}
+                      </span>
+
+                      <p
+                        className={`text-sm font-bold mb-1 transition-colors duration-300 ${isSelected ? "text-[#e8b84b]" : "text-[#f0e6c8]"}`}
+                        style={{
+                          fontFamily: "var(--font-cinzel)",
+                          textShadow: isSelected ? "0 0 10px rgba(200,146,26,0.6)" : "none",
+                        }}
+                      >
+                        {b.name}
+                      </p>
+                      <p
+                        className={`text-[10px] uppercase tracking-widest transition-colors duration-300 ${isSelected ? "text-[#c8921a]/80" : "text-[#b8a882]/40"}`}
+                        style={{ fontFamily: "var(--font-cinzel)" }}
+                      >
+                        {b.specialty}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <div className="flex justify-between">
               <button onClick={() => setPaso(1)} className="border border-[#5c3a1e] text-[#b8a882] px-8 py-3 text-xs tracking-widest uppercase hover:border-[#c8921a]/50 transition-all" style={{ fontFamily: "var(--font-cinzel)" }}>

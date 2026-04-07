@@ -29,36 +29,9 @@ const staff = [
 
 export default function NosotrosPage() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#0f0d0a" }}>
+    <div className="min-h-screen pt-24" style={{ backgroundColor: "#0f0d0a" }}>
 
-      {/* Header */}
-      <div className="relative border-b border-[#5c3a1e]/40 px-6 py-8">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex flex-col leading-none">
-            <span className="text-[#c8921a] text-xl font-black tracking-[0.2em]" style={{ fontFamily: "var(--font-cinzel-decorative)" }}>
-              INVICTUS
-            </span>
-            <span className="text-[#b8a882] text-[9px] tracking-[0.4em] uppercase" style={{ fontFamily: "var(--font-barlow)" }}>
-              Barberia
-            </span>
-          </Link>
-          <h1 className="text-[#f0e6c8] text-lg tracking-[0.3em] uppercase" style={{ fontFamily: "var(--font-barlow)" }}>
-            Nosotros Invictus
-          </h1>
-          <Link
-            href="/"
-            className="text-[#b8a882]/50 hover:text-[#c8921a] text-[10px] tracking-widest uppercase transition-colors"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
-            ← Volver
-          </Link>
-        </div>
-      </div>
-
-      {/* Separador dorado */}
-      <div className="h-px bg-gradient-to-r from-transparent via-[#c8921a]/40 to-transparent" />
-
-      <div className="max-w-5xl mx-auto px-6 py-20">
+      <div className="max-w-5xl mx-auto px-6 py-16">
 
         {/* SECCIÓN: Por qué INVICTUS */}
         <div className="mb-28">

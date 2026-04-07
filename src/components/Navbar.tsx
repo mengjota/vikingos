@@ -26,17 +26,17 @@ export default function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
         {/* Logo */}
         <a href="#" className="flex flex-col leading-none">
           <span
-            className="text-[#c8921a] text-2xl font-black tracking-[0.2em] uppercase"
+            className="text-[#c8921a] text-3xl font-black tracking-[0.2em] uppercase"
             style={{ fontFamily: "var(--font-cinzel-decorative)" }}
           >
             INVICTUS
           </span>
           <span
-            className="text-[#b8a882] text-[9px] tracking-[0.5em] uppercase"
+            className="text-[#b8a882] text-[10px] tracking-[0.5em] uppercase"
             style={{ fontFamily: "var(--font-barlow)" }}
           >
             Barberia
@@ -49,7 +49,7 @@ export default function Navbar() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-[#b8a882] hover:text-[#c8921a] text-xs tracking-[0.3em] uppercase transition-colors duration-300"
+                className="text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors duration-300"
                 style={{ fontFamily: "var(--font-barlow)" }}
               >
                 {link.label}
@@ -62,17 +62,17 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           <a
             href="/login"
-            className="flex items-center gap-2 text-[#b8a882] hover:text-[#c8921a] text-xs tracking-[0.3em] uppercase transition-colors duration-300 px-3 py-3"
+            className="flex items-center gap-2 text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors duration-300 px-3 py-3"
             style={{ fontFamily: "var(--font-barlow)" }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m0 0l3-3m-3 3l3 3" />
             </svg>
             Iniciar Sesión
           </a>
           <a
             href="/reservar"
-            className="btn-glow border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-xs tracking-[0.3em] uppercase px-6 py-3 transition-colors duration-300"
+            className="btn-glow border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-sm tracking-[0.3em] uppercase px-6 py-3 transition-colors duration-300"
             style={{
               fontFamily: "var(--font-barlow)",
               boxShadow: "0 0 10px rgba(200,146,26,0.45), 0 0 24px rgba(200,146,26,0.15), 0 4px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(200,146,26,0.18)",
@@ -88,9 +88,9 @@ export default function Navbar() {
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Abrir menú"
         >
-          <span className={`block w-6 h-0.5 bg-current transition-transform duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
-          <span className={`block w-6 h-0.5 bg-current transition-opacity duration-300 ${menuOpen ? "opacity-0" : ""}`} />
-          <span className={`block w-6 h-0.5 bg-current transition-transform duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          <span className={`block w-7 h-0.5 bg-current transition-transform duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
+          <span className={`block w-7 h-0.5 bg-current transition-opacity duration-300 ${menuOpen ? "opacity-0" : ""}`} />
+          <span className={`block w-7 h-0.5 bg-current transition-transform duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
         </button>
       </div>
 
@@ -102,7 +102,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors"
+              className="text-[#b8a882] hover:text-[#c8921a] text-base tracking-[0.3em] uppercase transition-colors"
               style={{ fontFamily: "var(--font-barlow)" }}
             >
               {link.label}
@@ -111,10 +111,10 @@ export default function Navbar() {
           <a
             href="/login"
             onClick={() => setMenuOpen(false)}
-            className="flex items-center gap-2 text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors"
+            className="flex items-center gap-2 text-[#b8a882] hover:text-[#c8921a] text-base tracking-[0.3em] uppercase transition-colors"
             style={{ fontFamily: "var(--font-barlow)" }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m0 0l3-3m-3 3l3 3" />
             </svg>
             Iniciar Sesión
@@ -122,7 +122,7 @@ export default function Navbar() {
           <a
             href="/reservar"
             onClick={() => setMenuOpen(false)}
-            className="border border-[#c8921a] text-[#c8921a] text-xs tracking-[0.3em] uppercase px-6 py-3 text-center"
+            className="border border-[#c8921a] text-[#c8921a] text-sm tracking-[0.3em] uppercase px-6 py-3 text-center"
             style={{ fontFamily: "var(--font-barlow)" }}
           >
             Reservar Servicio

@@ -6,7 +6,7 @@ import { getSession, logout, type Session } from "@/lib/auth";
 
 const navLinks = [
   { label: "Nosotros Invictus", href: "/nosotros" },
-  { label: "Servicios", href: "#servicios" },
+  { label: "Servicios", href: "/servicios" },
   { label: "Productos", href: "/productos" },
 ];
 

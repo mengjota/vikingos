@@ -281,7 +281,7 @@ export default function ReservarPage() {
           letterSpacing: "0.04em",
           marginBottom: "24px",
         }}>
-          Reserva tu Cita
+          Ven y Vívete la Experiencia
         </h1>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "20px", marginBottom: "20px" }}>
           <div style={{ height: "1px", width: "80px", background: "linear-gradient(to right, transparent, rgba(200,146,26,0.8))" }} />
@@ -399,38 +399,8 @@ export default function ReservarPage() {
                       )}
 
                       {/* Ícono SVG con glow */}
-                      <div className={`icon-glow-idle mb-5 ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]/65"}`}>
+                      <div className={`icon-glow-idle ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]/65"}`}>
                         <s.Icon active={isSelected} />
-                      </div>
-
-                      <h3
-                        className={`text-sm font-bold mb-1 transition-colors duration-300 ${isSelected ? "text-[#e8b84b]" : "text-[#f0e6c8]"}`}
-                        style={{ fontFamily: "var(--font-oswald)" }}
-                      >
-                        {s.nombre}
-                      </h3>
-                      <p
-                        className="text-[#b8a882]/65 text-xs italic leading-relaxed mb-5"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        {s.descripcion}
-                      </p>
-                      <div className={`flex items-center justify-between pt-3 border-t transition-colors duration-300 ${isSelected ? "border-[#c8921a]/50" : "border-[#5c3a1e]/40"}`}>
-                        <span
-                          className={`font-black text-xl transition-all duration-300 ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]"}`}
-                          style={{
-                            fontFamily: "var(--font-cinzel-decorative)",
-                            textShadow: isSelected ? "0 0 12px rgba(200,146,26,0.8)" : "none",
-                          }}
-                        >
-                          {s.precio}
-                        </span>
-                        <span
-                          className="text-[#b8a882]/40 text-[9px] uppercase tracking-widest"
-                          style={{ fontFamily: "var(--font-barlow)" }}
-                        >
-                          {s.duracion}
-                        </span>
                       </div>
                     </button>
                   );

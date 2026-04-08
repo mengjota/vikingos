@@ -231,3 +231,33 @@ export function deleteEmpleado(id: string) {
   const staff = getStaff().filter((e) => e.id !== id);
   localStorage.setItem("inv_staff", JSON.stringify(staff));
 }
+
+// ── Pausas / Descansos ───────────────────────────────────
+export interface Pausa {
+  id: string;
+  barbero: string;
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
+  motivo: string;
+}
+
+export function getPausas(): Pausa[] {
+  if (typeof window === "undefined") return [];
+  const raw = localStorage.getItem("inv_pausas");
+  if (!raw) return [];
+  try { return JSON.parse(raw); } catch { return []; }
+}
+
+export function savePausa(p: Omit<Pausa, "id">): Pausa {
+  const pausas = getPausas();
+  const nueva: Pausa = { ...p, id: Date.now().toString() };
+  pausas.push(nueva);
+  localStorage.setItem("inv_pausas", JSON.stringify(pausas));
+  return nueva;
+}
+
+export function deletePausa(id: string) {
+  const pausas = getPausas().filter((p) => p.id !== id);
+  localStorage.setItem("inv_pausas", JSON.stringify(pausas));
+}

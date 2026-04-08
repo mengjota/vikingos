@@ -216,40 +216,38 @@ export default function ReservarPage() {
   /* Pantalla de confirmación */
   if (confirmado) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "#0f0d0a" }}>
-        <div className="text-center max-w-lg">
-          <div className="animate-crown text-[#c8921a] mx-auto mb-6 w-16 h-16">
+      <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "#080604" }}>
+        <div className="fixed inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(200,146,26,0.15) 0%, transparent 65%)" }} />
+        <div style={{ textAlign: "center", maxWidth: "560px", width: "100%", position: "relative" }}>
+          <div style={{ color: "#c8921a", width: "72px", height: "72px", margin: "0 auto 24px" }}>
             <IconCrown active={true} />
           </div>
-          <h2 className="text-[#f0e6c8] text-4xl font-black mb-4" style={{ fontFamily: "var(--font-cinzel-decorative)" }}>
+          <h2 style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "clamp(2rem, 6vw, 3.5rem)", fontWeight: 900, color: "#f5ead0", textShadow: "0 0 60px rgba(200,146,26,0.5)", marginBottom: "16px" }}>
             ¡Pacto Sellado!
           </h2>
-          <p className="text-[#b8a882] italic text-lg mb-8" style={{ fontFamily: "var(--font-lato)" }}>
-            Tu silla en Invictus Barberia te espera.
+          <p style={{ fontFamily: "var(--font-barlow)", fontSize: "1.1rem", color: "rgba(184,168,138,0.7)", marginBottom: "36px", fontStyle: "italic" }}>
+            Tu silla en Invictus Barbería te espera.
           </p>
-          <div className="border border-[#c8921a]/40 p-8 text-left space-y-4 mb-8" style={{ backgroundColor: "#1a1510" }}>
-            <Row label="Servicio"  value={`${servicio?.nombre} — ${servicio?.precio}`} />
-            <Row label="Maestro"   value={barbero?.name ?? ""} />
-            <Row label="Fecha"     value={`${fecha} a las ${hora}`} />
-            <Row label="Nombre"    value={nombre} />
-            <Row label="Teléfono"  value={telefono} />
+          <div style={{ border: "1px solid rgba(200,146,26,0.4)", padding: "32px", textAlign: "left", backgroundColor: "#0e0b07", marginBottom: "32px", position: "relative" }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, #c8921a 30%, #e8b84b 50%, #c8921a 70%, transparent)" }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <Row label="Servicio"  value={`${servicio?.nombre} — ${servicio?.precio}`} />
+              <Row label="Maestro"   value={barbero?.name ?? ""} />
+              <Row label="Fecha"     value={`${fecha} a las ${hora}`} />
+              <Row label="Nombre"    value={nombre} />
+              <Row label="Teléfono"  value={telefono} />
+            </div>
           </div>
-          <p className="text-[#b8a882]/40 text-xs mb-6" style={{ fontFamily: "var(--font-barlow)" }}>
+          <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", color: "rgba(184,168,138,0.35)", marginBottom: "28px", letterSpacing: "0.1em" }}>
             Te contactaremos para confirmar tu cita.
           </p>
-          <div className="flex gap-4 justify-center">
-            <button
-              onClick={() => { setConfirmado(false); setPaso(1); setServicioId(null); setBarberoId(null); setFecha(""); setHora(""); setNombre(""); setTelefono(""); }}
-              className="btn-glow border border-[#c8921a]/50 text-[#c8921a] text-xs tracking-widest uppercase px-8 py-3 hover:bg-[#c8921a] hover:text-[#0f0d0a] transition-all"
-              style={{ fontFamily: "var(--font-barlow)" }}
-            >
+          <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+            <button onClick={() => { setConfirmado(false); setPaso(1); setServicioId(null); setBarberoId(null); setFecha(""); setHora(""); setNombre(""); setTelefono(""); }}
+              style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 700, color: "#c8921a", border: "1px solid rgba(200,146,26,0.5)", backgroundColor: "transparent", padding: "14px 28px", cursor: "pointer" }}>
               Nueva Reserva
             </button>
-            <Link
-              href="/perfil"
-              className="border border-[#c8921a]/50 text-[#c8921a] text-xs tracking-widest uppercase px-8 py-3 hover:bg-[#c8921a] hover:text-[#0f0d0a] transition-all"
-              style={{ fontFamily: "var(--font-barlow)" }}
-            >
+            <Link href="/perfil"
+              style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 700, color: "#080604", background: "linear-gradient(135deg, #a06010, #c8921a, #f0c040, #c8921a, #a06010)", padding: "14px 28px", display: "inline-block", boxShadow: "0 0 30px rgba(200,146,26,0.4)" }}>
               Ver mis citas
             </Link>
           </div>
@@ -258,35 +256,70 @@ export default function ReservarPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen" style={{ backgroundColor: "#0f0d0a", paddingTop: "100px" }}>
+  const stepTitles = ["", "Elige tu Ritual", "Elige tu Maestro", "Sella el Pacto"];
+  const stepSubs   = ["", "¿Qué servicio deseas recibir hoy?", "¿Con quién quieres vivir la experiencia?", "Elige fecha, hora y confirma tu cita."];
 
-      {/* Indicador de pasos */}
-      <div className="border-b border-[#5c3a1e]/30 px-6 py-6" style={{ backgroundColor: "#0f0d0a" }}>
-        <div style={{ maxWidth: "900px", width: "100%", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: "#080604", paddingTop: "100px" }}>
+
+      {/* Glow fondo */}
+      <div className="fixed inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 30%, rgba(200,146,26,0.1) 0%, transparent 65%)" }} />
+
+      {/* ── HERO SECTION ── */}
+      <div style={{ textAlign: "center", padding: "48px 24px 56px", position: "relative" }}>
+        <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.7em", textTransform: "uppercase", color: "#c8921a", marginBottom: "20px" }}>
+          — Tu Experiencia Comienza Aquí —
+        </p>
+        <h1 style={{
+          fontFamily: "var(--font-cinzel-decorative)",
+          fontSize: "clamp(2.4rem, 7vw, 5.5rem)",
+          fontWeight: 900,
+          color: "#f5ead0",
+          textAlign: "center",
+          lineHeight: 1.1,
+          textShadow: "0 0 80px rgba(200,146,26,0.55), 0 0 30px rgba(200,146,26,0.25), 0 3px 6px rgba(0,0,0,0.9)",
+          letterSpacing: "0.04em",
+          marginBottom: "24px",
+        }}>
+          Reserva tu Cita
+        </h1>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "20px", marginBottom: "20px" }}>
+          <div style={{ height: "1px", width: "80px", background: "linear-gradient(to right, transparent, rgba(200,146,26,0.8))" }} />
+          <span style={{ color: "#c8921a", fontSize: "1.3rem" }}>᛭</span>
+          <div style={{ height: "1px", width: "80px", background: "linear-gradient(to left, transparent, rgba(200,146,26,0.8))" }} />
+        </div>
+        <p style={{ fontFamily: "var(--font-barlow)", fontSize: "clamp(0.9rem, 2vw, 1.1rem)", color: "rgba(184,168,138,0.6)", maxWidth: "480px", margin: "0 auto", lineHeight: 1.8 }}>
+          Tres pasos. Una experiencia que no olvidarás.
+        </p>
+      </div>
+
+      {/* ── PASOS INDICATOR ── */}
+      <div style={{ borderTop: "1px solid rgba(92,58,30,0.3)", borderBottom: "1px solid rgba(92,58,30,0.3)", padding: "24px 24px", backgroundColor: "rgba(14,11,7,0.8)" }}>
+        <div style={{ maxWidth: "700px", width: "100%", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
           {[
-            { num: 1, label: "Elige Servicio" },
-            { num: 2, label: "Elige Maestro" },
-            { num: 3, label: "Fecha & Confirmar" },
+            { num: 1, label: "Servicio" },
+            { num: 2, label: "Maestro" },
+            { num: 3, label: "Confirmar" },
           ].map((p, i) => (
-            <div key={p.num} className="flex items-center">
-              <div className="flex flex-col items-center gap-1">
-                <div
-                  className={`w-9 h-9 flex items-center justify-center border-2 text-sm font-bold transition-all duration-300 ${
-                    paso === p.num
-                      ? "border-[#c8921a] bg-[#c8921a] text-[#0f0d0a] shadow-[0_0_14px_rgba(200,146,26,0.6)]"
-                      : paso > p.num
-                      ? "border-[#c8921a] text-[#c8921a]"
-                      : "border-[#5c3a1e] text-[#5c3a1e]"
-                  }`}
-                  style={{ fontFamily: "var(--font-barlow)" }}
-                >
+            <div key={p.num} style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+                <div style={{
+                  width: "44px", height: "44px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  border: paso === p.num ? "2px solid #c8921a" : paso > p.num ? "2px solid rgba(200,146,26,0.6)" : "2px solid rgba(92,58,30,0.5)",
+                  backgroundColor: paso === p.num ? "#c8921a" : "transparent",
+                  color: paso === p.num ? "#080604" : paso > p.num ? "#c8921a" : "rgba(92,58,30,0.7)",
+                  fontFamily: "var(--font-barlow)", fontSize: "1rem", fontWeight: 800,
+                  boxShadow: paso === p.num ? "0 0 20px rgba(200,146,26,0.7), 0 0 40px rgba(200,146,26,0.3)" : "none",
+                  transition: "all 0.4s",
+                }}>
                   {p.num}
                 </div>
-                <span
-                  className={`text-[9px] tracking-widest uppercase whitespace-nowrap ${paso >= p.num ? "text-[#c8921a]" : "text-[#5c3a1e]"}`}
-                  style={{ fontFamily: "var(--font-barlow)" }}
-                >
+                <span style={{
+                  fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em",
+                  textTransform: "uppercase", whiteSpace: "nowrap",
+                  color: paso >= p.num ? "#c8921a" : "rgba(92,58,30,0.6)",
+                }}>
                   {p.label}
                 </span>
               </div>
@@ -299,14 +332,29 @@ export default function ReservarPage() {
       </div>
 
       {/* Contenido */}
-      <div style={{ maxWidth: "900px", width: "100%", margin: "0 auto", padding: "48px 24px" }}>
+      <div style={{ maxWidth: "960px", width: "100%", margin: "0 auto", padding: "56px 24px 80px" }}>
+
+        {/* Título dramático del paso actual */}
+        <div style={{ textAlign: "center", marginBottom: "48px" }}>
+          <h2 style={{
+            fontFamily: "var(--font-cinzel-decorative)",
+            fontSize: "clamp(1.6rem, 4.5vw, 3rem)",
+            fontWeight: 900,
+            color: "#f5ead0",
+            textShadow: "0 0 50px rgba(200,146,26,0.4), 0 2px 4px rgba(0,0,0,0.8)",
+            marginBottom: "12px",
+            letterSpacing: "0.04em",
+          }}>
+            {stepTitles[paso]}
+          </h2>
+          <p style={{ fontFamily: "var(--font-barlow)", fontSize: "clamp(0.85rem, 1.8vw, 1rem)", color: "rgba(184,168,138,0.5)", letterSpacing: "0.1em" }}>
+            {stepSubs[paso]}
+          </p>
+        </div>
 
         {/* ── PASO 1: Servicios ── */}
         {paso === 1 && (
           <div>
-            <p className="text-[#b8a882]/70 text-center text-sm italic mb-10" style={{ fontFamily: "var(--font-lato)" }}>
-              Elige el rito que deseas recibir hoy.
-            </p>
 
             {/* Luz ambiental detrás del grid */}
             <div className="relative">
@@ -390,12 +438,19 @@ export default function ReservarPage() {
               </div>
             </div>
 
-            <div className="flex justify-end">
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <button
                 onClick={() => servicioId && setPaso(2)}
                 disabled={!servicioId}
-                className="btn-glow bg-[#c8921a] text-[#0f0d0a] px-12 py-4 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b]"
-                style={{ fontFamily: "var(--font-barlow)" }}
+                style={{
+                  fontFamily: "var(--font-barlow)", fontSize: "0.85rem", fontWeight: 800,
+                  letterSpacing: "0.4em", textTransform: "uppercase",
+                  padding: "18px 48px", border: "none", cursor: !servicioId ? "not-allowed" : "pointer",
+                  background: !servicioId ? "rgba(92,58,30,0.4)" : "linear-gradient(135deg, #a06010, #c8921a, #f0c040, #c8921a, #a06010)",
+                  color: !servicioId ? "rgba(184,168,138,0.3)" : "#080604",
+                  boxShadow: !servicioId ? "none" : "0 0 40px rgba(200,146,26,0.5), 0 0 80px rgba(200,146,26,0.2)",
+                  transition: "all 0.3s",
+                }}
               >
                 Siguiente →
               </button>
@@ -470,15 +525,22 @@ export default function ReservarPage() {
                 })}
               </div>
             </div>
-            <div className="flex justify-between">
-              <button onClick={() => setPaso(1)} className="border border-[#5c3a1e] text-[#b8a882] px-8 py-3 text-xs tracking-widest uppercase hover:border-[#c8921a]/50 transition-all" style={{ fontFamily: "var(--font-barlow)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+              <button onClick={() => setPaso(1)}
+                style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.35em", textTransform: "uppercase", padding: "16px 32px", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.5)", color: "rgba(184,168,138,0.6)", cursor: "pointer" }}>
                 ← Atrás
               </button>
               <button
                 onClick={() => barberoId !== null && setPaso(3)}
                 disabled={barberoId === null}
-                className="btn-glow bg-[#c8921a] text-[#0f0d0a] px-12 py-4 text-xs tracking-widest uppercase font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e8b84b]"
-                style={{ fontFamily: "var(--font-barlow)" }}
+                style={{
+                  fontFamily: "var(--font-barlow)", fontSize: "0.85rem", fontWeight: 800,
+                  letterSpacing: "0.4em", textTransform: "uppercase",
+                  padding: "18px 48px", border: "none", cursor: barberoId === null ? "not-allowed" : "pointer",
+                  background: barberoId === null ? "rgba(92,58,30,0.4)" : "linear-gradient(135deg, #a06010, #c8921a, #f0c040, #c8921a, #a06010)",
+                  color: barberoId === null ? "rgba(184,168,138,0.3)" : "#080604",
+                  boxShadow: barberoId === null ? "none" : "0 0 40px rgba(200,146,26,0.5), 0 0 80px rgba(200,146,26,0.2)",
+                }}
               >
                 Siguiente →
               </button>
@@ -637,38 +699,29 @@ export default function ReservarPage() {
               Sin registro. Sin contraseña. Solo tu nombre y número.
             </p>
 
-            <div className="flex justify-between items-center">
-              <button
-                onClick={() => setPaso(2)}
-                className="border border-[#5c3a1e] text-[#b8a882] px-8 py-3 text-xs tracking-widest uppercase hover:border-[#c8921a]/50 hover:text-[#c8921a] transition-all duration-300"
-                style={{ fontFamily: "var(--font-barlow)" }}
-              >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+              <button onClick={() => setPaso(2)}
+                style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.35em", textTransform: "uppercase", padding: "16px 32px", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.5)", color: "rgba(184,168,138,0.6)", cursor: "pointer" }}>
                 ← Atrás
               </button>
               <button
                 onClick={() => {
-  if (fecha && hora && nombre && telefono) {
-    if (sessionEmail && servicio && barbero) {
-      saveReservation(sessionEmail, {
-        servicio: servicio.nombre,
-        precio: servicio.precio,
-        barbero: barbero.name,
-        fecha,
-        hora,
-      });
-    }
-    setConfirmado(true);
-  }
-}}
+                  if (fecha && hora && nombre && telefono) {
+                    if (sessionEmail && servicio && barbero) {
+                      saveReservation(sessionEmail, { servicio: servicio.nombre, precio: servicio.precio, barbero: barbero.name, fecha, hora });
+                    }
+                    setConfirmado(true);
+                  }
+                }}
                 disabled={!fecha || !hora || !nombre || !telefono}
-                className="btn-glow relative px-14 py-4 text-xs tracking-[0.3em] uppercase font-bold disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-300"
                 style={{
-                  fontFamily: "var(--font-barlow)",
-                  backgroundColor: (!fecha || !hora || !nombre || !telefono) ? "#5c3a1e" : "#c8921a",
-                  color: (!fecha || !hora || !nombre || !telefono) ? "#b8a882" : "#0f0d0a",
-                  boxShadow: (!fecha || !hora || !nombre || !telefono)
-                    ? "none"
-                    : "0 0 28px rgba(200,146,26,0.7), 0 0 60px rgba(200,146,26,0.3), inset 0 0 20px rgba(255,220,100,0.15)",
+                  fontFamily: "var(--font-barlow)", fontSize: "0.9rem", fontWeight: 900,
+                  letterSpacing: "0.4em", textTransform: "uppercase",
+                  padding: "20px 52px", border: "none",
+                  cursor: (!fecha || !hora || !nombre || !telefono) ? "not-allowed" : "pointer",
+                  background: (!fecha || !hora || !nombre || !telefono) ? "rgba(92,58,30,0.35)" : "linear-gradient(135deg, #a06010, #c8921a, #f0c040, #c8921a, #a06010)",
+                  color: (!fecha || !hora || !nombre || !telefono) ? "rgba(184,168,138,0.25)" : "#080604",
+                  boxShadow: (!fecha || !hora || !nombre || !telefono) ? "none" : "0 0 50px rgba(200,146,26,0.6), 0 0 100px rgba(200,146,26,0.25), 0 8px 30px rgba(0,0,0,0.6)",
                 }}
               >
                 Sellar el Pacto ᚢ

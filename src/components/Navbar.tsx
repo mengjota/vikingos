@@ -43,7 +43,10 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
     >
       <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="flex flex-col leading-none">
+        <a href="/"
+          className="flex flex-col leading-none transition-all duration-500"
+          style={{ opacity: transparentOnTop && !scrolled ? 0 : 1, pointerEvents: transparentOnTop && !scrolled ? "none" : "auto" }}
+        >
           <span
             className="text-[#c8921a] text-3xl font-black tracking-[0.2em] uppercase"
             style={{ fontFamily: "var(--font-cinzel-decorative)" }}

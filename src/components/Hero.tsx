@@ -3,120 +3,6 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 
-/* ── Icono Tijeras Realistas ───────────────────────────── */
-function IconScissors() {
-  return (
-    <svg width="64" height="64" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Hoja superior */}
-      <g className="scissor-top" style={{ transformOrigin: "30px 30px" }}>
-        {/* Aro del dedo — exterior */}
-        <circle cx="10" cy="13" r="8"  stroke="#c8921a" strokeWidth="2.5" fill="rgba(200,146,26,0.08)" />
-        {/* Aro del dedo — interior hueco */}
-        <circle cx="10" cy="13" r="4"  stroke="#c8921a" strokeWidth="1.2" fill="rgba(200,146,26,0.15)" />
-        {/* Reflejo del aro (3D) */}
-        <path d="M5 9 Q7 6 11 7" stroke="rgba(255,220,100,0.5)" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
-        {/* Mango (shank) hacia el pivote */}
-        <path d="M17 15 L30 28" stroke="#c8921a" strokeWidth="3.5" strokeLinecap="round"/>
-        {/* Sombra del mango (3D) */}
-        <path d="M18 16 L31 29" stroke="rgba(0,0,0,0.4)" strokeWidth="2" strokeLinecap="round"/>
-        {/* Hoja (blade) hacia la punta */}
-        <path d="M30 28 L56 10" stroke="#c8921a" strokeWidth="2" strokeLinecap="round"/>
-        {/* Filo de la hoja (highlight) */}
-        <path d="M30 28 L56 12" stroke="rgba(255,220,100,0.4)" strokeWidth="0.8" strokeLinecap="round"/>
-      </g>
-
-      {/* Hoja inferior */}
-      <g className="scissor-bottom" style={{ transformOrigin: "30px 30px" }}>
-        {/* Aro del dedo — exterior */}
-        <circle cx="10" cy="47" r="8"  stroke="#c8921a" strokeWidth="2.5" fill="rgba(200,146,26,0.08)" />
-        {/* Aro del dedo — interior */}
-        <circle cx="10" cy="47" r="4"  stroke="#c8921a" strokeWidth="1.2" fill="rgba(200,146,26,0.15)" />
-        {/* Reflejo */}
-        <path d="M5 43 Q7 40 11 41" stroke="rgba(255,220,100,0.5)" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
-        {/* Mango */}
-        <path d="M17 45 L30 32" stroke="#c8921a" strokeWidth="3.5" strokeLinecap="round"/>
-        {/* Sombra mango */}
-        <path d="M18 46 L31 33" stroke="rgba(0,0,0,0.4)" strokeWidth="2" strokeLinecap="round"/>
-        {/* Hoja */}
-        <path d="M30 32 L56 50" stroke="#c8921a" strokeWidth="2" strokeLinecap="round"/>
-        {/* Filo highlight */}
-        <path d="M30 32 L56 48" stroke="rgba(255,220,100,0.4)" strokeWidth="0.8" strokeLinecap="round"/>
-      </g>
-
-      {/* Tornillo pivote */}
-      <circle cx="30" cy="30" r="4.5" fill="#c8921a"/>
-      <circle cx="30" cy="30" r="2.5" fill="#0f0d0a"/>
-      <circle cx="30" cy="30" r="1"   fill="#c8921a" opacity="0.6"/>
-      {/* Reflejo del tornillo */}
-      <circle cx="28.5" cy="28.5" r="1" fill="rgba(255,220,100,0.6)"/>
-    </svg>
-  );
-}
-
-/* ── Máquina de cortar pelo profesional (estilo Wahl/Andis) ─ */
-function IconClippers() {
-  return (
-    <svg width="52" height="72" viewBox="0 0 52 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-
-      {/* ── Cuerpo ergonómico ── */}
-      {/* Sombra 3D offset */}
-      <path d="M11 6 Q11 3 26 3 Q41 3 41 6 L43 50 Q43 55 26 55 Q9 55 9 50 Z"
-        fill="rgba(0,0,0,0.55)" transform="translate(2,2)"/>
-      {/* Cuerpo principal - forma ergonómica */}
-      <path d="M11 6 Q11 3 26 3 Q41 3 41 6 L43 50 Q43 55 26 55 Q9 55 9 50 Z"
-        fill="#1a1209" stroke="#c8921a" strokeWidth="2"/>
-      {/* Highlight superior (luz que viene de arriba) */}
-      <path d="M12 6 Q26 4 40 6 L40 14 Q26 12 12 14 Z"
-        fill="rgba(200,146,26,0.12)"/>
-      <path d="M13 7 Q26 5 39 7" stroke="rgba(255,220,100,0.4)" strokeWidth="1.2" strokeLinecap="round" fill="none"/>
-
-      {/* ── Borde lateral derecho (arista 3D) ── */}
-      <path d="M41 8 L43 50 Q43 54 41 55" stroke="rgba(200,146,26,0.3)" strokeWidth="1" fill="none"/>
-
-      {/* ── Grip lines (textura agarre) ── */}
-      <line x1="14" y1="34" x2="38" y2="34" stroke="rgba(200,146,26,0.18)" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="14" y1="38" x2="38" y2="38" stroke="rgba(200,146,26,0.13)" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="14" y1="42" x2="38" y2="42" stroke="rgba(200,146,26,0.08)" strokeWidth="1.5" strokeLinecap="round"/>
-
-      {/* ── Switch de encendido (lateral) ── */}
-      <rect x="8" y="22" width="4" height="14" rx="2" fill="#c8921a" opacity="0.9"/>
-      <rect x="8" y="22" width="4" height="7"  rx="2" fill="rgba(255,220,100,0.6)"/>
-
-      {/* ── Botón power (frente) ── */}
-      <rect x="20" y="12" width="12" height="16" rx="4" fill="rgba(0,0,0,0.3)" stroke="rgba(200,146,26,0.4)" strokeWidth="1.2"/>
-      {/* Símbolo power */}
-      <circle cx="26" cy="18" r="4.5" stroke="#c8921a" strokeWidth="1.5" fill="none"/>
-      <line   x1="26" y1="13.5" x2="26" y2="18" stroke="#c8921a" strokeWidth="1.8" strokeLinecap="round"/>
-      <circle cx="26" cy="18" r="1.5" fill="#c8921a" opacity="0.5"/>
-
-      {/* ── LED indicador (verde/dorado) ── */}
-      <circle cx="36" cy="14" r="2.8" fill="rgba(0,0,0,0.4)"/>
-      <circle cx="36" cy="14" r="2"   fill="#c8921a"/>
-      <circle cx="35.2" cy="13.2" r="0.8" fill="rgba(255,240,180,0.9)"/>
-
-      {/* ── Cable (sale de la parte superior) ── */}
-      <path d="M26 3 Q26 0 26 0" stroke="#c8921a" strokeWidth="2.5" strokeLinecap="round"/>
-
-      {/* ── Ensamble de la cuchilla ── */}
-      {/* Housing base */}
-      <rect x="7" y="55" width="38" height="7" rx="2" fill="#c8921a"/>
-      <rect x="7" y="55" width="38" height="3.5" rx="2" fill="rgba(255,220,100,0.25)"/>
-      {/* Línea divisoria cuchilla fija / móvil */}
-      <line x1="9" y1="59" x2="43" y2="59" stroke="rgba(0,0,0,0.5)" strokeWidth="1"/>
-
-      {/* Dientes de la cuchilla (finos y elegantes) */}
-      <g className="icon-blade">
-        {[9, 13, 17, 21, 25, 29, 33, 37, 41].map((x, i) => (
-          <g key={i}>
-            <rect x={x}   y={62} width={2.5} height={8} rx={1.2} fill="#c8921a"/>
-            <rect x={x}   y={62} width={1.2} height={8} rx={0.8} fill="rgba(255,220,100,0.5)"/>
-          </g>
-        ))}
-      </g>
-    </svg>
-  );
-}
-
 /* ── Partículas decorativas ────────────────────────────── */
 const PARTICLES = [
   { left: "8%",  delay: "0s",   duration: "5s"  },
@@ -221,17 +107,9 @@ export default function Hero() {
           <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#c8921a]/70" />
         </div>
 
-        {/* Etiqueta BARBERÍA */}
-        <p
-          className="hero-e2 text-[#c8921a] text-[11px] tracking-[0.65em] uppercase mb-5"
-          style={{ fontFamily: "var(--font-barlow)" }}
-        >
-          Barbería
-        </p>
-
         {/* Título INVICTUS */}
         <h1
-          className="hero-e3 text-[#f0e6c8] text-7xl md:text-[9rem] font-black leading-none mb-6 tracking-tight"
+          className="hero-e3 text-[#f0e6c8] text-7xl md:text-[9rem] font-black leading-none mb-4 tracking-tight"
           style={{
             fontFamily: "var(--font-cinzel-decorative)",
             textShadow: "0 0 60px rgba(200,146,26,0.15)",
@@ -239,6 +117,14 @@ export default function Hero() {
         >
           INVICTUS
         </h1>
+
+        {/* Etiqueta BARBERÍA */}
+        <p
+          className="hero-e2 text-[#c8921a] text-[11px] tracking-[0.65em] uppercase mb-5"
+          style={{ fontFamily: "var(--font-barlow)" }}
+        >
+          Barbería
+        </p>
 
         {/* Lema */}
         <p
@@ -256,63 +142,31 @@ export default function Hero() {
           <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#c8921a]/60" />
         </div>
 
-        {/* ── BOTONES ROW 1 ── */}
-        <div className="hero-e6 flex flex-col sm:flex-row items-center justify-center gap-6">
-
-          {/* Botón 1: Solo iconos 3D → Reservar */}
+        {/* ── Botón RESERVA CON NOSOTROS ── */}
+        <div className="hero-e6 flex justify-center">
           <Link
             href="/reservar"
-            className="btn-tools group relative overflow-hidden flex items-center gap-6 px-12 py-6"
+            className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-10 sm:px-16 py-5 sm:py-6 w-full sm:w-auto"
             style={{
-              background: "linear-gradient(145deg, #d9a020 0%, #c8921a 50%, #a87215 100%)",
-              boxShadow: "0 6px 0 rgba(80,40,0,0.9), 0 0 25px rgba(200,146,26,0.5), 0 0 55px rgba(200,146,26,0.2)",
+              background: "linear-gradient(135deg, #a06010 0%, #c8921a 35%, #f0c040 60%, #c8921a 80%, #a06010 100%)",
+              boxShadow: "0 0 35px rgba(200,146,26,0.55), 0 0 70px rgba(200,146,26,0.2), 0 6px 0 rgba(60,30,0,0.8)",
+              fontFamily: "var(--font-barlow)",
+              fontSize: "clamp(0.85rem, 2vw, 1rem)",
+              fontWeight: 800,
+              letterSpacing: "0.45em",
+              textTransform: "uppercase",
               color: "#0f0d0a",
             }}
           >
-            {/* Shimmer sweep */}
-            <span
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              style={{ background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%)" }}
-            />
-            <span className="relative z-10 scissors-float"><IconScissors /></span>
-            <span className="relative z-10 clippers-float"><IconClippers /></span>
-          </Link>
-
-          {/* Botón 2: INVICTUS → Nosotros (fondo transparente) */}
-          <Link
-            href="/nosotros"
-            className="btn-invictus relative flex items-center justify-center px-10 py-5 border-2 border-[#c8921a]"
-            style={{
-              background: "transparent",
-              fontFamily: "var(--font-cinzel-decorative)",
-              color: "#f0e6c8",
-              fontSize: "1rem",
-              letterSpacing: "0.35em",
-            }}
-          >
+            {/* Shimmer */}
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+              style={{ background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%)" }} />
             {/* Esquinas decorativas */}
-            <span className="absolute top-0 left-0   w-3 h-3 border-t-2 border-l-2 border-[#c8921a]" />
-            <span className="absolute top-0 right-0  w-3 h-3 border-t-2 border-r-2 border-[#c8921a]" />
-            <span className="absolute bottom-0 left-0  w-3 h-3 border-b-2 border-l-2 border-[#c8921a]" />
-            <span className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#c8921a]" />
-            INVICTUS
-          </Link>
-
-        </div>
-
-        {/* ── Iniciar Sesión (centrado debajo) ── */}
-        <div className="hero-e6 mt-6 flex justify-center">
-          <Link
-            href="/login"
-            className="group flex items-center gap-2 px-8 py-3 border border-[#c8921a]/40 text-[#b8a882]/70 text-[10px] tracking-[0.4em] uppercase hover:border-[#c8921a] hover:text-[#c8921a] transition-all duration-300"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
-            {/* Icono usuario */}
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-            </svg>
-            Iniciar Sesión
+            <span className="absolute top-0 left-0  w-3 h-3 border-t-2 border-l-2 border-[#0f0d0a]/30" />
+            <span className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#0f0d0a]/30" />
+            <span className="absolute bottom-0 left-0  w-3 h-3 border-b-2 border-l-2 border-[#0f0d0a]/30" />
+            <span className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#0f0d0a]/30" />
+            <span className="relative z-10">Reserva con Nosotros</span>
           </Link>
         </div>
       </div>

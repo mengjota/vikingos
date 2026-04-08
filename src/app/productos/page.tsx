@@ -1,3 +1,7 @@
+"use client";
+
+import type { MouseEvent } from "react";
+
 const categorias = [
   {
     id: "cuidado-barba",
@@ -142,11 +146,11 @@ export default function ProductosPage() {
                         border: "1px solid rgba(200,146,26,0.35)",
                         cursor: "pointer", transition: "all 0.25s",
                       }}
-                        onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        onMouseEnter={(e: MouseEvent<HTMLButtonElement>) => {
                           e.currentTarget.style.backgroundColor = "#c8921a";
                           e.currentTarget.style.color = "#080604";
                         }}
-                        onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        onMouseLeave={(e: MouseEvent<HTMLButtonElement>) => {
                           e.currentTarget.style.backgroundColor = "transparent";
                           e.currentTarget.style.color = "#c8921a";
                         }}

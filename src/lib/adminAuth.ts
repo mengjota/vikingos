@@ -31,6 +31,34 @@ export function getAllReservations(): Reservation[] {
   try { return JSON.parse(raw); } catch { return []; }
 }
 
+export function createAdminReservation(data: {
+  clienteNombre: string;
+  clienteTelefono: string;
+  servicio: string;
+  precio: string;
+  barbero: string;
+  fecha: string;
+  hora: string;
+}): Reservation {
+  if (typeof window === "undefined") throw new Error("SSR");
+  const nueva: Reservation = {
+    id: Date.now().toString(),
+    servicio: data.servicio,
+    precio: data.precio,
+    barbero: data.barbero,
+    fecha: data.fecha,
+    hora: data.hora,
+    creadaEl: new Date().toLocaleDateString("es-EC"),
+    clienteEmail: data.clienteTelefono ? `tel:${data.clienteTelefono}` : "admin-walk-in",
+    clienteNombre: data.clienteNombre,
+    estado: "pendiente",
+  };
+  const reservas = getAllReservations();
+  reservas.unshift(nueva);
+  localStorage.setItem("inv_reservas_global", JSON.stringify(reservas));
+  return nueva;
+}
+
 export function updateReservationEstado(
   id: string,
   estado: "pendiente" | "completada" | "cancelada",

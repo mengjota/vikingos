@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { getSession, saveReservation } from "@/lib/auth";
 
 /* ── Iconos SVG animados por servicio ─────────────────── */
@@ -178,7 +177,7 @@ const servicios = [
 ];
 
 const barberos = [
-  { id: 0, name: "Sin preferencia", specialty: "Cualquier maestro disponible", rune: "᛭" },
+  { id: 0, name: "El que más pronto me pueda atender", specialty: "Cualquier maestro disponible", rune: "᛭" },
   { id: 1, name: "Carlos Mendoza", specialty: "Navaja Clásica", rune: "ᚠ" },
   { id: 2, name: "Andrés Vega", specialty: "Degradados y Líneas", rune: "ᚢ" },
   { id: 3, name: "Sebastián Torres", specialty: "Estilo Moderno", rune: "ᚦ" },
@@ -254,7 +253,7 @@ export default function ReservarPage() {
     );
   }
 
-  const stepTitles = ["", "Echale un Ojo a Nuestros Servicios", "Elige tu Maestro", "Confírmanos tu Asistencia"];
+  const stepTitles = ["", "Echale un Ojo a Nuestros Servicios", "Puedes Seleccionar tu Barbero", "Confírmanos tu Asistencia"];
   const stepSubs   = ["", "¿Qué servicio deseas recibir hoy?", "¿Con quién quieres vivir la experiencia?", "Elige fecha, hora y confirma tu cita."];
 
   /* Modal: pedir cuenta para confirmar */

@@ -47,6 +47,7 @@ export default function AdminReservas() {
   const [nuevaBarbero, setNuevaBarbero] = useState(BARBEROS[0].name);
   const [nuevaNombre, setNuevaNombre]   = useState("");
   const [nuevaTel, setNuevaTel]         = useState("");
+  const [errorNueva, setErrorNueva]     = useState("");
   const [nuevaServicio, setNuevaServicio] = useState(SERVICIOS[0].nombre);
   const [nuevaPrecio, setNuevaPrecio]   = useState(SERVICIOS[0].precio);
   const [nuevaFecha, setNuevaFecha]     = useState("");
@@ -66,11 +67,14 @@ export default function AdminReservas() {
   function abrirNueva(barberoName?: string) {
     if (barberoName) setNuevaBarbero(barberoName);
     setNuevaNombre(""); setNuevaTel(""); setNuevaServicio(SERVICIOS[0].nombre); setNuevaPrecio(SERVICIOS[0].precio);
+    setErrorNueva("");
     setModalNueva(true);
   }
 
   function crearReserva() {
-    if (!nuevaNombre.trim() || !nuevaFecha || !nuevaHora) return;
+    setErrorNueva("");
+    if (!nuevaNombre.trim()) { setErrorNueva("Ingresa el nombre del cliente para continuar."); return; }
+    if (!nuevaFecha) { setErrorNueva("Selecciona una fecha."); return; }
     createAdminReservation({ clienteNombre: nuevaNombre, clienteTelefono: nuevaTel, servicio: nuevaServicio, precio: nuevaPrecio, barbero: nuevaBarbero, fecha: nuevaFecha, hora: nuevaHora });
     reload(); setModalNueva(false);
   }
@@ -294,14 +298,21 @@ export default function AdminReservas() {
                 </div>
               </div>
 
+              {/* Error */}
+              {errorNueva && (
+                <p style={{ fontSize: "0.75rem", color: "#ef4444", backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", padding: "10px 14px", letterSpacing: "0.05em" }}>
+                  {errorNueva}
+                </p>
+              )}
+
               {/* Botones */}
               <div style={{ display: "flex", gap: "10px", paddingTop: "4px" }}>
                 <button onClick={() => setModalNueva(false)}
                   style={{ flex: 1, padding: "14px", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.4)", color: "rgba(184,168,138,0.4)", cursor: "pointer" }}>
                   Cancelar
                 </button>
-                <button onClick={crearReserva} disabled={!nuevaNombre.trim() || !nuevaFecha}
-                  style={{ flex: 2, padding: "14px", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.3em", textTransform: "uppercase", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", color: "#060504", cursor: nuevaNombre.trim() && nuevaFecha ? "pointer" : "not-allowed", boxShadow: "0 0 25px rgba(200,146,26,0.4)", opacity: nuevaNombre.trim() && nuevaFecha ? 1 : 0.5 }}>
+                <button onClick={crearReserva}
+                  style={{ flex: 2, padding: "14px", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.3em", textTransform: "uppercase", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", color: "#060504", cursor: "pointer", boxShadow: "0 0 25px rgba(200,146,26,0.4)" }}>
                   Confirmar Cita
                 </button>
               </div>

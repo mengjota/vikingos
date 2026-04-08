@@ -301,7 +301,7 @@ export default function ReservarPage() {
               Crear Cuenta / Iniciar Sesión
             </Link>
             <button
-              onClick={() => setPedirLogin(false)}
+              type="button" onClick={() => setPedirLogin(false)}
               style={{
                 fontFamily: "var(--font-barlow)", fontSize: "0.75rem", fontWeight: 600,
                 letterSpacing: "0.35em", textTransform: "uppercase",
@@ -554,11 +554,12 @@ export default function ReservarPage() {
               </div>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
-              <button onClick={() => setPaso(1)}
+              <button type="button" onClick={() => setPaso(1)}
                 style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.35em", textTransform: "uppercase", padding: "16px 32px", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.5)", color: "rgba(184,168,138,0.6)", cursor: "pointer" }}>
                 ← Atrás
               </button>
               <button
+                type="button"
                 onClick={() => barberoId !== null && setPaso(3)}
                 disabled={barberoId === null}
                 style={{
@@ -728,11 +729,12 @@ export default function ReservarPage() {
             </p>
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
-              <button onClick={() => setPaso(2)}
+              <button type="button" onClick={() => setPaso(2)}
                 style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.35em", textTransform: "uppercase", padding: "16px 32px", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.5)", color: "rgba(184,168,138,0.6)", cursor: "pointer" }}>
                 ← Atrás
               </button>
               <button
+                type="button"
                 onClick={() => {
                   if (fecha && hora && nombre && telefono) {
                     if (!sessionEmail) {

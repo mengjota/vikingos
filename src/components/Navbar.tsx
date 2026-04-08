@@ -82,14 +82,14 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
             /* --- LOGUEADO --- */
             <>
               <a
-                href="/perfil"
+                href={session.email === "admin@invictus.com" ? "/admin/dashboard" : "/perfil"}
                 className="flex items-center gap-2 text-[#c8921a] hover:text-[#f0c040] text-sm tracking-[0.2em] uppercase transition-colors duration-300 px-3 py-2"
                 style={{ fontFamily: "var(--font-barlow)", fontWeight: 600 }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                {session.name.split(" ")[0]}
+                {session.email === "admin@invictus.com" ? "Panel Admin" : session.name.split(" ")[0]}
               </a>
               <button
                 onClick={handleLogout}
@@ -154,7 +154,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
           {session ? (
             <>
               <a
-                href="/perfil"
+                href={session.email === "admin@invictus.com" ? "/admin/dashboard" : "/perfil"}
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-2 text-[#c8921a] text-base tracking-[0.3em] uppercase"
                 style={{ fontFamily: "var(--font-barlow)", fontWeight: 600 }}
@@ -162,7 +162,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                Mi Cuenta — {session.name.split(" ")[0]}
+                {session.email === "admin@invictus.com" ? "Panel Admin" : `Mi Cuenta — ${session.name.split(" ")[0]}`}
               </a>
               <button
                 onClick={handleLogout}

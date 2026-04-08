@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { adminLogin } from "@/lib/adminAuth";
+
+const ADMIN_EMAIL = "admin@invictus.com";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,6 +26,19 @@ export default function LoginPage() {
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoginError("");
+
+    // Acceso admin
+    if (loginEmail.toLowerCase() === ADMIN_EMAIL) {
+      if (adminLogin(loginPass)) {
+        localStorage.setItem("inv_session", JSON.stringify({ name: "Admin", email: ADMIN_EMAIL }));
+        router.push("/admin/dashboard");
+      } else {
+        setLoginError("Contraseña incorrecta.");
+      }
+      return;
+    }
+
+    // Acceso cliente normal
     const stored = localStorage.getItem("inv_user_" + loginEmail.toLowerCase());
     if (!stored) {
       setLoginError("No existe una cuenta con ese correo.");

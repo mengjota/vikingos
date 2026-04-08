@@ -254,7 +254,7 @@ export default function ReservarPage() {
     );
   }
 
-  const stepTitles = ["", "Elige tu Ritual", "Elige tu Maestro", "Confírmanos tu Asistencia"];
+  const stepTitles = ["", "Echale un Ojo a Nuestros Servicios", "Elige tu Maestro", "Confírmanos tu Asistencia"];
   const stepSubs   = ["", "¿Qué servicio deseas recibir hoy?", "¿Con quién quieres vivir la experiencia?", "Elige fecha, hora y confirma tu cita."];
 
   /* Modal: pedir cuenta para confirmar */
@@ -426,7 +426,7 @@ export default function ReservarPage() {
                   return (
                     <button
                       key={s.id}
-                      onClick={() => setServicioId(s.id)}
+                      onClick={() => { setServicioId(s.id); setTimeout(() => setPaso(2), 280); }}
                       className={`service-card${isSelected ? " selected" : ""} p-6 border text-left`}
                       style={{ backgroundColor: isSelected ? "#2a1c0c" : "#141209" }}
                     >
@@ -466,23 +466,6 @@ export default function ReservarPage() {
               </div>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <button
-                onClick={() => servicioId && setPaso(2)}
-                disabled={!servicioId}
-                style={{
-                  fontFamily: "var(--font-barlow)", fontSize: "0.85rem", fontWeight: 800,
-                  letterSpacing: "0.4em", textTransform: "uppercase",
-                  padding: "18px 48px", border: "none", cursor: !servicioId ? "not-allowed" : "pointer",
-                  background: !servicioId ? "rgba(92,58,30,0.4)" : "linear-gradient(135deg, #a06010, #c8921a, #f0c040, #c8921a, #a06010)",
-                  color: !servicioId ? "rgba(184,168,138,0.3)" : "#080604",
-                  boxShadow: !servicioId ? "none" : "0 0 40px rgba(200,146,26,0.5), 0 0 80px rgba(200,146,26,0.2)",
-                  transition: "all 0.3s",
-                }}
-              >
-                Siguiente →
-              </button>
-            </div>
           </div>
         )}
 

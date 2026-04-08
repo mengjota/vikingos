@@ -36,7 +36,26 @@ const HORAS = [
 const MOTIVOS = ["Descanso", "Almuerzo", "Cita médica", "Capacitación", "Otro"];
 const ESTADO_COLOR: Record<string, string> = { pendiente: "#f0c040", completada: "#4ade80", cancelada: "#ef4444" };
 
+const DIAS_ES = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const MESES_ES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+
 function todayISO() { return new Date().toISOString().split("T")[0]; }
+
+function isoFromDate(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+function semanaDesde(offsetSemanas: number): Date[] {
+  const hoy = new Date();
+  const lunes = new Date(hoy);
+  const dia = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1;
+  lunes.setDate(hoy.getDate() - dia + offsetSemanas * 7);
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(lunes);
+    d.setDate(lunes.getDate() + i);
+    return d;
+  });
+}
 
 export default function AdminReservas() {
   const router = useRouter();
@@ -44,6 +63,10 @@ export default function AdminReservas() {
   const [pausas, setPausas]     = useState<Pausa[]>([]);
   const [filtro, setFiltro]     = useState<"todas"|"pendiente"|"completada"|"cancelada">("todas");
   const [productosDisp, setProductosDisp] = useState<Producto[]>([]);
+
+  // ── Navegador de semana ──
+  const [offsetSemana, setOffsetSemana] = useState(0);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(todayISO);
 
   // ── Modal nueva reserva ──
   const [modalNueva, setModalNueva]       = useState(false);
@@ -140,19 +163,27 @@ export default function AdminReservas() {
     reloadAll(); setModalPausa(false);
   }
 
-  // Reservas + pausas mezcladas y ordenadas por hora
+  // Reservas + pausas mezcladas, filtradas por fecha seleccionada
   function itemsDe(nombre: string) {
     const r = reservas
-      .filter(r => r.barbero === nombre)
+      .filter(r => r.barbero === nombre && r.fecha === fechaSeleccionada)
       .filter(r => filtro === "todas" || (r.estado ?? "pendiente") === filtro)
       .map(r => ({ tipo: "reserva" as const, hora: r.hora ?? "00:00", data: r }));
     const p = pausas
-      .filter(p => p.barbero === nombre)
+      .filter(p => p.barbero === nombre && p.fecha === fechaSeleccionada)
       .map(p => ({ tipo: "pausa" as const, hora: p.horaInicio, data: p }));
     return [...r, ...p].sort((a, b) => a.hora.localeCompare(b.hora));
   }
 
   const pendientes = reservas.filter(r => (r.estado ?? "pendiente") === "pendiente").length;
+
+  // Semana actual según offset
+  const diasSemana = semanaDesde(offsetSemana);
+
+  // Cuántas reservas hay por día (para los indicadores)
+  function citasDia(iso: string) {
+    return reservas.filter(r => r.fecha === iso && (r.estado ?? "pendiente") !== "cancelada").length;
+  }
 
   // Horas disponibles para fin (solo después del inicio)
   const horasFin = pausaInicio ? HORAS.filter(h => h > pausaInicio) : HORAS;
@@ -180,6 +211,77 @@ export default function AdminReservas() {
               style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.28em", textTransform: "uppercase", padding: "8px 18px", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", color: "#060504", cursor: "pointer", boxShadow: "0 0 18px rgba(200,146,26,0.4)", marginLeft: "6px" }}>
               + Nueva Cita
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Navegador de semana ── */}
+      <div style={{ backgroundColor: "#080604", borderBottom: "1px solid rgba(92,58,30,0.3)", padding: "0 28px" }}>
+        <div style={{ maxWidth: "1500px", margin: "0 auto", padding: "14px 0", display: "flex", alignItems: "center", gap: "10px" }}>
+
+          {/* Flecha anterior */}
+          <button onClick={() => setOffsetSemana(o => o - 1)}
+            style={{ width: "34px", height: "34px", border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "transparent", color: "rgba(184,168,138,0.5)", cursor: "pointer", fontSize: "1rem", flexShrink: 0 }}>
+            ‹
+          </button>
+
+          {/* Días */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "6px", flex: 1 }}>
+            {diasSemana.map(d => {
+              const iso     = isoFromDate(d);
+              const esHoy   = iso === todayISO();
+              const esSel   = iso === fechaSeleccionada;
+              const citas   = citasDia(iso);
+              const esPasado = iso < todayISO();
+              return (
+                <button key={iso} onClick={() => setFechaSeleccionada(iso)}
+                  style={{
+                    padding: "10px 6px", border: `1px solid ${esSel ? "#c8921a" : esHoy ? "rgba(200,146,26,0.35)" : "rgba(92,58,30,0.25)"}`,
+                    backgroundColor: esSel ? "rgba(200,146,26,0.15)" : esHoy ? "rgba(200,146,26,0.05)" : "transparent",
+                    cursor: "pointer", textAlign: "center", position: "relative",
+                  }}>
+                  <p style={{ fontSize: "0.55rem", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "4px",
+                    color: esSel ? "#c8921a" : esHoy ? "rgba(200,146,26,0.7)" : "rgba(184,168,138,0.35)" }}>
+                    {DIAS_ES[d.getDay()]}
+                  </p>
+                  <p style={{ fontSize: "1.15rem", fontWeight: 900, lineHeight: 1, marginBottom: "6px",
+                    color: esSel ? "#f0c040" : esHoy ? "#c8921a" : esPasado ? "rgba(184,168,138,0.25)" : "#f0e6c8" }}>
+                    {d.getDate()}
+                  </p>
+                  <p style={{ fontSize: "0.5rem", letterSpacing: "0.15em", color: "rgba(184,168,138,0.3)", marginBottom: "4px" }}>
+                    {MESES_ES[d.getMonth()]}
+                  </p>
+                  {/* Puntos de citas */}
+                  <div style={{ display: "flex", justifyContent: "center", gap: "3px", minHeight: "8px" }}>
+                    {citas > 0 && Array.from({ length: Math.min(citas, 5) }).map((_, i) => (
+                      <div key={i} style={{ width: "5px", height: "5px", borderRadius: "50%",
+                        backgroundColor: esSel ? "#f0c040" : "#c8921a", opacity: esPasado ? 0.4 : 1 }} />
+                    ))}
+                    {citas > 5 && <span style={{ fontSize: "0.45rem", color: "#c8921a", lineHeight: "6px" }}>+</span>}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Flecha siguiente */}
+          <button onClick={() => setOffsetSemana(o => o + 1)}
+            style={{ width: "34px", height: "34px", border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "transparent", color: "rgba(184,168,138,0.5)", cursor: "pointer", fontSize: "1rem", flexShrink: 0 }}>
+            ›
+          </button>
+
+          {/* Botón Hoy */}
+          <button onClick={() => { setOffsetSemana(0); setFechaSeleccionada(todayISO()); }}
+            style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", padding: "8px 14px", border: "1px solid rgba(200,146,26,0.4)", backgroundColor: "rgba(200,146,26,0.08)", color: "rgba(200,146,26,0.7)", cursor: "pointer", flexShrink: 0 }}>
+            Hoy
+          </button>
+
+          {/* Fecha seleccionada — label */}
+          <div style={{ flexShrink: 0, textAlign: "right" }}>
+            <p style={{ fontSize: "0.55rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(184,168,138,0.3)", marginBottom: "2px" }}>Viendo</p>
+            <p style={{ fontSize: "0.82rem", fontWeight: 700, color: "#c8921a" }}>
+              {new Date(fechaSeleccionada + "T12:00:00").toLocaleDateString("es-EC", { weekday: "long", day: "numeric", month: "long" })}
+            </p>
           </div>
         </div>
       </div>

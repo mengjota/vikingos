@@ -74,13 +74,7 @@ export default function LoginPage() {
       setRegError(data.error ?? "Error al crear la cuenta.");
       return;
     }
-    // Cuenta creada y activa — pasar directo al login
-    setRegOk(true);
-    setTimeout(() => {
-      setTab("entrar");
-      setLoginEmail(regEmail);
-      setRegOk(false);
-    }, 1800);
+    setRegOk(true); // muestra pantalla "revisa tu correo"
   }
 
   const inputClass =
@@ -205,12 +199,17 @@ export default function LoginPage() {
             <form onSubmit={handleRegister} className="space-y-7">
               {regOk ? (
                 <div style={{ textAlign: "center", padding: "16px 0" }}>
-                  <div style={{ fontSize: "3rem", marginBottom: "20px" }}>⚔️</div>
-                  <p style={{ fontSize: "1.1rem", fontWeight: 800, color: "#f0e6c8", marginBottom: "12px", fontFamily: "var(--font-barlow)" }}>
-                    ¡Bienvenido al gremio!
+                  <div style={{ fontSize: "3.5rem", marginBottom: "20px" }}>📧</div>
+                  <p style={{ fontSize: "1.1rem", fontWeight: 800, color: "#f0e6c8", marginBottom: "14px", fontFamily: "var(--font-barlow)" }}>
+                    ¡Revisa tu correo!
                   </p>
-                  <p style={{ fontSize: "0.9rem", color: "#b8a882", lineHeight: 1.7, fontFamily: "var(--font-barlow)" }}>
-                    Tu cuenta fue creada. Entrando al sistema...
+                  <p style={{ fontSize: "0.9rem", color: "#b8a882", lineHeight: 1.8, fontFamily: "var(--font-barlow)" }}>
+                    Te enviamos un enlace de confirmación a<br />
+                    <strong style={{ color: "#c8921a" }}>{regEmail}</strong>
+                  </p>
+                  <p style={{ fontSize: "0.82rem", color: "rgba(184,168,138,0.45)", marginTop: "16px", fontFamily: "var(--font-barlow)" }}>
+                    Haz clic en el enlace del correo para activar tu cuenta.<br />
+                    Revisa también la carpeta de spam.
                   </p>
                 </div>
               ) : (

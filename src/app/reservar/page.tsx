@@ -448,13 +448,6 @@ export default function ReservarPage() {
                         </span>
                       )}
 
-                      {/* Check */}
-                      {isSelected && (
-                        <div className="absolute top-3 right-3 w-6 h-6 bg-[#c8921a] flex items-center justify-center"
-                          style={{ boxShadow: "0 0 12px rgba(200,146,26,1), 0 0 24px rgba(200,146,26,0.5)" }}>
-                          <span className="text-[#0f0d0a] text-xs font-black">✓</span>
-                        </div>
-                      )}
 
                       {/* Ícono SVG con glow */}
                       <div className={`icon-glow-idle ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]/65"}`}>
@@ -500,13 +493,6 @@ export default function ReservarPage() {
                         }`}
                       />
 
-                      {/* Check */}
-                      {isSelected && (
-                        <div className="absolute top-3 right-3 w-6 h-6 bg-[#c8921a] flex items-center justify-center"
-                          style={{ boxShadow: "0 0 12px rgba(200,146,26,1), 0 0 24px rgba(200,146,26,0.5)" }}>
-                          <span className="text-[#0f0d0a] text-xs font-black">✓</span>
-                        </div>
-                      )}
 
                       {/* Runa */}
                       <span

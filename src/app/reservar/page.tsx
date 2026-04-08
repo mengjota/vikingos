@@ -197,12 +197,14 @@ export default function ReservarPage() {
   const [telefono, setTelefono] = useState("");
   const [confirmado, setConfirmado] = useState(false);
   const [sessionEmail, setSessionEmail] = useState<string | null>(null);
+  const [sessionNombre, setSessionNombre] = useState<string>("");
   const [pedirLogin, setPedirLogin] = useState(false);
 
   useEffect(() => {
     const s = getSession();
     if (s) {
       setSessionEmail(s.email);
+      setSessionNombre(s.name);
       if (!nombre) setNombre(s.name);
     }
   }, []);
@@ -710,7 +712,7 @@ export default function ReservarPage() {
                       return;
                     }
                     if (servicio && barbero) {
-                      saveReservation(sessionEmail, { servicio: servicio.nombre, precio: servicio.precio, barbero: barbero.name, fecha, hora });
+                      saveReservation(sessionEmail, sessionNombre, { servicio: servicio.nombre, precio: servicio.precio, barbero: barbero.name, fecha, hora });
                     }
                     setConfirmado(true);
                   }

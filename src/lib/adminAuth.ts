@@ -31,6 +31,27 @@ export function getAllReservations(): Reservation[] {
   try { return JSON.parse(raw); } catch { return []; }
 }
 
+/** Devuelve true si ese barbero ya tiene una reserva activa (no cancelada) en esa fecha+hora */
+export function isSlotTaken(barbero: string, fecha: string, hora: string): boolean {
+  if (typeof window === "undefined") return false;
+  const reservas = getAllReservations();
+  return reservas.some(
+    r => r.barbero === barbero &&
+         r.fecha === fecha &&
+         r.hora === hora &&
+         r.estado !== "cancelada"
+  );
+}
+
+/** Devuelve las horas ya ocupadas para un barbero en una fecha */
+export function getHorasOcupadas(barbero: string, fecha: string): string[] {
+  if (typeof window === "undefined") return [];
+  const reservas = getAllReservations();
+  return reservas
+    .filter(r => r.barbero === barbero && r.fecha === fecha && r.estado !== "cancelada")
+    .map(r => r.hora);
+}
+
 export function createAdminReservation(data: {
   clienteNombre: string;
   clienteTelefono: string;
@@ -41,6 +62,9 @@ export function createAdminReservation(data: {
   hora: string;
 }): Reservation {
   if (typeof window === "undefined") throw new Error("SSR");
+  if (isSlotTaken(data.barbero, data.fecha, data.hora)) {
+    throw new Error(`${data.barbero.split(" ")[0]} ya tiene una cita a las ${data.hora}. Elige otro horario.`);
+  }
   const nueva: Reservation = {
     id: Date.now().toString(),
     servicio: data.servicio,

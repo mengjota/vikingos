@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   isAdminLoggedIn, getAllReservations, updateReservationEstado,
   saveFactura, getProductos, createAdminReservation,
-  getPausas, savePausa, deletePausa,
+  getPausas, savePausa, deletePausa, getHorasOcupadas,
   type Producto, type ProductoVendido, type Pausa,
 } from "@/lib/adminAuth";
 import type { Reservation } from "@/lib/auth";
@@ -95,8 +95,12 @@ export default function AdminReservas() {
     setErrorNueva("");
     if (!nuevaNombre.trim()) { setErrorNueva("Ingresa el nombre del cliente."); return; }
     if (!nuevaFecha)         { setErrorNueva("Selecciona una fecha."); return; }
-    createAdminReservation({ clienteNombre: nuevaNombre, clienteTelefono: nuevaTel, servicio: nuevaServicio, precio: nuevaPrecio, barbero: nuevaBarbero, fecha: nuevaFecha, hora: nuevaHora });
-    reloadAll(); setModalNueva(false);
+    try {
+      createAdminReservation({ clienteNombre: nuevaNombre, clienteTelefono: nuevaTel, servicio: nuevaServicio, precio: nuevaPrecio, barbero: nuevaBarbero, fecha: nuevaFecha, hora: nuevaHora });
+      reloadAll(); setModalNueva(false);
+    } catch (e) {
+      setErrorNueva((e as Error).message);
+    }
   }
 
   // ── Completar servicio ──
@@ -430,18 +434,31 @@ export default function AdminReservas() {
                 </div>
               </div>
               {/* Fecha y hora */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.6rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(200,146,26,0.65)", marginBottom: "8px" }}>Fecha *</label>
-                  <input type="date" value={nuevaFecha} onChange={e => setNuevaFecha(e.target.value)}
-                    style={{ width: "100%", padding: "12px 14px", backgroundColor: "#141209", border: "1px solid rgba(92,58,30,0.45)", color: "#f0e6c8", fontSize: "0.88rem", outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.6rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(200,146,26,0.65)", marginBottom: "8px" }}>Hora *</label>
-                  <select value={nuevaHora} onChange={e => setNuevaHora(e.target.value)}
-                    style={{ width: "100%", padding: "12px 14px", backgroundColor: "#141209", border: "1px solid rgba(92,58,30,0.45)", color: "#f0e6c8", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}>
-                    {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
-                  </select>
+              <div>
+                <label style={{ display: "block", fontSize: "0.6rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(200,146,26,0.65)", marginBottom: "8px" }}>Fecha *</label>
+                <input type="date" value={nuevaFecha} onChange={e => setNuevaFecha(e.target.value)}
+                  style={{ width: "100%", padding: "12px 14px", backgroundColor: "#141209", border: "1px solid rgba(92,58,30,0.45)", color: "#f0e6c8", fontSize: "0.88rem", outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: "0.6rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(200,146,26,0.65)", marginBottom: "10px" }}>
+                  Hora * {nuevaHora && <span style={{ color: "#f0c040", fontWeight: 800 }}>— {nuevaHora}</span>}
+                </label>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: "5px" }}>
+                  {HORAS.map(h => {
+                    const ocupada = nuevaFecha ? getHorasOcupadas(nuevaBarbero, nuevaFecha).includes(h) : false;
+                    return (
+                      <button key={h} onClick={() => !ocupada && setNuevaHora(h)} disabled={ocupada}
+                        title={ocupada ? "Hora ocupada" : h}
+                        style={{ padding: "8px 4px", fontSize: "0.66rem", fontWeight: 700, textAlign: "center", cursor: ocupada ? "not-allowed" : "pointer",
+                          border: `1px solid ${ocupada ? "rgba(239,68,68,0.25)" : nuevaHora === h ? "rgba(200,146,26,0.8)" : "rgba(92,58,30,0.3)"}`,
+                          backgroundColor: ocupada ? "rgba(239,68,68,0.06)" : nuevaHora === h ? "rgba(200,146,26,0.15)" : "transparent",
+                          color: ocupada ? "rgba(239,68,68,0.4)" : nuevaHora === h ? "#f0c040" : "rgba(184,168,138,0.5)",
+                          textDecoration: ocupada ? "line-through" : "none",
+                        }}>
+                        {h}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
               {errorNueva && <p style={{ fontSize: "0.75rem", color: "#ef4444", backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", padding: "10px 14px" }}>{errorNueva}</p>}

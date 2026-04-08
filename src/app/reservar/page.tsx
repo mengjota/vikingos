@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getSession, saveReservation } from "@/lib/auth";
+import { getHorasOcupadas } from "@/lib/adminAuth";
 
 /* ── Iconos SVG animados por servicio ─────────────────── */
 
@@ -199,6 +200,7 @@ export default function ReservarPage() {
   const [sessionEmail, setSessionEmail] = useState<string | null>(null);
   const [sessionNombre, setSessionNombre] = useState<string>("");
   const [pedirLogin, setPedirLogin] = useState(false);
+  const [errorReserva, setErrorReserva] = useState("");
 
   useEffect(() => {
     const s = getSession();
@@ -619,24 +621,31 @@ export default function ReservarPage() {
                 <div className="grid grid-cols-3 gap-2">
                   {horas.map((h) => {
                     const isHora = hora === h;
+                    const barberoNombre = barbero?.name ?? "";
+                    const esEspecifico = barberoNombre && barberoNombre !== "El que más pronto me pueda atender";
+                    const ocupada = esEspecifico && fecha ? getHorasOcupadas(barberoNombre, fecha).includes(h) : false;
                     return (
                       <button
                         key={h}
-                        onClick={() => setHora(h)}
+                        onClick={() => { if (!ocupada) setHora(h); }}
+                        disabled={ocupada}
+                        title={ocupada ? "Hora no disponible" : h}
                         className="service-card py-2.5 text-xs border text-center transition-all duration-200"
                         style={{
                           fontFamily: "var(--font-barlow)",
-                          backgroundColor: isHora ? "#c8921a" : "#141209",
-                          borderColor: isHora ? "#c8921a" : "rgba(92,58,30,0.5)",
-                          color: isHora ? "#0f0d0a" : "#b8a882",
+                          backgroundColor: ocupada ? "rgba(239,68,68,0.05)" : isHora ? "#c8921a" : "#141209",
+                          borderColor: ocupada ? "rgba(239,68,68,0.2)" : isHora ? "#c8921a" : "rgba(92,58,30,0.5)",
+                          color: ocupada ? "rgba(239,68,68,0.35)" : isHora ? "#0f0d0a" : "#b8a882",
                           fontWeight: isHora ? "700" : "400",
+                          cursor: ocupada ? "not-allowed" : "pointer",
+                          textDecoration: ocupada ? "line-through" : "none",
                           boxShadow: isHora
                             ? "0 0 22px rgba(200,146,26,0.95), 0 0 50px rgba(200,146,26,0.45), 0 0 90px rgba(200,146,26,0.18), 0 6px 18px rgba(0,0,0,0.85), inset 0 0 18px rgba(255,220,100,0.12), inset 0 1px 0 rgba(255,220,100,0.3)"
                             : undefined,
                           textShadow: isHora ? "0 0 6px rgba(0,0,0,0.5)" : "none",
                         }}
                       >
-                        {h}
+                        {ocupada ? "—" : h}
                       </button>
                     );
                   })}
@@ -698,6 +707,12 @@ export default function ReservarPage() {
               Sin registro. Sin contraseña. Solo tu nombre y número.
             </p>
 
+            {errorReserva && (
+              <div style={{ marginBottom: "16px", padding: "12px 16px", backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontSize: "0.8rem", fontFamily: "var(--font-barlow)" }}>
+                ⚠ {errorReserva}
+              </div>
+            )}
+
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
               <button type="button" onClick={() => setPaso(2)}
                 style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.35em", textTransform: "uppercase", padding: "16px 32px", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.5)", color: "rgba(184,168,138,0.6)", cursor: "pointer" }}>
@@ -712,9 +727,17 @@ export default function ReservarPage() {
                       return;
                     }
                     if (servicio && barbero) {
-                      saveReservation(sessionEmail, sessionNombre, { servicio: servicio.nombre, precio: servicio.precio, barbero: barbero.name, fecha, hora });
+                      try {
+                        saveReservation(sessionEmail, sessionNombre, { servicio: servicio.nombre, precio: servicio.precio, barbero: barbero.name, fecha, hora });
+                        setErrorReserva("");
+                        setConfirmado(true);
+                      } catch (e) {
+                        setErrorReserva((e as Error).message);
+                        return;
+                      }
+                    } else {
+                      setConfirmado(true);
                     }
-                    setConfirmado(true);
                   }
                 }}
                 disabled={!fecha || !hora || !nombre || !telefono}

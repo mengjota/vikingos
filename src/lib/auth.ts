@@ -37,6 +37,21 @@ export function getReservations(email: string): Reservation[] {
 }
 
 export function saveReservation(email: string, nombreCliente: string, reserva: Omit<Reservation, "id" | "creadaEl" | "clienteEmail" | "clienteNombre" | "estado">) {
+  // Verificar conflicto de horario (solo si hay barbero específico)
+  const barberoEspecifico = reserva.barbero && reserva.barbero !== "El que más pronto me pueda atender";
+  if (barberoEspecifico) {
+    const rawGlobal = localStorage.getItem("inv_reservas_global");
+    const global: Reservation[] = rawGlobal ? JSON.parse(rawGlobal) : [];
+    const tomado = global.some(
+      r => r.barbero === reserva.barbero &&
+           r.fecha === reserva.fecha &&
+           r.hora === reserva.hora &&
+           r.estado !== "cancelada"
+    );
+    if (tomado) {
+      throw new Error(`${reserva.barbero.split(" ")[0]} ya tiene una cita a las ${reserva.hora}. Elige otro horario.`);
+    }
+  }
   const nueva: Reservation = {
     ...reserva,
     id: Date.now().toString(),

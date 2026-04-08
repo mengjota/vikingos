@@ -434,8 +434,24 @@ export default function AdminReservas() {
                             </button>
                           </div>
                         )}
-                        {estado === "completada" && r.facturaId && (
-                          <p style={{ fontSize: "0.56rem", letterSpacing: "0.18em", color: "rgba(74,222,128,0.45)", marginTop: "6px" }}>{r.facturaId}</p>
+                        {estado === "completada" && (
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px" }}>
+                            {r.facturaId && (
+                              <p style={{ fontSize: "0.56rem", letterSpacing: "0.18em", color: "rgba(74,222,128,0.45)" }}>{r.facturaId}</p>
+                            )}
+                            <button
+                              onClick={async () => {
+                                await fetch(`/api/reservations/${r.id}`, {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ estado: "pendiente", facturaId: null }),
+                                });
+                                reloadAll();
+                              }}
+                              style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", padding: "5px 10px", border: "1px solid rgba(240,192,64,0.35)", backgroundColor: "rgba(240,192,64,0.07)", color: "rgba(240,192,64,0.6)", cursor: "pointer" }}>
+                              ↩ Reabrir
+                            </button>
+                          </div>
                         )}
                       </div>
                     );

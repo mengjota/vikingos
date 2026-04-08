@@ -199,15 +199,14 @@ export default function ReservarPage() {
   const [telefono, setTelefono] = useState("");
   const [confirmado, setConfirmado] = useState(false);
   const [sessionEmail, setSessionEmail] = useState<string | null>(null);
+  const [pedirLogin, setPedirLogin] = useState(false);
 
   useEffect(() => {
     const s = getSession();
-    if (!s) {
-      router.push("/login");
-      return;
+    if (s) {
+      setSessionEmail(s.email);
+      if (!nombre) setNombre(s.name);
     }
-    setSessionEmail(s.email);
-    if (!nombre) setNombre(s.name);
   }, []);
 
   const servicio = servicios.find((s) => s.id === servicioId);
@@ -258,6 +257,66 @@ export default function ReservarPage() {
 
   const stepTitles = ["", "Elige tu Ritual", "Elige tu Maestro", "Sella el Pacto"];
   const stepSubs   = ["", "¿Qué servicio deseas recibir hoy?", "¿Con quién quieres vivir la experiencia?", "Elige fecha, hora y confirma tu cita."];
+
+  /* Modal: pedir cuenta para confirmar */
+  if (pedirLogin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "#080604" }}>
+        <div className="fixed inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(200,146,26,0.12) 0%, transparent 65%)" }} />
+        <div style={{ textAlign: "center", maxWidth: "520px", width: "100%", position: "relative" }}>
+
+          {/* Ícono */}
+          <div style={{ fontSize: "3rem", color: "#c8921a", marginBottom: "24px" }}>ᚠ</div>
+
+          <h2 style={{
+            fontFamily: "var(--font-cinzel-decorative)",
+            fontSize: "clamp(1.6rem, 5vw, 2.8rem)",
+            fontWeight: 900, color: "#f5ead0",
+            textShadow: "0 0 50px rgba(200,146,26,0.4)",
+            marginBottom: "16px",
+          }}>
+            Un último paso
+          </h2>
+
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "16px", marginBottom: "20px" }}>
+            <div style={{ height: "1px", width: "60px", background: "linear-gradient(to right, transparent, rgba(200,146,26,0.7))" }} />
+            <span style={{ color: "#c8921a" }}>᛭</span>
+            <div style={{ height: "1px", width: "60px", background: "linear-gradient(to left, transparent, rgba(200,146,26,0.7))" }} />
+          </div>
+
+          <p style={{ fontFamily: "var(--font-barlow)", fontSize: "1rem", color: "rgba(184,168,138,0.7)", lineHeight: 1.8, marginBottom: "36px" }}>
+            Para confirmar tu reserva necesitas una cuenta.<br />
+            Es rápido, gratis y solo lo harás una vez.
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px", alignItems: "center" }}>
+            <Link href="/login"
+              style={{
+                fontFamily: "var(--font-barlow)", fontSize: "0.9rem", fontWeight: 900,
+                letterSpacing: "0.45em", textTransform: "uppercase",
+                padding: "18px 52px", display: "block", width: "100%", textAlign: "center",
+                background: "linear-gradient(135deg, #a06010, #c8921a, #f0c040, #c8921a, #a06010)",
+                color: "#080604",
+                boxShadow: "0 0 40px rgba(200,146,26,0.5), 0 0 80px rgba(200,146,26,0.2)",
+              }}>
+              Crear Cuenta / Iniciar Sesión
+            </Link>
+            <button
+              onClick={() => setPedirLogin(false)}
+              style={{
+                fontFamily: "var(--font-barlow)", fontSize: "0.75rem", fontWeight: 600,
+                letterSpacing: "0.35em", textTransform: "uppercase",
+                padding: "14px 32px", backgroundColor: "transparent",
+                border: "1px solid rgba(92,58,30,0.5)", color: "rgba(184,168,138,0.5)",
+                cursor: "pointer", width: "100%",
+              }}>
+              ← Volver a mi reserva
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#080604", paddingTop: "100px" }}>
@@ -677,7 +736,11 @@ export default function ReservarPage() {
               <button
                 onClick={() => {
                   if (fecha && hora && nombre && telefono) {
-                    if (sessionEmail && servicio && barbero) {
+                    if (!sessionEmail) {
+                      setPedirLogin(true);
+                      return;
+                    }
+                    if (servicio && barbero) {
                       saveReservation(sessionEmail, { servicio: servicio.nombre, precio: servicio.precio, barbero: barbero.name, fecha, hora });
                     }
                     setConfirmado(true);

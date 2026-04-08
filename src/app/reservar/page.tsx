@@ -189,7 +189,6 @@ const horas = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "1
 /* ── Página principal ────────────────────────────────── */
 
 export default function ReservarPage() {
-  const router = useRouter();
   const [paso, setPaso] = useState<1 | 2 | 3>(1);
   const [servicioId, setServicioId] = useState<number | null>(null);
   const [barberoId, setBarberoId] = useState<number | null>(null);
@@ -255,7 +254,7 @@ export default function ReservarPage() {
     );
   }
 
-  const stepTitles = ["", "Elige tu Ritual", "Elige tu Maestro", "Sella el Pacto"];
+  const stepTitles = ["", "Elige tu Ritual", "Elige tu Maestro", "Confírmanos tu Asistencia"];
   const stepSubs   = ["", "¿Qué servicio deseas recibir hoy?", "¿Con quién quieres vivir la experiencia?", "Elige fecha, hora y confirma tu cita."];
 
   /* Modal: pedir cuenta para confirmar */
@@ -757,7 +756,7 @@ export default function ReservarPage() {
                   boxShadow: (!fecha || !hora || !nombre || !telefono) ? "none" : "0 0 50px rgba(200,146,26,0.6), 0 0 100px rgba(200,146,26,0.25), 0 8px 30px rgba(0,0,0,0.6)",
                 }}
               >
-                Sellar el Pacto ᚢ
+                Confirmar Asistencia ᚢ
               </button>
             </div>
           </div>

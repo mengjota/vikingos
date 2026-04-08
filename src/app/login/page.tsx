@@ -23,7 +23,7 @@ export default function LoginPage() {
   const [regError, setRegError] = useState("");
   const [regOk, setRegOk] = useState(false);
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoginError("");
 
@@ -38,34 +38,35 @@ export default function LoginPage() {
       return;
     }
 
-    // Acceso cliente normal
-    const stored = localStorage.getItem("inv_user_" + loginEmail.toLowerCase());
-    if (!stored) {
-      setLoginError("No existe una cuenta con ese correo.");
+    // Acceso cliente — valida contra la DB
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: loginEmail, password: loginPass }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setLoginError(data.error ?? "Error al iniciar sesión.");
       return;
     }
-    const user = JSON.parse(stored);
-    if (user.password !== loginPass) {
-      setLoginError("Contraseña incorrecta.");
-      return;
-    }
-    localStorage.setItem("inv_session", JSON.stringify({ name: user.name, email: user.email }));
+    localStorage.setItem("inv_session", JSON.stringify({ name: data.name, email: data.email }));
     router.push("/");
   }
 
-  function handleRegister(e: React.FormEvent) {
+  async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     setRegError("");
-    if (regPass.length < 6) {
-      setRegError("La contraseña debe tener mínimo 6 caracteres.");
+
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: regName, email: regEmail, password: regPass }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setRegError(data.error ?? "Error al crear la cuenta.");
       return;
     }
-    const key = "inv_user_" + regEmail.toLowerCase();
-    if (localStorage.getItem(key)) {
-      setRegError("Ya existe una cuenta con ese correo.");
-      return;
-    }
-    localStorage.setItem(key, JSON.stringify({ name: regName, email: regEmail, password: regPass }));
     setRegOk(true);
     setTimeout(() => {
       setTab("entrar");

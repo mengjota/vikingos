@@ -21,7 +21,9 @@ function toRes(r: Record<string, unknown>) {
 // GET — todas las reservas (admin)
 export async function GET() {
   const rows = await sql`
-    SELECT * FROM reservations ORDER BY created_at DESC
+    SELECT id, client_name, client_email, service, price, barber,
+           date::text AS date, time, status, invoice_id, created_at
+    FROM reservations ORDER BY created_at DESC
   `;
   return NextResponse.json(rows.map(toRes));
 }
@@ -49,8 +51,9 @@ export async function POST(req: NextRequest) {
 
   const [row] = await sql`
     INSERT INTO reservations (client_name, client_email, service, price, barber, date, time, status)
-    VALUES (${d.clienteNombre}, ${d.clienteEmail ?? null}, ${d.servicio}, ${d.precio}, ${d.barbero}, ${d.fecha}, ${d.hora}, 'pendiente')
-    RETURNING *
+    VALUES (${d.clienteNombre}, ${d.clienteEmail ?? null}, ${d.servicio}, ${d.precio}, ${d.barbero}, ${d.fecha}::date, ${d.hora}, 'pendiente')
+    RETURNING id, client_name, client_email, service, price, barber,
+              date::text AS date, time, status, invoice_id, created_at
   `;
   return NextResponse.json(toRes(row), { status: 201 });
 }

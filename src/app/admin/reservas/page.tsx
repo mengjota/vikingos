@@ -99,7 +99,7 @@ export default function AdminReservas() {
 
   useEffect(() => {
     if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    reloadAll();
+    reloadAll(true); // true = auto-saltar al día con próxima cita
     setProductosDisp(getProductos());
   }, [router]);
 
@@ -112,12 +112,28 @@ export default function AdminReservas() {
       .catch(() => setHorasOcupadasModal([]));
   }, [nuevaBarbero, nuevaFecha, modalNueva]);
 
-  async function reloadAll() {
-    const [resData] = await Promise.all([
-      fetch("/api/reservations").then(r => r.json()),
-    ]);
+  async function reloadAll(autoJump = false) {
+    const resData: Reservation[] = await fetch("/api/reservations").then(r => r.json());
     setReservas(resData);
     setPausas(getPausas());
+
+    // Auto-saltar al día con la próxima cita pendiente más cercana
+    if (autoJump) {
+      const hoy = todayISO();
+      const proxima = resData
+        .filter(r => (r.estado ?? "pendiente") === "pendiente" && r.fecha >= hoy)
+        .sort((a, b) => (a.fecha + a.hora).localeCompare(b.fecha + b.hora))[0];
+      if (proxima) {
+        setFechaSeleccionada(proxima.fecha);
+        // Ajustar offset de semana si la cita no está en la semana actual
+        const diasDiff = Math.floor(
+          (new Date(proxima.fecha + "T12:00:00").getTime() - new Date(hoy + "T12:00:00").getTime())
+          / (7 * 24 * 60 * 60 * 1000)
+        );
+        if (diasDiff >= 1) setOffsetSemana(Math.floor(diasDiff));
+        else if (diasDiff < 0) setOffsetSemana(Math.ceil(diasDiff));
+      }
+    }
   }
 
   // ── Nueva reserva ──
@@ -286,13 +302,18 @@ export default function AdminReservas() {
                   <p style={{ fontSize: "0.5rem", letterSpacing: "0.15em", color: "rgba(184,168,138,0.3)", marginBottom: "4px" }}>
                     {MESES_ES[d.getMonth()]}
                   </p>
-                  {/* Puntos de citas */}
-                  <div style={{ display: "flex", justifyContent: "center", gap: "3px", minHeight: "8px" }}>
-                    {citas > 0 && Array.from({ length: Math.min(citas, 5) }).map((_, i) => (
-                      <div key={i} style={{ width: "5px", height: "5px", borderRadius: "50%",
-                        backgroundColor: esSel ? "#f0c040" : "#c8921a", opacity: esPasado ? 0.4 : 1 }} />
-                    ))}
-                    {citas > 5 && <span style={{ fontSize: "0.45rem", color: "#c8921a", lineHeight: "6px" }}>+</span>}
+                  {/* Indicador de citas */}
+                  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "3px", minHeight: "14px" }}>
+                    {citas > 0 && (
+                      <span style={{
+                        fontSize: "0.6rem", fontWeight: 900, letterSpacing: "0.05em",
+                        backgroundColor: esSel ? "#f0c040" : "rgba(200,146,26,0.85)",
+                        color: "#060504", borderRadius: "10px", padding: "1px 6px",
+                        opacity: esPasado ? 0.5 : 1,
+                      }}>
+                        {citas}
+                      </span>
+                    )}
                   </div>
                 </button>
               );

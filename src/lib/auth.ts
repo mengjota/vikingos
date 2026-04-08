@@ -29,44 +29,35 @@ export function logout() {
   localStorage.removeItem("inv_session");
 }
 
-export function getReservations(email: string): Reservation[] {
-  if (typeof window === "undefined") return [];
-  const raw = localStorage.getItem("inv_reservas_" + email.toLowerCase());
-  if (!raw) return [];
-  try { return JSON.parse(raw); } catch { return []; }
+// Reservas del cliente — se leen desde la DB vía API
+export async function getReservations(email: string): Promise<Reservation[]> {
+  const res = await fetch(`/api/reservations?email=${encodeURIComponent(email)}`);
+  if (!res.ok) return [];
+  const all: Reservation[] = await res.json();
+  return all.filter(r => r.clienteEmail === email.toLowerCase());
 }
 
-export function saveReservation(email: string, nombreCliente: string, reserva: Omit<Reservation, "id" | "creadaEl" | "clienteEmail" | "clienteNombre" | "estado">) {
-  // Verificar conflicto de horario (solo si hay barbero específico)
-  const barberoEspecifico = reserva.barbero && reserva.barbero !== "El que más pronto me pueda atender";
-  if (barberoEspecifico) {
-    const rawGlobal = localStorage.getItem("inv_reservas_global");
-    const global: Reservation[] = rawGlobal ? JSON.parse(rawGlobal) : [];
-    const tomado = global.some(
-      r => r.barbero === reserva.barbero &&
-           r.fecha === reserva.fecha &&
-           r.hora === reserva.hora &&
-           r.estado !== "cancelada"
-    );
-    if (tomado) {
-      throw new Error(`${reserva.barbero.split(" ")[0]} ya tiene una cita a las ${reserva.hora}. Elige otro horario.`);
-    }
+// Guardar reserva en la DB vía API
+export async function saveReservation(
+  email: string,
+  nombreCliente: string,
+  reserva: Omit<Reservation, "id" | "creadaEl" | "clienteEmail" | "clienteNombre" | "estado">
+) {
+  const res = await fetch("/api/reservations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      clienteNombre: nombreCliente,
+      clienteEmail:  email.toLowerCase(),
+      servicio:      reserva.servicio,
+      precio:        reserva.precio,
+      barbero:       reserva.barbero,
+      fecha:         reserva.fecha,
+      hora:          reserva.hora,
+    }),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error ?? "Error al guardar la reserva.");
   }
-  const nueva: Reservation = {
-    ...reserva,
-    id: Date.now().toString(),
-    creadaEl: new Date().toLocaleDateString("es-EC"),
-    clienteEmail: email.toLowerCase(),
-    clienteNombre: nombreCliente,
-    estado: "pendiente",
-  };
-  // Guardar en historial del cliente
-  const reservas = getReservations(email);
-  reservas.unshift(nueva);
-  localStorage.setItem("inv_reservas_" + email.toLowerCase(), JSON.stringify(reservas));
-  // Guardar en lista global para el admin
-  const rawGlobal = localStorage.getItem("inv_reservas_global");
-  const global: Reservation[] = rawGlobal ? JSON.parse(rawGlobal) : [];
-  global.unshift(nueva);
-  localStorage.setItem("inv_reservas_global", JSON.stringify(global));
 }

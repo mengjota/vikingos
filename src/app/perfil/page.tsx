@@ -18,8 +18,7 @@ export default function PerfilPage() {
       return;
     }
     setSession(s);
-    setReservas(getReservations(s.email));
-    setLoading(false);
+    getReservations(s.email).then(setReservas).finally(() => setLoading(false));
   }, [router]);
 
   function handleLogout() {

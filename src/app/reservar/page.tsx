@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getSession, saveReservation } from "@/lib/auth";
-import { getHorasOcupadas } from "@/lib/adminAuth";
 
 /* ── Iconos SVG animados por servicio ─────────────────── */
 
@@ -201,6 +200,7 @@ export default function ReservarPage() {
   const [sessionNombre, setSessionNombre] = useState<string>("");
   const [pedirLogin, setPedirLogin] = useState(false);
   const [errorReserva, setErrorReserva] = useState("");
+  const [horasOcupadas, setHorasOcupadas] = useState<string[]>([]);
 
   useEffect(() => {
     const s = getSession();
@@ -210,6 +210,17 @@ export default function ReservarPage() {
       if (!nombre) setNombre(s.name);
     }
   }, []);
+
+  // Cargar horas ocupadas desde la DB cuando cambia barbero o fecha
+  useEffect(() => {
+    const barberoNombre = barberos.find(b => b.id === barberoId)?.name ?? "";
+    const esEspecifico  = barberoNombre && barberoNombre !== "El que más pronto me pueda atender";
+    if (!esEspecifico || !fecha) { setHorasOcupadas([]); return; }
+    fetch(`/api/reservations/check?barbero=${encodeURIComponent(barberoNombre)}&fecha=${fecha}`)
+      .then(r => r.json())
+      .then(setHorasOcupadas)
+      .catch(() => setHorasOcupadas([]));
+  }, [barberoId, fecha]);
 
   const servicio = servicios.find((s) => s.id === servicioId);
   const barbero = barberos.find((b) => b.id === barberoId);
@@ -620,10 +631,8 @@ export default function ReservarPage() {
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {horas.map((h) => {
-                    const isHora = hora === h;
-                    const barberoNombre = barbero?.name ?? "";
-                    const esEspecifico = barberoNombre && barberoNombre !== "El que más pronto me pueda atender";
-                    const ocupada = esEspecifico && fecha ? getHorasOcupadas(barberoNombre, fecha).includes(h) : false;
+                    const isHora  = hora === h;
+                    const ocupada = horasOcupadas.includes(h);
                     return (
                       <button
                         key={h}

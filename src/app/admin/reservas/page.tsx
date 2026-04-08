@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  isAdminLoggedIn, getAllReservations, updateReservationEstado,
-  saveFactura, getProductos, createAdminReservation,
-  getPausas, savePausa, deletePausa, getHorasOcupadas,
+  isAdminLoggedIn,
+  saveFactura, getProductos,
+  getPausas, savePausa, deletePausa,
   type Producto, type ProductoVendido, type Pausa,
 } from "@/lib/adminAuth";
 import type { Reservation } from "@/lib/auth";
@@ -68,6 +68,9 @@ export default function AdminReservas() {
   const [offsetSemana, setOffsetSemana] = useState(0);
   const [fechaSeleccionada, setFechaSeleccionada] = useState(todayISO);
 
+  // ── Horas ocupadas para modal nueva reserva ──
+  const [horasOcupadasModal, setHorasOcupadasModal] = useState<string[]>([]);
+
   // ── Modal nueva reserva ──
   const [modalNueva, setModalNueva]       = useState(false);
   const [nuevaBarbero, setNuevaBarbero]   = useState(BARBEROS[0].name);
@@ -100,8 +103,20 @@ export default function AdminReservas() {
     setProductosDisp(getProductos());
   }, [router]);
 
-  function reloadAll() {
-    setReservas(getAllReservations());
+  // Cargar horas ocupadas cuando cambia barbero o fecha en modal nueva reserva
+  useEffect(() => {
+    if (!modalNueva || !nuevaFecha) { setHorasOcupadasModal([]); return; }
+    fetch(`/api/reservations/check?barbero=${encodeURIComponent(nuevaBarbero)}&fecha=${nuevaFecha}`)
+      .then(r => r.json())
+      .then(setHorasOcupadasModal)
+      .catch(() => setHorasOcupadasModal([]));
+  }, [nuevaBarbero, nuevaFecha, modalNueva]);
+
+  async function reloadAll() {
+    const [resData] = await Promise.all([
+      fetch("/api/reservations").then(r => r.json()),
+    ]);
+    setReservas(resData);
     setPausas(getPausas());
   }
 
@@ -114,16 +129,26 @@ export default function AdminReservas() {
     setModalNueva(true);
   }
 
-  function crearReserva() {
+  async function crearReserva() {
     setErrorNueva("");
     if (!nuevaNombre.trim()) { setErrorNueva("Ingresa el nombre del cliente."); return; }
     if (!nuevaFecha)         { setErrorNueva("Selecciona una fecha."); return; }
-    try {
-      createAdminReservation({ clienteNombre: nuevaNombre, clienteTelefono: nuevaTel, servicio: nuevaServicio, precio: nuevaPrecio, barbero: nuevaBarbero, fecha: nuevaFecha, hora: nuevaHora });
-      reloadAll(); setModalNueva(false);
-    } catch (e) {
-      setErrorNueva((e as Error).message);
+    const res = await fetch("/api/reservations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        clienteNombre: nuevaNombre,
+        clienteEmail:  nuevaTel ? `tel:${nuevaTel}` : "admin-walk-in",
+        servicio: nuevaServicio, precio: nuevaPrecio,
+        barbero: nuevaBarbero, fecha: nuevaFecha, hora: nuevaHora,
+      }),
+    });
+    if (!res.ok) {
+      const d = await res.json();
+      setErrorNueva(d.error ?? "Error al crear la reserva.");
+      return;
     }
+    reloadAll(); setModalNueva(false);
   }
 
   // ── Completar servicio ──
@@ -137,13 +162,23 @@ export default function AdminReservas() {
     });
   }
 
-  function completarServicio() {
+  async function completarServicio() {
     if (!modalCompletar) return;
     setGuardando(true);
-    const precioServicio = parseFloat(modalCompletar.precio?.replace(/[^0-9.]/g, "")) || 0;
-    const subtotalProductos = productosEnFactura.reduce((s, p) => s + p.precio * p.cantidad, 0);
-    const factura = saveFactura({ reservaId: modalCompletar.id, clienteEmail: modalCompletar.clienteEmail ?? "", clienteNombre: modalCompletar.clienteNombre ?? "Cliente", servicio: modalCompletar.servicio, barbero: modalCompletar.barbero, fecha: modalCompletar.fecha, hora: modalCompletar.hora, precioServicio, metodoPago, productosAdicionales: productosEnFactura, subtotalProductos, total: precioServicio + subtotalProductos });
-    updateReservationEstado(modalCompletar.id, "completada", factura.id);
+    const precioServicio     = parseFloat(modalCompletar.precio?.replace(/[^0-9.]/g, "")) || 0;
+    const subtotalProductos  = productosEnFactura.reduce((s, p) => s + p.precio * p.cantidad, 0);
+    const factura = saveFactura({
+      reservaId: modalCompletar.id, clienteEmail: modalCompletar.clienteEmail ?? "",
+      clienteNombre: modalCompletar.clienteNombre ?? "Cliente", servicio: modalCompletar.servicio,
+      barbero: modalCompletar.barbero, fecha: modalCompletar.fecha, hora: modalCompletar.hora,
+      precioServicio, metodoPago, productosAdicionales: productosEnFactura,
+      subtotalProductos, total: precioServicio + subtotalProductos,
+    });
+    await fetch(`/api/reservations/${modalCompletar.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ estado: "completada", facturaId: factura.id }),
+    });
     reloadAll(); setGuardando(false); setModalCompletar(null);
   }
 
@@ -372,7 +407,7 @@ export default function AdminReservas() {
                               style={{ flex: 1, padding: "8px", fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.25em", textTransform: "uppercase", background: `linear-gradient(135deg, rgba(${barb.rgb},0.8), rgba(${barb.rgb},1))`, border: "none", color: "#060504", cursor: "pointer" }}>
                               ✓ Completar
                             </button>
-                            <button onClick={() => { updateReservationEstado(r.id, "cancelada"); reloadAll(); }}
+                            <button onClick={async () => { await fetch(`/api/reservations/${r.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ estado: "cancelada" }) }); reloadAll(); }}
                               style={{ padding: "8px 11px", fontSize: "0.7rem", fontWeight: 700, backgroundColor: "transparent", border: "1px solid rgba(239,68,68,0.3)", color: "rgba(239,68,68,0.55)", cursor: "pointer" }}>
                               ✕
                             </button>
@@ -547,7 +582,7 @@ export default function AdminReservas() {
                 </label>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: "5px" }}>
                   {HORAS.map(h => {
-                    const ocupada = nuevaFecha ? getHorasOcupadas(nuevaBarbero, nuevaFecha).includes(h) : false;
+                    const ocupada = horasOcupadasModal.includes(h);
                     return (
                       <button key={h} onClick={() => !ocupada && setNuevaHora(h)} disabled={ocupada}
                         title={ocupada ? "Hora ocupada" : h}

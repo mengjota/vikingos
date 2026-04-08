@@ -127,7 +127,7 @@ export default function Hero() {
         </p>
 
         {/* Link dinámico → Nosotros */}
-        <div className="hero-e4 mb-10">
+        <div className="hero-e4 mb-16">
           <Link
             href="/nosotros"
             className="group inline-flex items-center gap-3 text-[#b8a882] hover:text-[#f0c040] transition-colors duration-300"
@@ -135,42 +135,73 @@ export default function Hero() {
           >
             <span className="relative">
               Conoce más sobre Vikingos Barber Club
-              {/* Subrayado animado */}
               <span className="absolute bottom-0 left-0 h-px w-0 group-hover:w-full transition-all duration-500 bg-[#f0c040]" />
             </span>
-            {/* Flecha animada */}
             <svg className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </Link>
         </div>
 
-        {/* ── Botón RESERVA CON NOSOTROS ── */}
-        <div className="hero-e6 flex justify-center">
+        {/* ── Botones flotantes ── */}
+        <div className="hero-e6 flex flex-col sm:flex-row items-center justify-center gap-5 mt-4">
+
+          {/* Reserva con Nosotros */}
           <Link
             href="/reservar"
-            className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-10 sm:px-16 py-5 sm:py-6 w-full sm:w-auto"
+            className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-10 sm:px-14 py-5 w-full sm:w-auto"
             style={{
               background: "linear-gradient(135deg, #a06010 0%, #c8921a 35%, #f0c040 60%, #c8921a 80%, #a06010 100%)",
               boxShadow: "0 0 35px rgba(200,146,26,0.55), 0 0 70px rgba(200,146,26,0.2), 0 6px 0 rgba(60,30,0,0.8)",
               fontFamily: "var(--font-barlow)",
-              fontSize: "clamp(0.85rem, 2vw, 1rem)",
+              fontSize: "clamp(0.8rem, 1.8vw, 0.95rem)",
               fontWeight: 800,
               letterSpacing: "0.45em",
               textTransform: "uppercase",
               color: "#0f0d0a",
             }}
           >
-            {/* Shimmer */}
             <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
               style={{ background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%)" }} />
-            {/* Esquinas decorativas */}
             <span className="absolute top-0 left-0  w-3 h-3 border-t-2 border-l-2 border-[#0f0d0a]/30" />
             <span className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#0f0d0a]/30" />
             <span className="absolute bottom-0 left-0  w-3 h-3 border-b-2 border-l-2 border-[#0f0d0a]/30" />
             <span className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#0f0d0a]/30" />
             <span className="relative z-10">Reserva con Nosotros</span>
           </Link>
+
+          {/* Ver Productos */}
+          <Link
+            href="/productos"
+            className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-10 sm:px-14 py-5 w-full sm:w-auto"
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(200,146,26,0.55)",
+              boxShadow: "0 0 20px rgba(200,146,26,0.15), 0 0 50px rgba(200,146,26,0.07), inset 0 1px 0 rgba(200,146,26,0.12)",
+              fontFamily: "var(--font-barlow)",
+              fontSize: "clamp(0.8rem, 1.8vw, 0.95rem)",
+              fontWeight: 800,
+              letterSpacing: "0.45em",
+              textTransform: "uppercase",
+              color: "#c8921a",
+              transition: "all 0.3s",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(200,146,26,0.1)";
+              (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 30px rgba(200,146,26,0.35), 0 0 70px rgba(200,146,26,0.15), inset 0 1px 0 rgba(200,146,26,0.2)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent";
+              (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 20px rgba(200,146,26,0.15), 0 0 50px rgba(200,146,26,0.07), inset 0 1px 0 rgba(200,146,26,0.12)";
+            }}
+          >
+            <span className="absolute top-0 left-0  w-3 h-3 border-t border-l border-[#c8921a]/60" />
+            <span className="absolute top-0 right-0 w-3 h-3 border-t border-r border-[#c8921a]/60" />
+            <span className="absolute bottom-0 left-0  w-3 h-3 border-b border-l border-[#c8921a]/60" />
+            <span className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-[#c8921a]/60" />
+            <span className="relative z-10">Ver Productos</span>
+          </Link>
+
         </div>
       </div>
 

@@ -184,3 +184,50 @@ export function saveFactura(f: Omit<Factura, "id" | "completadaEl">): Factura {
   localStorage.setItem("inv_facturas", JSON.stringify(facturas));
   return nueva;
 }
+
+// ── Staff ────────────────────────────────────────────────
+export interface Empleado {
+  id: string;
+  nombre: string;
+  especialidad: string;
+  runa: string;
+  color: string;
+  activo: boolean;
+}
+
+const STAFF_DEFAULT: Empleado[] = [
+  { id: "1", nombre: "Carlos Mendoza",   especialidad: "Navaja Clásica",      runa: "ᚠ", color: "#c8921a", activo: true },
+  { id: "2", nombre: "Andrés Vega",      especialidad: "Degradados y Líneas", runa: "ᚢ", color: "#a78bfa", activo: true },
+  { id: "3", nombre: "Sebastián Torres", especialidad: "Estilo Moderno",      runa: "ᚦ", color: "#60a5fa", activo: true },
+];
+
+export function getStaff(): Empleado[] {
+  if (typeof window === "undefined") return STAFF_DEFAULT;
+  const raw = localStorage.getItem("inv_staff");
+  if (!raw) {
+    localStorage.setItem("inv_staff", JSON.stringify(STAFF_DEFAULT));
+    return STAFF_DEFAULT;
+  }
+  try { return JSON.parse(raw); } catch { return STAFF_DEFAULT; }
+}
+
+export function saveEmpleado(e: Omit<Empleado, "id">, id?: string): Empleado {
+  const staff = getStaff();
+  if (id) {
+    const idx = staff.findIndex((x) => x.id === id);
+    if (idx !== -1) {
+      staff[idx] = { ...e, id };
+      localStorage.setItem("inv_staff", JSON.stringify(staff));
+      return staff[idx];
+    }
+  }
+  const nuevo: Empleado = { ...e, id: Date.now().toString() };
+  staff.push(nuevo);
+  localStorage.setItem("inv_staff", JSON.stringify(staff));
+  return nuevo;
+}
+
+export function deleteEmpleado(id: string) {
+  const staff = getStaff().filter((e) => e.id !== id);
+  localStorage.setItem("inv_staff", JSON.stringify(staff));
+}

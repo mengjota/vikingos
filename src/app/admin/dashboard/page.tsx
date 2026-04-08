@@ -23,10 +23,11 @@ export default function AdminDashboard() {
   function handleLogout() { adminLogout(); router.push("/admin"); }
 
   const nav = [
-    { href: "/admin/reservas",    label: "Reservas",    sub: "Gestionar citas y pagos",   icon: "📋" },
-    { href: "/admin/productos",   label: "Tienda",      sub: "Administrar catálogo",       icon: "🛍️" },
-    { href: "/admin/facturacion", label: "Facturación", sub: "Historial de pagos",         icon: "💰" },
+    { href: "/admin/reservas",    label: "Reservas",    sub: "Gestionar citas y pagos",    icon: "📋" },
+    { href: "/admin/productos",   label: "Tienda",      sub: "Administrar catálogo",        icon: "🛍️" },
+    { href: "/admin/facturacion", label: "Facturación", sub: "Historial de pagos",          icon: "💰" },
     { href: "/admin/staff",       label: "Staff",       sub: "Añadir y eliminar empleados", icon: "✂️" },
+    { href: "/admin/clientes",    label: "Clientes",    sub: "Usuarios registrados",        icon: "👥" },
   ];
 
   return (

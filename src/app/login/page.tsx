@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPass, setLoginPass] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
 
   // Registrar
   const [regName, setRegName] = useState("");
@@ -22,10 +23,12 @@ export default function LoginPage() {
   const [regPass, setRegPass] = useState("");
   const [regError, setRegError] = useState("");
   const [regOk, setRegOk] = useState(false);
+  const [regLoading, setRegLoading] = useState(false);
 
-  async function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: { preventDefault(): void }) {
     e.preventDefault();
     setLoginError("");
+    setLoginLoading(true);
 
     // Acceso admin
     if (loginEmail.toLowerCase() === ADMIN_EMAIL) {
@@ -34,6 +37,7 @@ export default function LoginPage() {
         router.push("/admin/dashboard");
       } else {
         setLoginError("Contraseña incorrecta.");
+        setLoginLoading(false);
       }
       return;
     }
@@ -45,6 +49,7 @@ export default function LoginPage() {
       body: JSON.stringify({ email: loginEmail, password: loginPass }),
     });
     const data = await res.json();
+    setLoginLoading(false);
     if (!res.ok) {
       setLoginError(data.error ?? "Error al iniciar sesión.");
       return;
@@ -53,9 +58,10 @@ export default function LoginPage() {
     router.push("/");
   }
 
-  async function handleRegister(e: React.FormEvent) {
+  async function handleRegister(e: { preventDefault(): void }) {
     e.preventDefault();
     setRegError("");
+    setRegLoading(true);
 
     const res = await fetch("/api/auth/register", {
       method: "POST",
@@ -63,10 +69,12 @@ export default function LoginPage() {
       body: JSON.stringify({ name: regName, email: regEmail, password: regPass }),
     });
     const data = await res.json();
+    setRegLoading(false);
     if (!res.ok) {
       setRegError(data.error ?? "Error al crear la cuenta.");
       return;
     }
+    // Cuenta creada y activa — pasar directo al login
     setRegOk(true);
     setTimeout(() => {
       setTab("entrar");
@@ -178,15 +186,15 @@ export default function LoginPage() {
                   className={inputClass} style={inputStyle} />
               </div>
               {loginError && (
-                <p className="text-red-400 text-sm tracking-wide" style={{ fontFamily: "var(--font-barlow)" }}>
-                  {loginError}
+                <p className="text-sm tracking-wide" style={{ fontFamily: "var(--font-barlow)", color: loginError.includes("Confirma") ? "#f0c040" : "#f87171" }}>
+                  {loginError.includes("Confirma") ? "📧 " : "⚠ "}{loginError}
                 </p>
               )}
               <div className="pt-4">
-                <button type="submit"
+                <button type="submit" disabled={loginLoading}
                   className="w-full py-6 uppercase font-black tracking-[0.6em] transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
-                  style={btnStyle}>
-                  Entrar al Gremio
+                  style={{ ...btnStyle, opacity: loginLoading ? 0.7 : 1, cursor: loginLoading ? "not-allowed" : "pointer" }}>
+                  {loginLoading ? "Verificando..." : "Entrar al Gremio"}
                 </button>
               </div>
             </form>
@@ -195,41 +203,50 @@ export default function LoginPage() {
           {/* Form Registrar */}
           {tab === "registrar" && (
             <form onSubmit={handleRegister} className="space-y-7">
-              <div>
-                <label className="block text-[#c8921a] uppercase mb-3" style={labelStyle}>Nombre completo</label>
-                <input type="text" required placeholder="Tu nombre" value={regName}
-                  onChange={(e) => setRegName(e.target.value)}
-                  className={inputClass} style={inputStyle} />
-              </div>
-              <div>
-                <label className="block text-[#c8921a] uppercase mb-3" style={labelStyle}>Correo electrónico</label>
-                <input type="email" required placeholder="tu@email.com" value={regEmail}
-                  onChange={(e) => setRegEmail(e.target.value)}
-                  className={inputClass} style={inputStyle} />
-              </div>
-              <div>
-                <label className="block text-[#c8921a] uppercase mb-3" style={labelStyle}>Contraseña</label>
-                <input type="password" required placeholder="Mínimo 6 caracteres" value={regPass}
-                  onChange={(e) => setRegPass(e.target.value)}
-                  className={inputClass} style={inputStyle} />
-              </div>
-              {regError && (
-                <p className="text-red-400 text-sm tracking-wide" style={{ fontFamily: "var(--font-barlow)" }}>
-                  {regError}
-                </p>
+              {regOk ? (
+                <div style={{ textAlign: "center", padding: "16px 0" }}>
+                  <div style={{ fontSize: "3rem", marginBottom: "20px" }}>⚔️</div>
+                  <p style={{ fontSize: "1.1rem", fontWeight: 800, color: "#f0e6c8", marginBottom: "12px", fontFamily: "var(--font-barlow)" }}>
+                    ¡Bienvenido al gremio!
+                  </p>
+                  <p style={{ fontSize: "0.9rem", color: "#b8a882", lineHeight: 1.7, fontFamily: "var(--font-barlow)" }}>
+                    Tu cuenta fue creada. Entrando al sistema...
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-[#c8921a] uppercase mb-3" style={labelStyle}>Nombre completo</label>
+                    <input type="text" required placeholder="Tu nombre" value={regName}
+                      onChange={(e) => setRegName(e.target.value)}
+                      className={inputClass} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label className="block text-[#c8921a] uppercase mb-3" style={labelStyle}>Correo electrónico</label>
+                    <input type="email" required placeholder="tu@email.com" value={regEmail}
+                      onChange={(e) => setRegEmail(e.target.value)}
+                      className={inputClass} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label className="block text-[#c8921a] uppercase mb-3" style={labelStyle}>Contraseña</label>
+                    <input type="password" required placeholder="Mínimo 6 caracteres" value={regPass}
+                      onChange={(e) => setRegPass(e.target.value)}
+                      className={inputClass} style={inputStyle} />
+                  </div>
+                  {regError && (
+                    <p className="text-red-400 text-sm tracking-wide" style={{ fontFamily: "var(--font-barlow)" }}>
+                      ⚠ {regError}
+                    </p>
+                  )}
+                  <div className="pt-4">
+                    <button type="submit" disabled={regLoading}
+                      className="w-full py-6 uppercase font-black tracking-[0.6em] transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
+                      style={{ ...btnStyle, opacity: regLoading ? 0.7 : 1, cursor: regLoading ? "not-allowed" : "pointer" }}>
+                      {regLoading ? "Enviando correo..." : "Crear mi Cuenta"}
+                    </button>
+                  </div>
+                </>
               )}
-              {regOk && (
-                <p className="text-[#c8921a] text-sm tracking-wide" style={{ fontFamily: "var(--font-barlow)" }}>
-                  Cuenta creada. Redirigiendo al inicio de sesión...
-                </p>
-              )}
-              <div className="pt-4">
-                <button type="submit"
-                  className="w-full py-6 uppercase font-black tracking-[0.6em] transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
-                  style={btnStyle}>
-                  Crear mi Cuenta
-                </button>
-              </div>
             </form>
           )}
 

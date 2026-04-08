@@ -18,7 +18,11 @@ export async function POST(req: NextRequest) {
   }
 
   const hash = await bcrypt.hash(password, 10);
-  await sql`INSERT INTO users (name, email, password_hash) VALUES (${name}, ${email.toLowerCase()}, ${hash})`;
+
+  await sql`
+    INSERT INTO users (name, email, password_hash, email_verified)
+    VALUES (${name}, ${email.toLowerCase()}, ${hash}, true)
+  `;
 
   return NextResponse.json({ ok: true });
 }

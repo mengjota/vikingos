@@ -100,16 +100,9 @@ export default function Hero() {
       {/* ── Contenido central ── */}
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
 
-        {/* Símbolo y líneas superiores */}
-        <div className="hero-e1 flex items-center justify-center gap-4 mb-6">
-          <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#c8921a]/70" />
-          <span className="text-[#c8921a] text-xl">᛭</span>
-          <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#c8921a]/70" />
-        </div>
-
         {/* Título INVICTUS */}
         <h1
-          className="hero-e3 text-[#f0e6c8] text-7xl md:text-[9rem] font-black leading-none mb-4 tracking-tight"
+          className="hero-e3 text-[#f0e6c8] text-7xl md:text-[9rem] font-black leading-none mb-2 tracking-tight"
           style={{
             fontFamily: "var(--font-cinzel-decorative)",
             textShadow: "0 0 60px rgba(200,146,26,0.15)",
@@ -118,28 +111,38 @@ export default function Hero() {
           INVICTUS
         </h1>
 
+        {/* Separador entre INVICTUS y BARBERÍA */}
+        <div className="hero-e1 flex items-center justify-center gap-4 mb-3">
+          <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#c8921a]/70" />
+          <span className="text-[#c8921a] text-xl">᛭</span>
+          <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#c8921a]/70" />
+        </div>
+
         {/* Etiqueta BARBERÍA */}
         <p
-          className="hero-e2 text-[#c8921a] text-[11px] tracking-[0.65em] uppercase mb-5"
+          className="hero-e2 text-[#c8921a] text-[11px] tracking-[0.65em] uppercase mb-10"
           style={{ fontFamily: "var(--font-barlow)" }}
         >
           Barbería
         </p>
 
-        {/* Lema */}
-        <p
-          className="hero-e4 text-[#b8a882] text-lg md:text-xl italic mb-8 leading-relaxed"
-          style={{ fontFamily: "var(--font-lato)" }}
-        >
-          &ldquo;Donde el acero se afila con honor<br />
-          y el oficio se lleva en la sangre.&rdquo;
-        </p>
-
-        {/* Separador */}
-        <div className="hero-e5 flex items-center justify-center gap-4 mb-10">
-          <div className="h-px w-20 bg-gradient-to-r from-transparent to-[#c8921a]/60" />
-          <span className="text-[#c8921a]">ᚢ</span>
-          <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#c8921a]/60" />
+        {/* Link dinámico → Nosotros */}
+        <div className="hero-e4 mb-10">
+          <Link
+            href="/nosotros"
+            className="group inline-flex items-center gap-3 text-[#b8a882] hover:text-[#f0c040] transition-colors duration-300"
+            style={{ fontFamily: "var(--font-barlow)", fontSize: "clamp(0.75rem, 1.8vw, 0.95rem)", letterSpacing: "0.25em", textTransform: "uppercase" }}
+          >
+            <span className="relative">
+              Conoce más sobre Vikingos Barber Club
+              {/* Subrayado animado */}
+              <span className="absolute bottom-0 left-0 h-px w-0 group-hover:w-full transition-all duration-500 bg-[#f0c040]" />
+            </span>
+            {/* Flecha animada */}
+            <svg className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
 
         {/* ── Botón RESERVA CON NOSOTROS ── */}

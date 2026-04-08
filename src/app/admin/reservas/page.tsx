@@ -453,6 +453,22 @@ export default function AdminReservas() {
                             </button>
                           </div>
                         )}
+                        {estado === "cancelada" && (
+                          <div style={{ marginTop: "10px", borderTop: "1px solid rgba(239,68,68,0.15)", paddingTop: "10px" }}>
+                            <p style={{ fontSize: "0.58rem", color: "rgba(239,68,68,0.4)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "8px" }}>
+                              Horario liberado · Solo tú puedes eliminar
+                            </p>
+                            <button
+                              onClick={async () => {
+                                if (!confirm("¿Eliminar esta cita permanentemente?")) return;
+                                await fetch(`/api/reservations/${r.id}`, { method: "DELETE" });
+                                reloadAll();
+                              }}
+                              style={{ width: "100%", padding: "9px", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.25em", textTransform: "uppercase", border: "1px solid rgba(239,68,68,0.4)", backgroundColor: "rgba(239,68,68,0.08)", color: "rgba(239,68,68,0.8)", cursor: "pointer" }}>
+                              🗑 Eliminar
+                            </button>
+                          </div>
+                        )}
                       </div>
                     );
                   })

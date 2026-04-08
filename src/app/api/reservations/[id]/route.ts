@@ -13,3 +13,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   `;
   return NextResponse.json({ ok: true });
 }
+
+// DELETE — eliminar reserva permanentemente (solo admin)
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  await sql`DELETE FROM reservations WHERE id = ${Number(id)}`;
+  return NextResponse.json({ ok: true });
+}

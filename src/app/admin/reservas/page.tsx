@@ -19,12 +19,12 @@ const BARBEROS = [
 ];
 
 const SERVICIOS = [
-  { nombre: "Corte Clásico",       precio: "$25" },
-  { nombre: "Corte + Barba",       precio: "$35" },
-  { nombre: "Afeitado con Navaja", precio: "$30" },
-  { nombre: "Limpieza Facial",     precio: "$40" },
-  { nombre: "Corte Degradado",     precio: "$28" },
-  { nombre: "Diseño de Barba",     precio: "$20" },
+  { nombre: "Corte de Cabello",          precio: "$80"  },
+  { nombre: "Corte y Barba",             precio: "$150" },
+  { nombre: "Perfilado de Barba",        precio: "$60"  },
+  { nombre: "Afeitado de Barba al Ras",  precio: "$120" },
+  { nombre: "Limpieza Facial",           precio: "$100" },
+  { nombre: "Rizos Permanentes",         precio: "$220" },
 ];
 
 const HORAS = [
@@ -214,16 +214,32 @@ export default function AdminReservas() {
     reloadAll(); setModalPausa(false);
   }
 
-  // Reservas + pausas mezcladas, filtradas por fecha seleccionada
+  // Reservas + pausas mezcladas
+  // — "todas": solo la fecha seleccionada
+  // — estado específico: todas las fechas con ese estado
   function itemsDe(nombre: string) {
     const r = reservas
-      .filter(r => r.barbero === nombre && r.fecha === fechaSeleccionada)
+      .filter(r => r.barbero === nombre)
+      .filter(r => filtro === "todas" ? r.fecha === fechaSeleccionada : true)
       .filter(r => filtro === "todas" || (r.estado ?? "pendiente") === filtro)
       .map(r => ({ tipo: "reserva" as const, hora: r.hora ?? "00:00", data: r }));
-    const p = pausas
-      .filter(p => p.barbero === nombre && p.fecha === fechaSeleccionada)
-      .map(p => ({ tipo: "pausa" as const, hora: p.horaInicio, data: p }));
-    return [...r, ...p].sort((a, b) => a.hora.localeCompare(b.hora));
+
+    // Pausas solo se muestran en vista "todas" (por fecha)
+    const p = filtro === "todas"
+      ? pausas
+          .filter(p => p.barbero === nombre && p.fecha === fechaSeleccionada)
+          .map(p => ({ tipo: "pausa" as const, hora: p.horaInicio, data: p }))
+      : [];
+
+    return [...r, ...p].sort((a, b) => {
+      // Con filtro de estado: ordenar por fecha descendente (más reciente primero)
+      if (filtro !== "todas") {
+        const fa = (a.data as Reservation).fecha ?? "";
+        const fb = (b.data as Reservation).fecha ?? "";
+        if (fa !== fb) return fb.localeCompare(fa);
+      }
+      return a.hora.localeCompare(b.hora);
+    });
   }
 
   const pendientes = reservas.filter(r => (r.estado ?? "pendiente") === "pendiente").length;
@@ -240,26 +256,26 @@ export default function AdminReservas() {
   const horasFin = pausaInicio ? HORAS.filter(h => h > pausaInicio) : HORAS;
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#060504", fontFamily: "var(--font-barlow)" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#0f0b06", fontFamily: "var(--font-barlow)" }}>
 
       {/* ── Header ── */}
-      <div style={{ backgroundColor: "#0a0806", borderBottom: "1px solid rgba(92,58,30,0.45)", padding: "0 28px" }}>
-        <div style={{ maxWidth: "1500px", margin: "0 auto", height: "64px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+      <div style={{ backgroundColor: "#1a1108", borderBottom: "2px solid rgba(200,146,26,0.5)", padding: "0 28px", boxShadow: "0 2px 20px rgba(200,146,26,0.12)" }}>
+        <div style={{ maxWidth: "1500px", margin: "0 auto", height: "68px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <a href="/admin/dashboard" style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", textDecoration: "none" }}>← Dashboard</a>
-            <span style={{ color: "rgba(92,58,30,0.5)" }}>|</span>
-            <span style={{ fontSize: "1rem", fontWeight: 800, color: "#f0e6c8" }}>Panel de Reservas</span>
-            {pendientes > 0 && <span style={{ backgroundColor: "#c8921a", color: "#060504", fontSize: "0.65rem", fontWeight: 900, borderRadius: "20px", padding: "2px 10px" }}>{pendientes} pendiente{pendientes > 1 ? "s" : ""}</span>}
+            <a href="/admin/dashboard" style={{ fontSize: "0.78rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#ffffff", textDecoration: "none", fontWeight: 700 }}>← Atrás</a>
+            <span style={{ color: "rgba(200,146,26,0.4)" }}>|</span>
+            <span style={{ fontSize: "1.1rem", fontWeight: 900, color: "#ffffff", letterSpacing: "0.05em", textShadow: "0 0 20px rgba(200,146,26,0.4)" }}>Panel de Reservas</span>
+            {pendientes > 0 && <span style={{ backgroundColor: "#f0c040", color: "#0f0b06", fontSize: "0.7rem", fontWeight: 900, borderRadius: "20px", padding: "3px 12px", boxShadow: "0 0 14px rgba(240,192,64,0.6)" }}>{pendientes} pendiente{pendientes > 1 ? "s" : ""}</span>}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
             {(["todas","pendiente","completada","cancelada"] as const).map(f => (
               <button key={f} onClick={() => setFiltro(f)}
-                style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", padding: "6px 12px", border: `1px solid ${filtro===f ? "#c8921a" : "rgba(92,58,30,0.3)"}`, backgroundColor: filtro===f ? "rgba(200,146,26,0.12)" : "transparent", color: filtro===f ? "#c8921a" : "rgba(184,168,138,0.35)", cursor: "pointer" }}>
+                style={{ fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", padding: "9px 18px", border: "none", backgroundColor: filtro===f ? "rgba(240,192,64,0.18)" : "transparent", color: filtro===f ? "#f0c040" : "#ffffff", cursor: "pointer", borderBottom: filtro===f ? "2px solid #f0c040" : "2px solid transparent" }}>
                 {f}
               </button>
             ))}
             <button onClick={() => abrirNueva()}
-              style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.28em", textTransform: "uppercase", padding: "8px 18px", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", color: "#060504", cursor: "pointer", boxShadow: "0 0 18px rgba(200,146,26,0.4)", marginLeft: "6px" }}>
+              style={{ fontSize: "0.72rem", fontWeight: 900, letterSpacing: "0.25em", textTransform: "uppercase", padding: "10px 22px", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", color: "#0f0b06", cursor: "pointer", boxShadow: "0 0 24px rgba(200,146,26,0.6), 0 4px 12px rgba(0,0,0,0.4)", marginLeft: "6px" }}>
               + Nueva Cita
             </button>
           </div>
@@ -267,50 +283,46 @@ export default function AdminReservas() {
       </div>
 
       {/* ── Navegador de semana ── */}
-      <div style={{ backgroundColor: "#080604", borderBottom: "1px solid rgba(92,58,30,0.3)", padding: "0 28px" }}>
-        <div style={{ maxWidth: "1500px", margin: "0 auto", padding: "14px 0", display: "flex", alignItems: "center", gap: "10px" }}>
+      <div style={{ backgroundColor: "#161009", borderBottom: "1px solid rgba(200,146,26,0.25)", padding: "0 28px" }}>
+        <div style={{ maxWidth: "1500px", margin: "0 auto", padding: "16px 0", display: "flex", alignItems: "center", gap: "10px" }}>
 
           {/* Flecha anterior */}
           <button onClick={() => setOffsetSemana(o => o - 1)}
-            style={{ width: "34px", height: "34px", border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "transparent", color: "rgba(184,168,138,0.5)", cursor: "pointer", fontSize: "1rem", flexShrink: 0 }}>
+            style={{ width: "38px", height: "38px", border: "1px solid rgba(200,146,26,0.45)", backgroundColor: "rgba(200,146,26,0.08)", color: "#c8921a", cursor: "pointer", fontSize: "1.2rem", flexShrink: 0, fontWeight: 900 }}>
             ‹
           </button>
 
           {/* Días */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "6px", flex: 1 }}>
             {diasSemana.map(d => {
-              const iso     = isoFromDate(d);
-              const esHoy   = iso === todayISO();
-              const esSel   = iso === fechaSeleccionada;
-              const citas   = citasDia(iso);
+              const iso      = isoFromDate(d);
+              const esHoy    = iso === todayISO();
+              const esSel    = iso === fechaSeleccionada;
+              const citas    = citasDia(iso);
               const esPasado = iso < todayISO();
               return (
                 <button key={iso} onClick={() => setFechaSeleccionada(iso)}
                   style={{
-                    padding: "10px 6px", border: `1px solid ${esSel ? "#c8921a" : esHoy ? "rgba(200,146,26,0.35)" : "rgba(92,58,30,0.25)"}`,
-                    backgroundColor: esSel ? "rgba(200,146,26,0.15)" : esHoy ? "rgba(200,146,26,0.05)" : "transparent",
-                    cursor: "pointer", textAlign: "center", position: "relative",
+                    padding: "12px 6px", cursor: "pointer", textAlign: "center",
+                    border: `2px solid ${esSel ? "#f0c040" : esHoy ? "rgba(200,146,26,0.6)" : "rgba(200,146,26,0.15)"}`,
+                    backgroundColor: esSel ? "rgba(240,192,64,0.18)" : esHoy ? "rgba(200,146,26,0.1)" : "rgba(255,255,255,0.02)",
+                    boxShadow: esSel ? "0 0 18px rgba(240,192,64,0.35), inset 0 0 12px rgba(240,192,64,0.08)" : "none",
                   }}>
-                  <p style={{ fontSize: "0.55rem", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "4px",
-                    color: esSel ? "#c8921a" : esHoy ? "rgba(200,146,26,0.7)" : "rgba(184,168,138,0.35)" }}>
+                  <p style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "5px", fontWeight: 700,
+                    color: esSel ? "#f0c040" : esHoy ? "#c8921a" : "rgba(200,180,140,0.6)" }}>
                     {DIAS_ES[d.getDay()]}
                   </p>
-                  <p style={{ fontSize: "1.15rem", fontWeight: 900, lineHeight: 1, marginBottom: "6px",
-                    color: esSel ? "#f0c040" : esHoy ? "#c8921a" : esPasado ? "rgba(184,168,138,0.25)" : "#f0e6c8" }}>
+                  <p style={{ fontSize: "1.35rem", fontWeight: 900, lineHeight: 1, marginBottom: "4px",
+                    color: esSel ? "#ffffff" : esHoy ? "#f0c040" : esPasado ? "rgba(200,180,140,0.35)" : "#f0e6c8",
+                    textShadow: esSel ? "0 0 16px rgba(240,192,64,0.8)" : esHoy ? "0 0 10px rgba(200,146,26,0.6)" : "none" }}>
                     {d.getDate()}
                   </p>
-                  <p style={{ fontSize: "0.5rem", letterSpacing: "0.15em", color: "rgba(184,168,138,0.3)", marginBottom: "4px" }}>
+                  <p style={{ fontSize: "0.52rem", letterSpacing: "0.15em", color: esSel ? "rgba(240,192,64,0.7)" : "rgba(200,180,140,0.4)", marginBottom: "5px" }}>
                     {MESES_ES[d.getMonth()]}
                   </p>
-                  {/* Indicador de citas */}
-                  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "3px", minHeight: "14px" }}>
+                  <div style={{ display: "flex", justifyContent: "center", minHeight: "16px" }}>
                     {citas > 0 && (
-                      <span style={{
-                        fontSize: "0.6rem", fontWeight: 900, letterSpacing: "0.05em",
-                        backgroundColor: esSel ? "#f0c040" : "rgba(200,146,26,0.85)",
-                        color: "#060504", borderRadius: "10px", padding: "1px 6px",
-                        opacity: esPasado ? 0.5 : 1,
-                      }}>
+                      <span style={{ fontSize: "0.65rem", fontWeight: 900, backgroundColor: esSel ? "#f0c040" : "#c8921a", color: "#0f0b06", borderRadius: "10px", padding: "1px 7px", opacity: esPasado ? 0.6 : 1, boxShadow: esSel ? "0 0 8px rgba(240,192,64,0.5)" : "none" }}>
                         {citas}
                       </span>
                     )}
@@ -322,20 +334,20 @@ export default function AdminReservas() {
 
           {/* Flecha siguiente */}
           <button onClick={() => setOffsetSemana(o => o + 1)}
-            style={{ width: "34px", height: "34px", border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "transparent", color: "rgba(184,168,138,0.5)", cursor: "pointer", fontSize: "1rem", flexShrink: 0 }}>
+            style={{ width: "38px", height: "38px", border: "1px solid rgba(200,146,26,0.45)", backgroundColor: "rgba(200,146,26,0.08)", color: "#c8921a", cursor: "pointer", fontSize: "1.2rem", flexShrink: 0, fontWeight: 900 }}>
             ›
           </button>
 
           {/* Botón Hoy */}
           <button onClick={() => { setOffsetSemana(0); setFechaSeleccionada(todayISO()); }}
-            style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", padding: "8px 14px", border: "1px solid rgba(200,146,26,0.4)", backgroundColor: "rgba(200,146,26,0.08)", color: "rgba(200,146,26,0.7)", cursor: "pointer", flexShrink: 0 }}>
+            style={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 16px", border: "1px solid #c8921a", backgroundColor: "rgba(200,146,26,0.15)", color: "#f0c040", cursor: "pointer", flexShrink: 0, boxShadow: "0 0 10px rgba(200,146,26,0.2)" }}>
             Hoy
           </button>
 
           {/* Fecha seleccionada — label */}
           <div style={{ flexShrink: 0, textAlign: "right" }}>
-            <p style={{ fontSize: "0.55rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(184,168,138,0.3)", marginBottom: "2px" }}>Viendo</p>
-            <p style={{ fontSize: "0.82rem", fontWeight: 700, color: "#c8921a" }}>
+            <p style={{ fontSize: "0.55rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(200,180,140,0.5)", marginBottom: "2px" }}>Viendo</p>
+            <p style={{ fontSize: "0.9rem", fontWeight: 800, color: "#f0c040", textShadow: "0 0 10px rgba(240,192,64,0.4)" }}>
               {new Date(fechaSeleccionada + "T12:00:00").toLocaleDateString("es-EC", { weekday: "long", day: "numeric", month: "long" })}
             </p>
           </div>
@@ -347,14 +359,14 @@ export default function AdminReservas() {
         {BARBEROS.map(barb => {
           const items = itemsDe(barb.name);
           return (
-            <div key={barb.name} style={{ border: `1px solid rgba(${barb.rgb},0.2)`, backgroundColor: "#0a0806", overflow: "hidden" }}>
+            <div key={barb.name} style={{ border: `2px solid rgba(${barb.rgb},0.4)`, backgroundColor: "#1a1108", overflow: "hidden", boxShadow: `0 0 30px rgba(${barb.rgb},0.08)` }}>
 
               {/* Cabecera */}
-              <div style={{ padding: "20px 22px 16px", background: `linear-gradient(160deg, rgba(${barb.rgb},0.1) 0%, transparent 70%)`, borderBottom: `1px solid rgba(${barb.rgb},0.15)` }}>
+              <div style={{ padding: "20px 22px 16px", background: `linear-gradient(160deg, rgba(${barb.rgb},0.2) 0%, rgba(${barb.rgb},0.05) 60%, transparent 100%)`, borderBottom: `2px solid rgba(${barb.rgb},0.3)` }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                  <span style={{ fontSize: "1.7rem", color: barb.col }}>{barb.rune}</span>
+                  <span style={{ fontSize: "2rem", color: barb.col, textShadow: `0 0 20px ${barb.col}` }}>{barb.rune}</span>
                   <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-                    <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: barb.col, border: `1px solid ${barb.col}45`, padding: "3px 9px" }}>
+                    <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: barb.col, border: `1px solid ${barb.col}`, padding: "4px 10px", boxShadow: `0 0 8px ${barb.col}40` }}>
                       {items.filter(i => i.tipo === "reserva").length} cita{items.filter(i => i.tipo === "reserva").length !== 1 ? "s" : ""}
                     </span>
                     {/* Botón pausa */}
@@ -370,16 +382,16 @@ export default function AdminReservas() {
                   </div>
                 </div>
                 <p style={{ fontSize: "1.05rem", fontWeight: 800, color: "#f0e6c8", marginBottom: "2px" }}>{barb.name}</p>
-                <p style={{ fontSize: "0.65rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(184,168,138,0.35)" }}>{barb.specialty}</p>
+                <p style={{ fontSize: "0.65rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(200,180,140,0.65)" }}>{barb.specialty}</p>
               </div>
 
               {/* Items */}
               <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "8px", minHeight: "280px" }}>
                 {items.length === 0 ? (
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "12px", padding: "36px 0", opacity: 0.35 }}>
-                    <p style={{ fontSize: "0.62rem", letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(184,168,138,0.5)" }}>Sin actividad</p>
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "12px", padding: "36px 0" }}>
+                    <p style={{ fontSize: "0.62rem", letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(200,180,140,0.5)" }}>Sin actividad</p>
                     <button onClick={() => abrirNueva(barb.name)}
-                      style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", padding: "7px 18px", border: `1px dashed ${barb.col}50`, backgroundColor: "transparent", color: barb.col, cursor: "pointer" }}>
+                      style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", padding: "9px 22px", border: `1px dashed ${barb.col}`, backgroundColor: `rgba(${barb.rgb},0.06)`, color: barb.col, cursor: "pointer" }}>
                       + Agregar cita
                     </button>
                   </div>
@@ -388,17 +400,17 @@ export default function AdminReservas() {
                     if (item.tipo === "pausa") {
                       const p = item.data as Pausa;
                       return (
-                        <div key={`pausa-${p.id}`} style={{ backgroundColor: "rgba(251,146,60,0.06)", border: "1px solid rgba(251,146,60,0.25)", borderLeft: "4px solid rgba(251,146,60,0.7)", padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div key={`pausa-${p.id}`} style={{ backgroundColor: "rgba(251,146,60,0.1)", border: "1px solid rgba(251,146,60,0.45)", borderLeft: "4px solid rgba(251,146,60,0.9)", padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 0 12px rgba(251,146,60,0.08)" }}>
                           <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "3px" }}>
                               <span style={{ fontSize: "0.7rem" }}>⏸</span>
-                              <span style={{ fontSize: "0.85rem", fontWeight: 800, color: "rgba(251,146,60,0.9)" }}>{p.horaInicio} – {p.horaFin}</span>
+                              <span style={{ fontSize: "0.88rem", fontWeight: 800, color: "rgba(251,146,60,1)" }}>{p.horaInicio} – {p.horaFin}</span>
                             </div>
-                            <p style={{ fontSize: "0.65rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(251,146,60,0.55)" }}>{p.motivo}</p>
-                            <p style={{ fontSize: "0.62rem", color: "rgba(184,168,138,0.35)", marginTop: "2px" }}>{p.fecha}</p>
+                            <p style={{ fontSize: "0.65rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(251,146,60,0.85)" }}>{p.motivo}</p>
+                            <p style={{ fontSize: "0.62rem", color: "rgba(200,180,140,0.65)", marginTop: "2px" }}>{p.fecha}</p>
                           </div>
                           <button onClick={() => { deletePausa(p.id); reloadAll(); }}
-                            style={{ background: "none", border: "1px solid rgba(239,68,68,0.25)", color: "rgba(239,68,68,0.5)", cursor: "pointer", padding: "4px 8px", fontSize: "0.7rem" }}>
+                            style={{ background: "none", border: "1px solid rgba(239,68,68,0.5)", color: "rgba(239,68,68,0.8)", cursor: "pointer", padding: "4px 8px", fontSize: "0.7rem" }}>
                             ✕
                           </button>
                         </div>
@@ -408,36 +420,36 @@ export default function AdminReservas() {
                     const r = item.data as Reservation;
                     const estado = r.estado ?? "pendiente";
                     return (
-                      <div key={`res-${r.id}-${idx}`} style={{ backgroundColor: "#0f0c08", border: `1px solid rgba(${barb.rgb},0.12)`, borderLeft: `4px solid ${ESTADO_COLOR[estado]}`, padding: "14px 16px" }}>
+                      <div key={`res-${r.id}-${idx}`} style={{ backgroundColor: "#1c1409", border: `1px solid rgba(${barb.rgb},0.3)`, borderLeft: `4px solid ${ESTADO_COLOR[estado]}`, padding: "14px 16px", boxShadow: `0 0 16px rgba(${barb.rgb},0.06)` }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                          <span style={{ fontSize: "1.4rem", fontWeight: 900, color: barb.col, lineHeight: 1 }}>{r.hora}</span>
-                          <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: ESTADO_COLOR[estado], border: `1px solid ${ESTADO_COLOR[estado]}40`, padding: "3px 8px" }}>{estado}</span>
+                          <span style={{ fontSize: "1.5rem", fontWeight: 900, color: barb.col, lineHeight: 1, textShadow: `0 0 12px ${barb.col}80` }}>{r.hora}</span>
+                          <span style={{ fontSize: "0.52rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: ESTADO_COLOR[estado], border: `1px solid ${ESTADO_COLOR[estado]}`, padding: "3px 10px", boxShadow: `0 0 8px ${ESTADO_COLOR[estado]}50` }}>{estado}</span>
                         </div>
-                        <p style={{ fontSize: "0.65rem", color: "rgba(184,168,138,0.38)", marginBottom: "8px" }}>{r.fecha}</p>
-                        <p style={{ fontSize: "0.95rem", fontWeight: 700, color: "#f0e6c8", marginBottom: "2px" }}>{r.clienteNombre ?? "Cliente"}</p>
-                        <p style={{ fontSize: "0.65rem", color: "rgba(184,168,138,0.35)", marginBottom: "10px" }}>
+                        <p style={{ fontSize: "0.65rem", color: "rgba(200,180,140,0.7)", marginBottom: "8px" }}>{r.fecha}</p>
+                        <p style={{ fontSize: "0.98rem", fontWeight: 700, color: "#ffffff", marginBottom: "2px" }}>{r.clienteNombre ?? "Cliente"}</p>
+                        <p style={{ fontSize: "0.65rem", color: "rgba(200,180,140,0.7)", marginBottom: "10px" }}>
                           {r.clienteEmail?.startsWith("tel:") ? `📞 ${r.clienteEmail.replace("tel:","")}` : r.clienteEmail}
                         </p>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: estado === "pendiente" ? "12px" : "0", paddingTop: "8px", borderTop: "1px solid rgba(92,58,30,0.2)" }}>
-                          <span style={{ fontSize: "0.72rem", color: "rgba(184,168,138,0.5)", fontWeight: 600 }}>{r.servicio}</span>
-                          <span style={{ fontSize: "1rem", fontWeight: 900, color: "#f0c040" }}>{r.precio}</span>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: estado === "pendiente" ? "12px" : "0", paddingTop: "8px", borderTop: "1px solid rgba(92,58,30,0.4)" }}>
+                          <span style={{ fontSize: "0.72rem", color: "rgba(200,180,140,0.85)", fontWeight: 600 }}>{r.servicio}</span>
+                          <span style={{ fontSize: "1.05rem", fontWeight: 900, color: "#f0c040", textShadow: "0 0 10px rgba(240,192,64,0.5)" }}>{r.precio}</span>
                         </div>
                         {estado === "pendiente" && (
                           <div style={{ display: "flex", gap: "7px" }}>
                             <button onClick={() => abrirCompletar(r)}
-                              style={{ flex: 1, padding: "8px", fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.25em", textTransform: "uppercase", background: `linear-gradient(135deg, rgba(${barb.rgb},0.8), rgba(${barb.rgb},1))`, border: "none", color: "#060504", cursor: "pointer" }}>
+                              style={{ flex: 1, padding: "10px", fontSize: "0.62rem", fontWeight: 900, letterSpacing: "0.25em", textTransform: "uppercase", background: `linear-gradient(135deg, rgba(${barb.rgb},0.85), rgba(${barb.rgb},1))`, border: "none", color: "#060504", cursor: "pointer", boxShadow: `0 0 16px rgba(${barb.rgb},0.4)` }}>
                               ✓ Completar
                             </button>
                             <button onClick={async () => { await fetch(`/api/reservations/${r.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ estado: "cancelada" }) }); reloadAll(); }}
-                              style={{ padding: "8px 11px", fontSize: "0.7rem", fontWeight: 700, backgroundColor: "transparent", border: "1px solid rgba(239,68,68,0.3)", color: "rgba(239,68,68,0.55)", cursor: "pointer" }}>
+                              style={{ padding: "10px 13px", fontSize: "0.75rem", fontWeight: 700, backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.6)", color: "rgba(239,68,68,0.9)", cursor: "pointer" }}>
                               ✕
                             </button>
                           </div>
                         )}
                         {estado === "completada" && (
-                          <div style={{ marginTop: "10px", borderTop: "1px solid rgba(92,58,30,0.2)", paddingTop: "10px" }}>
+                          <div style={{ marginTop: "10px", borderTop: "1px solid rgba(74,222,128,0.2)", paddingTop: "10px" }}>
                             {r.facturaId && (
-                              <p style={{ fontSize: "0.56rem", letterSpacing: "0.18em", color: "rgba(74,222,128,0.45)", marginBottom: "8px" }}>{r.facturaId}</p>
+                              <p style={{ fontSize: "0.56rem", letterSpacing: "0.18em", color: "rgba(74,222,128,0.85)", marginBottom: "8px", textShadow: "0 0 8px rgba(74,222,128,0.3)" }}>{r.facturaId}</p>
                             )}
                             <button
                               onClick={async () => {
@@ -448,14 +460,14 @@ export default function AdminReservas() {
                                 });
                                 reloadAll();
                               }}
-                              style={{ width: "100%", padding: "9px", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.25em", textTransform: "uppercase", border: "1px solid rgba(240,192,64,0.5)", backgroundColor: "rgba(240,192,64,0.1)", color: "#f0c040", cursor: "pointer" }}>
+                              style={{ width: "100%", padding: "10px", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.25em", textTransform: "uppercase", border: "1px solid rgba(240,192,64,0.7)", backgroundColor: "rgba(240,192,64,0.14)", color: "#f0c040", cursor: "pointer", boxShadow: "0 0 10px rgba(240,192,64,0.2)" }}>
                               ↩ Reabrir y Editar
                             </button>
                           </div>
                         )}
                         {estado === "cancelada" && (
-                          <div style={{ marginTop: "10px", borderTop: "1px solid rgba(239,68,68,0.15)", paddingTop: "10px" }}>
-                            <p style={{ fontSize: "0.58rem", color: "rgba(239,68,68,0.4)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "8px" }}>
+                          <div style={{ marginTop: "10px", borderTop: "1px solid rgba(239,68,68,0.3)", paddingTop: "10px" }}>
+                            <p style={{ fontSize: "0.58rem", color: "rgba(239,68,68,0.8)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "8px" }}>
                               Horario liberado · Solo tú puedes eliminar
                             </p>
                             <button
@@ -464,7 +476,7 @@ export default function AdminReservas() {
                                 await fetch(`/api/reservations/${r.id}`, { method: "DELETE" });
                                 reloadAll();
                               }}
-                              style={{ width: "100%", padding: "9px", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.25em", textTransform: "uppercase", border: "1px solid rgba(239,68,68,0.4)", backgroundColor: "rgba(239,68,68,0.08)", color: "rgba(239,68,68,0.8)", cursor: "pointer" }}>
+                              style={{ width: "100%", padding: "10px", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.25em", textTransform: "uppercase", border: "1px solid rgba(239,68,68,0.7)", backgroundColor: "rgba(239,68,68,0.12)", color: "rgba(239,68,68,1)", cursor: "pointer", boxShadow: "0 0 10px rgba(239,68,68,0.2)" }}>
                               🗑 Eliminar
                             </button>
                           </div>

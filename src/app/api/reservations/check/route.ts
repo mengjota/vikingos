@@ -11,11 +11,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json([], { status: 200 });
   }
 
+  const bid = process.env.BARBERSHOP_ID ?? "invictus";
   const rows = await sql`
     SELECT time FROM reservations
     WHERE barber = ${barbero}
       AND date   = ${fecha}
       AND status != 'cancelada'
+      AND barbershop_id = ${bid}
   `;
   return NextResponse.json(rows.map(r => r.time));
 }

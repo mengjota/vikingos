@@ -176,12 +176,7 @@ const servicios = [
   },
 ];
 
-const barberos = [
-  { id: 0, name: "El que más pronto me pueda atender", specialty: "Cualquier maestro disponible", rune: "᛭" },
-  { id: 1, name: "Carlos Mendoza", specialty: "Navaja Clásica", rune: "ᚠ" },
-  { id: 2, name: "Andrés Vega", specialty: "Degradados y Líneas", rune: "ᚢ" },
-  { id: 3, name: "Sebastián Torres", specialty: "Estilo Moderno", rune: "ᚦ" },
-];
+interface Barbero { id: number; name: string; specialty: string; rune: string; }
 
 const horas = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
 
@@ -191,6 +186,9 @@ export default function ReservarPage() {
   const [paso, setPaso] = useState<1 | 2 | 3>(1);
   const [servicioId, setServicioId] = useState<number | null>(null);
   const [barberoId, setBarberoId] = useState<number | null>(null);
+  const [barberos, setBarberos] = useState<Barbero[]>([
+    { id: 0, name: "El que más pronto me pueda atender", specialty: "Cualquier maestro disponible", rune: "᛭" },
+  ]);
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [nombre, setNombre] = useState("");
@@ -201,6 +199,14 @@ export default function ReservarPage() {
   const [pedirLogin, setPedirLogin] = useState(false);
   const [errorReserva, setErrorReserva] = useState("");
   const [horasOcupadas, setHorasOcupadas] = useState<string[]>([]);
+
+  // Cargar barberos desde la DB
+  useEffect(() => {
+    fetch("/api/barbers")
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data) && data.length > 0) setBarberos(data); })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const s = getSession();

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
 
-// Mapea fila DB → interfaz Reservation
+const BID = () => process.env.BARBERSHOP_ID ?? "invictus";
+
 function toRes(r: Record<string, unknown>) {
   return {
     id:            String(r.id),
@@ -18,28 +19,32 @@ function toRes(r: Record<string, unknown>) {
   };
 }
 
-// GET — todas las reservas (admin)
+// GET — todas las reservas de esta barbería (admin)
 export async function GET() {
   const rows = await sql`
     SELECT id, client_name, client_email, service, price, barber,
            date::text AS date, time, status, invoice_id, created_at
-    FROM reservations ORDER BY created_at DESC
+    FROM reservations
+    WHERE barbershop_id = ${BID()}
+    ORDER BY created_at DESC
   `;
   return NextResponse.json(rows.map(toRes));
 }
 
-// POST — crear reserva
+// POST — crear reserva en esta barbería
 export async function POST(req: NextRequest) {
   const d = await req.json();
+  const bid = BID();
 
-  // Verificar conflicto de horario
+  // Verificar conflicto de horario dentro de esta barbería
   if (d.barbero && d.barbero !== "El que más pronto me pueda atender") {
     const conflict = await sql`
       SELECT id FROM reservations
       WHERE barber = ${d.barbero}
-        AND date  = ${d.fecha}
-        AND time  = ${d.hora}
+        AND date   = ${d.fecha}
+        AND time   = ${d.hora}
         AND status != 'cancelada'
+        AND barbershop_id = ${bid}
     `;
     if (conflict.length > 0) {
       return NextResponse.json(
@@ -50,8 +55,11 @@ export async function POST(req: NextRequest) {
   }
 
   const [row] = await sql`
-    INSERT INTO reservations (client_name, client_email, service, price, barber, date, time, status)
-    VALUES (${d.clienteNombre}, ${d.clienteEmail ?? null}, ${d.servicio}, ${d.precio}, ${d.barbero}, ${d.fecha}::date, ${d.hora}, 'pendiente')
+    INSERT INTO reservations
+      (client_name, client_email, service, price, barber, date, time, status, barbershop_id)
+    VALUES
+      (${d.clienteNombre}, ${d.clienteEmail ?? null}, ${d.servicio}, ${d.precio},
+       ${d.barbero}, ${d.fecha}::date, ${d.hora}, 'pendiente', ${bid})
     RETURNING id, client_name, client_email, service, price, barber,
               date::text AS date, time, status, invoice_id, created_at
   `;

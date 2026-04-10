@@ -2,34 +2,36 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import sql from "@/lib/db";
 
-async function verifyOwner(email: string): Promise<boolean> {
-  if (!email) return false;
-  const rows = await sql`SELECT role FROM users WHERE email = ${email.toLowerCase()}`;
-  return rows.length > 0 && rows[0].role === "owner";
+async function getOwnerBarbershop(email: string): Promise<string | null> {
+  if (!email) return null;
+  const rows = await sql`
+    SELECT role, barbershop_id FROM users WHERE email = ${email.toLowerCase()}
+  `;
+  if (rows.length === 0 || rows[0].role !== "owner") return null;
+  return (rows[0].barbershop_id as string) ?? (process.env.BARBERSHOP_ID ?? "invictus");
 }
 
-// GET — lista todos los empleados
+// GET — lista empleados de la barbería del owner
 export async function GET(req: NextRequest) {
   const callerEmail = req.headers.get("x-caller-email") ?? "";
-  if (!(await verifyOwner(callerEmail))) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
+  const barbershopId = await getOwnerBarbershop(callerEmail);
+  if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const rows = await sql`
     SELECT id, name, email, barber_name, created_at
-    FROM users WHERE role = 'employee'
+    FROM users
+    WHERE role = 'employee' AND barbershop_id = ${barbershopId}
     ORDER BY name
   `;
   return NextResponse.json(rows);
 }
 
-// POST — crear cuenta de empleado
+// POST — crear cuenta de empleado en la barbería del owner
 export async function POST(req: NextRequest) {
   const { callerEmail, name, email, password, barberName } = await req.json();
 
-  if (!(await verifyOwner(callerEmail))) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
+  const barbershopId = await getOwnerBarbershop(callerEmail);
+  if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   if (!name || !email || !password || !barberName) {
     return NextResponse.json({ error: "Todos los campos son requeridos" }, { status: 400 });
@@ -45,24 +47,24 @@ export async function POST(req: NextRequest) {
 
   const hash = await bcrypt.hash(password, 10);
   const [row] = await sql`
-    INSERT INTO users (name, email, password_hash, email_verified, role, barber_name)
-    VALUES (${name}, ${email.toLowerCase()}, ${hash}, true, 'employee', ${barberName})
-    RETURNING id, name, email, barber_name
+    INSERT INTO users (name, email, password_hash, email_verified, role, barber_name, barbershop_id)
+    VALUES (${name}, ${email.toLowerCase()}, ${hash}, true, 'employee', ${barberName}, ${barbershopId})
+    RETURNING id, name, email, barber_name, barbershop_id
   `;
 
   return NextResponse.json({ ok: true, employee: row }, { status: 201 });
 }
 
-// DELETE — eliminar cuenta de empleado
+// DELETE — eliminar empleado (solo de la barbería del owner)
 export async function DELETE(req: NextRequest) {
   const { callerEmail, employeeId } = await req.json();
 
-  if (!(await verifyOwner(callerEmail))) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
+  const barbershopId = await getOwnerBarbershop(callerEmail);
+  if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const result = await sql`
-    DELETE FROM users WHERE id = ${employeeId} AND role = 'employee'
+    DELETE FROM users
+    WHERE id = ${employeeId} AND role = 'employee' AND barbershop_id = ${barbershopId}
     RETURNING id, name
   `;
 

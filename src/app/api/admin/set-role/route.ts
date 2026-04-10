@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
 
-// Endpoint exclusivo para Narvek System — asigna rol a un usuario
-// POST /api/admin/set-role { "email": "...", "role": "owner|employee|client", "secret": "narvek-dev-2025" }
+// Endpoint exclusivo Narvek System
+// POST /api/admin/set-role
+// { "email": "...", "role": "owner|employee|client", "barbershopId": "invictus", "secret": "narvek-dev-2025" }
 export async function POST(req: NextRequest) {
-  const { email, role, secret } = await req.json();
+  const { email, role, barbershopId, secret } = await req.json();
 
   if (secret !== (process.env.DEV_SECRET ?? "narvek-dev-2025")) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
@@ -14,10 +15,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Rol inválido. Usa: owner, employee, client" }, { status: 400 });
   }
 
+  const bid = barbershopId ?? process.env.BARBERSHOP_ID ?? "invictus";
+
   const result = await sql`
-    UPDATE users SET role = ${role}
+    UPDATE users
+    SET role = ${role}, barbershop_id = ${bid}
     WHERE email = ${email.toLowerCase()}
-    RETURNING id, name, email, role
+    RETURNING id, name, email, role, barbershop_id
   `;
 
   if (result.length === 0) {

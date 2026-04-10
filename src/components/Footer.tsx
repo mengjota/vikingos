@@ -92,12 +92,21 @@ export default function Footer() {
           >
             © 2025 Invictus Barberia — Todos los derechos reservados
           </p>
-          <p
-            className="text-[#b8a882]/20 text-[10px] italic"
-            style={{ fontFamily: "var(--font-lato)" }}
-          >
-            Honor · Fuerza · Oficio
-          </p>
+          <div className="flex items-center gap-6">
+            <p
+              className="text-[#b8a882]/20 text-[10px] italic"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              Honor · Fuerza · Oficio
+            </p>
+            <a
+              href="/login"
+              className="text-[#b8a882]/20 hover:text-[#c8921a]/50 text-[9px] tracking-[0.35em] uppercase transition-colors duration-300"
+              style={{ fontFamily: "var(--font-barlow)" }}
+            >
+              Acceso Empleados
+            </a>
+          </div>
         </div>
       </div>
     </footer>

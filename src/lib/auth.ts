@@ -3,6 +3,8 @@ export interface Session {
   email: string;
   role: "owner" | "employee" | "client";
   barberName?: string;
+  barbershopId?: string;
+  barbershopName?: string;
 }
 
 export interface Reservation {

@@ -1,6 +1,8 @@
 export interface Session {
   name: string;
   email: string;
+  role: "owner" | "employee" | "client";
+  barberName?: string;
 }
 
 export interface Reservation {

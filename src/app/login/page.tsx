@@ -33,7 +33,7 @@ export default function LoginPage() {
     // Acceso admin
     if (loginEmail.toLowerCase() === ADMIN_EMAIL) {
       if (adminLogin(loginPass)) {
-        localStorage.setItem("inv_session", JSON.stringify({ name: "Admin", email: ADMIN_EMAIL }));
+        localStorage.setItem("inv_session", JSON.stringify({ name: "Admin", email: ADMIN_EMAIL, role: "owner" }));
         router.push("/admin/dashboard");
       } else {
         setLoginError("Contraseña incorrecta.");
@@ -42,7 +42,7 @@ export default function LoginPage() {
       return;
     }
 
-    // Acceso cliente — valida contra la DB
+    // Acceso via DB — válido para clientes, empleados y owner
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -54,7 +54,15 @@ export default function LoginPage() {
       setLoginError(data.error ?? "Error al iniciar sesión.");
       return;
     }
-    localStorage.setItem("inv_session", JSON.stringify({ name: data.name, email: data.email }));
+    localStorage.setItem("inv_session", JSON.stringify({
+      name: data.name,
+      email: data.email,
+      role: data.role ?? "client",
+      barberName: data.barberName ?? null,
+    }));
+    // Redirigir según rol
+    if (data.role === "owner") { router.push("/admin/dashboard"); return; }
+    if (data.role === "employee") { router.push("/mi-agenda"); return; }
     router.push("/");
   }
 

@@ -20,7 +20,11 @@ export function adminLogout() {
 
 export function isAdminLoggedIn(): boolean {
   if (typeof window === "undefined") return false;
-  return localStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  if (localStorage.getItem(ADMIN_SESSION_KEY) === "true") return true;
+  // También acepta owner registrado en DB
+  const raw = localStorage.getItem("inv_session");
+  if (!raw) return false;
+  try { return JSON.parse(raw).role === "owner"; } catch { return false; }
 }
 
 // ── Reservas globales ────────────────────────────────────

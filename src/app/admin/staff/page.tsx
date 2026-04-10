@@ -2,252 +2,365 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAdminLoggedIn, getStaff, saveEmpleado, deleteEmpleado, type Empleado } from "@/lib/adminAuth";
+import { isAdminLoggedIn } from "@/lib/adminAuth";
+import { getSession } from "@/lib/auth";
 
-const COLORES = ["#c8921a", "#a78bfa", "#60a5fa", "#4ade80", "#fb923c", "#f472b6", "#f0c040"];
-const RUNAS   = ["ᚠ", "ᚢ", "ᚦ", "ᚨ", "ᚱ", "ᚲ", "ᚷ", "ᚹ", "ᚺ", "ᚾ", "ᛁ", "ᛇ", "ᛈ", "ᛉ", "ᛊ", "ᛏ", "ᛒ", "ᛖ", "ᛗ", "ᛚ", "ᛜ", "ᛞ", "ᛟ", "᛭"];
+interface Empleado {
+  id: number;
+  name: string;
+  email: string;
+  barber_name: string;
+  created_at: string;
+}
 
-const VACIO: Omit<Empleado, "id"> = { nombre: "", especialidad: "", runa: "ᚠ", color: "#c8921a", activo: true };
+const VACIO = { name: "", email: "", password: "", barberName: "" };
 
 export default function AdminStaff() {
   const router = useRouter();
-  const [staff, setStaff]     = useState<Empleado[]>([]);
-  const [modal, setModal]     = useState(false);
-  const [editando, setEditando] = useState<string | null>(null);
-  const [form, setForm]       = useState<Omit<Empleado, "id">>(VACIO);
-  const [error, setError]     = useState("");
-  const [confirmDel, setConfirmDel] = useState<string | null>(null);
+  const [empleados, setEmpleados] = useState<Empleado[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [modal, setModal] = useState(false);
+  const [form, setForm] = useState(VACIO);
+  const [formError, setFormError] = useState("");
+  const [formLoading, setFormLoading] = useState(false);
+  const [confirmDel, setConfirmDel] = useState<Empleado | null>(null);
+  const [delLoading, setDelLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const [session, setSession] = useState<ReturnType<typeof getSession>>(null);
 
   useEffect(() => {
     if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    setStaff(getStaff());
+    setSession(getSession());
+    cargarEmpleados();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
-  function reload() { setStaff(getStaff()); }
-
-  function abrirNuevo() {
-    setEditando(null); setForm(VACIO); setError(""); setModal(true);
+  async function cargarEmpleados() {
+    setLoading(true);
+    const s = getSession();
+    if (!s) return;
+    const res = await fetch("/api/admin/employees", {
+      headers: { "x-caller-email": s.email },
+    });
+    if (res.ok) setEmpleados(await res.json());
+    setLoading(false);
   }
 
-  function abrirEditar(e: Empleado) {
-    setEditando(e.id);
-    setForm({ nombre: e.nombre, especialidad: e.especialidad, runa: e.runa, color: e.color, activo: e.activo });
-    setError(""); setModal(true);
+  async function crearEmpleado(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setFormError("");
+    setFormLoading(true);
+    const s = getSession();
+    if (!s) return;
+
+    const res = await fetch("/api/admin/employees", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        callerEmail: s.email,
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        barberName: form.barberName,
+      }),
+    });
+    const data = await res.json();
+    setFormLoading(false);
+    if (!res.ok) { setFormError(data.error ?? "Error al crear empleado"); return; }
+
+    setModal(false);
+    setForm(VACIO);
+    setSuccessMsg(`Cuenta creada para ${form.name}`);
+    setTimeout(() => setSuccessMsg(""), 3000);
+    cargarEmpleados();
   }
 
-  function guardar() {
-    if (!form.nombre.trim()) { setError("El nombre es obligatorio."); return; }
-    if (!form.especialidad.trim()) { setError("La especialidad es obligatoria."); return; }
-    saveEmpleado(form, editando ?? undefined);
-    reload(); setModal(false);
+  async function eliminarEmpleado() {
+    if (!confirmDel) return;
+    setDelLoading(true);
+    const s = getSession();
+    if (!s) return;
+
+    const res = await fetch("/api/admin/employees", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ callerEmail: s.email, employeeId: confirmDel.id }),
+    });
+    setDelLoading(false);
+    if (res.ok) {
+      setSuccessMsg(`Cuenta de ${confirmDel.name} eliminada`);
+      setTimeout(() => setSuccessMsg(""), 3000);
+      setConfirmDel(null);
+      cargarEmpleados();
+    }
   }
 
-  function eliminar(id: string) {
-    deleteEmpleado(id); reload(); setConfirmDel(null);
-  }
-
-  const activos   = staff.filter(e => e.activo);
-  const inactivos = staff.filter(e => !e.activo);
+  const labelStyle: React.CSSProperties = {
+    fontFamily: "var(--font-barlow)", fontSize: "0.7rem",
+    letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(200,146,26,0.8)",
+    display: "block", marginBottom: "8px",
+  };
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "13px 16px", backgroundColor: "#0a0806",
+    border: "1px solid rgba(92,58,30,0.5)", color: "#f0e6c8",
+    fontFamily: "var(--font-barlow)", fontSize: "0.95rem",
+    outline: "none", boxSizing: "border-box",
+  };
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#060504", fontFamily: "var(--font-barlow)" }}>
+      <div style={{ position: "fixed", inset: 0, background: "radial-gradient(ellipse 70% 35% at 50% 0%, rgba(200,146,26,0.06) 0%, transparent 60%)", pointerEvents: "none" }} />
 
       {/* Header */}
       <div style={{ backgroundColor: "#0a0806", borderBottom: "1px solid rgba(92,58,30,0.45)", padding: "0 28px" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", height: "64px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <a href="/admin/dashboard" style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", textDecoration: "none" }}>← Dashboard</a>
+            <a href="/admin/dashboard" style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", textDecoration: "none" }}>
+              ← Dashboard
+            </a>
             <span style={{ color: "rgba(92,58,30,0.5)" }}>|</span>
-            <span style={{ fontSize: "1rem", fontWeight: 800, color: "#f0e6c8", letterSpacing: "0.05em" }}>Staff</span>
-            <span style={{ fontSize: "0.65rem", letterSpacing: "0.25em", color: "#c8921a", border: "1px solid rgba(200,146,26,0.35)", padding: "2px 10px" }}>{activos.length} activo{activos.length !== 1 ? "s" : ""}</span>
+            <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.1rem", color: "#c8921a" }}>INVICTUS</span>
+            <span style={{ fontSize: "0.65rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(184,168,138,0.3)" }}>
+              Gestión de Empleados
+            </span>
           </div>
-          <button onClick={abrirNuevo}
-            style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.3em", textTransform: "uppercase", padding: "9px 22px", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", color: "#060504", cursor: "pointer", boxShadow: "0 0 20px rgba(200,146,26,0.35)" }}>
+          {session && (
+            <span style={{ fontSize: "0.65rem", letterSpacing: "0.25em", color: "rgba(184,168,138,0.35)" }}>
+              {session.name}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "48px 24px" }}>
+
+        {/* Título */}
+        <div style={{ marginBottom: "40px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
+          <div>
+            <h1 style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "clamp(1.4rem,4vw,2rem)", color: "#f0e6c8", fontWeight: 900, marginBottom: "8px" }}>
+              Cuentas de Empleados
+            </h1>
+            <p style={{ fontSize: "0.78rem", letterSpacing: "0.12em", color: "rgba(184,168,138,0.45)" }}>
+              Crea y administra el acceso de tus barberos al sistema
+            </p>
+          </div>
+          <button
+            onClick={() => { setForm(VACIO); setFormError(""); setModal(true); }}
+            style={{
+              padding: "13px 28px", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)",
+              border: "none", cursor: "pointer", fontFamily: "var(--font-barlow)",
+              fontSize: "0.75rem", fontWeight: 800, letterSpacing: "0.4em", textTransform: "uppercase", color: "#080604",
+              boxShadow: "0 0 24px rgba(200,146,26,0.35)",
+            }}
+          >
             + Nuevo Empleado
           </button>
         </div>
-      </div>
 
-      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "36px 24px" }}>
-
-        {/* Activos */}
-        <div style={{ marginBottom: "48px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
-            <p style={{ fontSize: "0.6rem", letterSpacing: "0.45em", textTransform: "uppercase", color: "#c8921a" }}>Empleados Activos</p>
-            <div style={{ flex: 1, height: "1px", background: "rgba(92,58,30,0.4)" }} />
-          </div>
-
-          {activos.length === 0 ? (
-            <div style={{ border: "1px dashed rgba(92,58,30,0.35)", padding: "48px", textAlign: "center" }}>
-              <p style={{ fontSize: "0.75rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.25)" }}>Sin empleados activos</p>
-            </div>
-          ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "14px" }}>
-              {activos.map(emp => (
-                <div key={emp.id} style={{ border: `1px solid rgba(${colorToRgb(emp.color)},0.25)`, backgroundColor: "#0a0806", padding: "24px", position: "relative", overflow: "hidden" }}>
-                  {/* Línea top */}
-                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: `linear-gradient(to right, transparent, ${emp.color}80, transparent)` }} />
-
-                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "16px" }}>
-                    {/* Runa + info */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                      <div style={{ width: "52px", height: "52px", border: `1px solid ${emp.color}50`, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: `${emp.color}10`, flexShrink: 0 }}>
-                        <span style={{ fontSize: "1.6rem", color: emp.color, lineHeight: 1 }}>{emp.runa}</span>
-                      </div>
-                      <div>
-                        <p style={{ fontSize: "1rem", fontWeight: 800, color: "#f0e6c8", marginBottom: "3px" }}>{emp.nombre}</p>
-                        <p style={{ fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(184,168,138,0.45)" }}>{emp.especialidad}</p>
-                      </div>
-                    </div>
-                    <span style={{ fontSize: "0.55rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "#4ade80", border: "1px solid rgba(74,222,128,0.3)", padding: "3px 9px", flexShrink: 0 }}>Activo</span>
-                  </div>
-
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    <button onClick={() => abrirEditar(emp)}
-                      style={{ flex: 1, padding: "9px", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", backgroundColor: "transparent", border: `1px solid ${emp.color}40`, color: emp.color, cursor: "pointer" }}>
-                      Editar
-                    </button>
-                    <button onClick={() => { saveEmpleado({ ...emp, activo: false }, emp.id); reload(); }}
-                      style={{ padding: "9px 14px", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", backgroundColor: "transparent", border: "1px solid rgba(251,146,60,0.35)", color: "rgba(251,146,60,0.65)", cursor: "pointer" }}>
-                      Pausar
-                    </button>
-                    <button onClick={() => setConfirmDel(emp.id)}
-                      style={{ padding: "9px 14px", fontSize: "0.62rem", fontWeight: 700, backgroundColor: "transparent", border: "1px solid rgba(239,68,68,0.3)", color: "rgba(239,68,68,0.55)", cursor: "pointer" }}>
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Inactivos */}
-        {inactivos.length > 0 && (
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
-              <p style={{ fontSize: "0.6rem", letterSpacing: "0.45em", textTransform: "uppercase", color: "rgba(184,168,138,0.35)" }}>Empleados Pausados</p>
-              <div style={{ flex: 1, height: "1px", background: "rgba(92,58,30,0.25)" }} />
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "12px" }}>
-              {inactivos.map(emp => (
-                <div key={emp.id} style={{ border: "1px solid rgba(92,58,30,0.2)", backgroundColor: "#080604", padding: "20px", opacity: 0.6 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
-                    <span style={{ fontSize: "1.4rem", color: emp.color }}>{emp.runa}</span>
-                    <div>
-                      <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "#f0e6c8" }}>{emp.nombre}</p>
-                      <p style={{ fontSize: "0.65rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(184,168,138,0.35)" }}>{emp.especialidad}</p>
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    <button onClick={() => { saveEmpleado({ ...emp, activo: true }, emp.id); reload(); }}
-                      style={{ flex: 1, padding: "8px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", backgroundColor: "transparent", border: "1px solid rgba(74,222,128,0.35)", color: "rgba(74,222,128,0.65)", cursor: "pointer" }}>
-                      Reactivar
-                    </button>
-                    <button onClick={() => setConfirmDel(emp.id)}
-                      style={{ padding: "8px 12px", fontSize: "0.62rem", backgroundColor: "transparent", border: "1px solid rgba(239,68,68,0.25)", color: "rgba(239,68,68,0.45)", cursor: "pointer" }}>
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Mensaje de éxito */}
+        {successMsg && (
+          <div style={{ marginBottom: "24px", padding: "14px 20px", border: "1px solid rgba(74,222,128,0.3)", backgroundColor: "rgba(74,222,128,0.05)", color: "#4ade80", fontSize: "0.82rem", letterSpacing: "0.1em" }}>
+            ✓ {successMsg}
           </div>
         )}
+
+        {/* Lista de empleados */}
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "80px 0", color: "rgba(184,168,138,0.3)", letterSpacing: "0.3em", fontSize: "0.75rem" }}>
+            CARGANDO...
+          </div>
+        ) : empleados.length === 0 ? (
+          <div style={{
+            border: "1px dashed rgba(92,58,30,0.4)", padding: "64px 40px",
+            textAlign: "center", backgroundColor: "#0a0806",
+          }}>
+            <p style={{ fontSize: "2.5rem", marginBottom: "20px" }}>✂️</p>
+            <p style={{ color: "rgba(184,168,138,0.5)", fontSize: "0.85rem", letterSpacing: "0.2em", marginBottom: "8px" }}>
+              No hay empleados registrados
+            </p>
+            <p style={{ color: "rgba(184,168,138,0.25)", fontSize: "0.75rem", letterSpacing: "0.15em" }}>
+              Crea la primera cuenta con el botón de arriba
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {empleados.map((emp) => (
+              <div key={emp.id} style={{
+                border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "#0a0806",
+                padding: "20px 24px", display: "flex", alignItems: "center",
+                justifyContent: "space-between", gap: "16px", flexWrap: "wrap",
+                position: "relative", overflow: "hidden",
+              }}>
+                <div style={{ position: "absolute", top: 0, left: 0, width: "3px", height: "100%", background: "linear-gradient(to bottom, #c8921a, rgba(200,146,26,0.2))" }} />
+                <div style={{ paddingLeft: "12px" }}>
+                  <p style={{ fontSize: "1rem", fontWeight: 700, color: "#f0e6c8", marginBottom: "4px", letterSpacing: "0.05em" }}>
+                    {emp.name}
+                  </p>
+                  <p style={{ fontSize: "0.75rem", color: "rgba(184,168,138,0.5)", letterSpacing: "0.1em", marginBottom: "2px" }}>
+                    {emp.email}
+                  </p>
+                  <p style={{ fontSize: "0.7rem", color: "rgba(200,146,26,0.6)", letterSpacing: "0.15em" }}>
+                    Barbero: {emp.barber_name}
+                  </p>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span style={{
+                    padding: "4px 12px", border: "1px solid rgba(74,222,128,0.3)",
+                    backgroundColor: "rgba(74,222,128,0.05)", color: "#4ade80",
+                    fontSize: "0.62rem", letterSpacing: "0.3em", textTransform: "uppercase",
+                  }}>
+                    Activo
+                  </span>
+                  <button
+                    onClick={() => setConfirmDel(emp)}
+                    style={{
+                      padding: "8px 18px", border: "1px solid rgba(239,68,68,0.3)",
+                      backgroundColor: "transparent", color: "rgba(239,68,68,0.6)",
+                      cursor: "pointer", fontFamily: "var(--font-barlow)",
+                      fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase",
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Info */}
+        <div style={{ marginTop: "40px", padding: "20px 24px", border: "1px solid rgba(92,58,30,0.25)", backgroundColor: "rgba(200,146,26,0.03)" }}>
+          <p style={{ fontSize: "0.68rem", letterSpacing: "0.15em", color: "rgba(184,168,138,0.35)", lineHeight: 1.8 }}>
+            ⚔ Los empleados inician sesión en <strong style={{ color: "rgba(200,146,26,0.5)" }}>/login</strong> con su correo y contraseña. Solo pueden ver su propia agenda semanal. El campo "Nombre en reservas" debe coincidir exactamente con el nombre del barbero al crear citas.
+          </p>
+        </div>
       </div>
 
-      {/* ── Modal Nuevo / Editar ── */}
+      {/* Modal: Crear empleado */}
       {modal && (
-        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(6,5,4,0.94)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
-          <div style={{ backgroundColor: "#0e0b07", border: "1px solid rgba(200,146,26,0.45)", width: "100%", maxWidth: "500px", maxHeight: "92vh", overflowY: "auto", boxShadow: "0 0 80px rgba(200,146,26,0.12)" }}>
+        <div style={{
+          position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "24px", zIndex: 100, backdropFilter: "blur(4px)",
+        }}>
+          <div style={{
+            width: "100%", maxWidth: "480px", backgroundColor: "#0e0b07",
+            border: "1px solid rgba(92,58,30,0.5)", padding: "40px",
+            boxShadow: "0 0 80px rgba(200,146,26,0.12)",
+            position: "relative",
+          }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "linear-gradient(to right, transparent, #c8921a, transparent)" }} />
 
-            <div style={{ borderBottom: "1px solid rgba(92,58,30,0.4)", padding: "22px 28px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <p style={{ fontSize: "0.95rem", fontWeight: 800, color: "#f0e6c8" }}>{editando ? "Editar Empleado" : "Nuevo Empleado"}</p>
-              <button onClick={() => setModal(false)} style={{ background: "none", border: "none", color: "rgba(184,168,138,0.45)", cursor: "pointer", fontSize: "1.1rem" }}>✕</button>
-            </div>
+            <h2 style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.2rem", color: "#f0e6c8", marginBottom: "8px" }}>
+              Nuevo Empleado
+            </h2>
+            <p style={{ fontSize: "0.7rem", letterSpacing: "0.2em", color: "rgba(184,168,138,0.4)", marginBottom: "32px" }}>
+              Se creará una cuenta de acceso al sistema
+            </p>
 
-            <div style={{ padding: "28px", display: "flex", flexDirection: "column", gap: "20px" }}>
-
-              {/* Nombre */}
+            <form onSubmit={crearEmpleado} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               <div>
-                <label style={{ display: "block", fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(200,146,26,0.65)", marginBottom: "8px" }}>Nombre completo *</label>
-                <input value={form.nombre} onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))} placeholder="Ej: Carlos Mendoza"
-                  style={{ width: "100%", padding: "12px 14px", backgroundColor: "#141209", border: "1px solid rgba(92,58,30,0.45)", color: "#f0e6c8", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }} />
+                <label style={labelStyle}>Nombre completo</label>
+                <input type="text" required placeholder="Carlos Mendoza" value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  style={inputStyle} />
               </div>
-
-              {/* Especialidad */}
               <div>
-                <label style={{ display: "block", fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(200,146,26,0.65)", marginBottom: "8px" }}>Especialidad *</label>
-                <input value={form.especialidad} onChange={e => setForm(f => ({ ...f, especialidad: e.target.value }))} placeholder="Ej: Navaja Clásica"
-                  style={{ width: "100%", padding: "12px 14px", backgroundColor: "#141209", border: "1px solid rgba(92,58,30,0.45)", color: "#f0e6c8", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }} />
+                <label style={labelStyle}>Correo electrónico</label>
+                <input type="email" required placeholder="carlos@invictus.com" value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  style={inputStyle} />
               </div>
-
-              {/* Color */}
               <div>
-                <label style={{ display: "block", fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(200,146,26,0.65)", marginBottom: "10px" }}>Color identificador</label>
-                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                  {COLORES.map(c => (
-                    <button key={c} onClick={() => setForm(f => ({ ...f, color: c }))}
-                      style={{ width: "36px", height: "36px", backgroundColor: c, border: form.color === c ? `3px solid #f0e6c8` : "2px solid transparent", cursor: "pointer", boxShadow: form.color === c ? `0 0 14px ${c}` : "none" }} />
-                  ))}
-                </div>
+                <label style={labelStyle}>Contraseña temporal</label>
+                <input type="password" required placeholder="Mínimo 6 caracteres" value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  style={inputStyle} />
               </div>
-
-              {/* Runa */}
               <div>
-                <label style={{ display: "block", fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(200,146,26,0.65)", marginBottom: "10px" }}>Símbolo / Runa</label>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                  {RUNAS.map(r => (
-                    <button key={r} onClick={() => setForm(f => ({ ...f, runa: r }))}
-                      style={{ width: "36px", height: "36px", fontSize: "1.1rem", border: `1px solid ${form.runa === r ? form.color : "rgba(92,58,30,0.35)"}`, backgroundColor: form.runa === r ? `${form.color}18` : "transparent", color: form.runa === r ? form.color : "rgba(184,168,138,0.5)", cursor: "pointer" }}>
-                      {r}
-                    </button>
-                  ))}
-                </div>
+                <label style={labelStyle}>Nombre en reservas</label>
+                <input type="text" required placeholder="Ej: Carlos Mendoza" value={form.barberName}
+                  onChange={(e) => setForm({ ...form, barberName: e.target.value })}
+                  style={inputStyle} />
+                <p style={{ fontSize: "0.65rem", color: "rgba(200,146,26,0.45)", marginTop: "6px", letterSpacing: "0.1em" }}>
+                  Debe coincidir exactamente con el nombre del barbero en el sistema de citas
+                </p>
               </div>
 
-              {/* Preview */}
-              <div style={{ border: `1px solid ${form.color}30`, backgroundColor: "#141209", padding: "18px 20px", display: "flex", alignItems: "center", gap: "16px" }}>
-                <div style={{ width: "48px", height: "48px", border: `1px solid ${form.color}50`, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: `${form.color}10` }}>
-                  <span style={{ fontSize: "1.5rem", color: form.color }}>{form.runa}</span>
-                </div>
-                <div>
-                  <p style={{ fontSize: "0.95rem", fontWeight: 800, color: "#f0e6c8" }}>{form.nombre || "Nombre del empleado"}</p>
-                  <p style={{ fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(184,168,138,0.45)" }}>{form.especialidad || "Especialidad"}</p>
-                </div>
-              </div>
+              {formError && (
+                <p style={{ color: "#f87171", fontSize: "0.78rem", letterSpacing: "0.08em" }}>⚠ {formError}</p>
+              )}
 
-              {error && <p style={{ fontSize: "0.75rem", color: "#ef4444", backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", padding: "10px 14px" }}>{error}</p>}
-
-              <div style={{ display: "flex", gap: "10px" }}>
-                <button onClick={() => setModal(false)}
-                  style={{ flex: 1, padding: "13px", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.4)", color: "rgba(184,168,138,0.4)", cursor: "pointer" }}>
+              <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
+                <button type="button" onClick={() => setModal(false)}
+                  style={{
+                    flex: 1, padding: "14px", border: "1px solid rgba(92,58,30,0.5)",
+                    backgroundColor: "transparent", color: "rgba(184,168,138,0.5)",
+                    cursor: "pointer", fontFamily: "var(--font-barlow)",
+                    fontSize: "0.72rem", letterSpacing: "0.35em", textTransform: "uppercase",
+                  }}>
                   Cancelar
                 </button>
-                <button onClick={guardar}
-                  style={{ flex: 2, padding: "13px", fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.3em", textTransform: "uppercase", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", color: "#060504", cursor: "pointer", boxShadow: "0 0 20px rgba(200,146,26,0.3)" }}>
-                  {editando ? "Guardar Cambios" : "Añadir Empleado"}
+                <button type="submit" disabled={formLoading}
+                  style={{
+                    flex: 2, padding: "14px",
+                    background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)",
+                    border: "none", cursor: formLoading ? "not-allowed" : "pointer",
+                    fontFamily: "var(--font-barlow)", fontSize: "0.72rem", fontWeight: 800,
+                    letterSpacing: "0.4em", textTransform: "uppercase", color: "#080604",
+                    opacity: formLoading ? 0.7 : 1,
+                  }}>
+                  {formLoading ? "Creando..." : "Crear Cuenta"}
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       )}
 
-      {/* ── Confirmar eliminar ── */}
+      {/* Modal: Confirmar eliminación */}
       {confirmDel && (
-        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(6,5,4,0.94)", zIndex: 110, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-          <div style={{ backgroundColor: "#0e0b07", border: "1px solid rgba(239,68,68,0.4)", padding: "40px", maxWidth: "380px", width: "100%", textAlign: "center" }}>
-            <p style={{ fontSize: "0.95rem", fontWeight: 700, color: "#f0e6c8", marginBottom: "8px" }}>¿Eliminar empleado?</p>
-            <p style={{ fontSize: "0.75rem", color: "rgba(184,168,138,0.45)", marginBottom: "28px" }}>Esta acción no se puede deshacer.</p>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button onClick={() => setConfirmDel(null)}
-                style={{ flex: 1, padding: "12px", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.4)", color: "rgba(184,168,138,0.45)", cursor: "pointer" }}>
+        <div style={{
+          position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "24px", zIndex: 100, backdropFilter: "blur(4px)",
+        }}>
+          <div style={{
+            width: "100%", maxWidth: "400px", backgroundColor: "#0e0b07",
+            border: "1px solid rgba(239,68,68,0.3)", padding: "40px",
+            textAlign: "center",
+          }}>
+            <p style={{ fontSize: "2.5rem", marginBottom: "20px" }}>⚠️</p>
+            <h3 style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1rem", color: "#f0e6c8", marginBottom: "12px" }}>
+              ¿Eliminar cuenta?
+            </h3>
+            <p style={{ fontSize: "0.82rem", color: "rgba(184,168,138,0.6)", marginBottom: "8px" }}>
+              {confirmDel.name}
+            </p>
+            <p style={{ fontSize: "0.72rem", color: "rgba(239,68,68,0.5)", marginBottom: "32px", letterSpacing: "0.1em" }}>
+              {confirmDel.email}
+            </p>
+            <p style={{ fontSize: "0.72rem", color: "rgba(184,168,138,0.35)", marginBottom: "32px" }}>
+              El empleado perderá acceso al sistema inmediatamente.
+            </p>
+            <div style={{ display: "flex", gap: "12px" }}>
+              <button onClick={() => setConfirmDel(null)} style={{
+                flex: 1, padding: "13px", border: "1px solid rgba(92,58,30,0.5)",
+                backgroundColor: "transparent", color: "rgba(184,168,138,0.5)",
+                cursor: "pointer", fontFamily: "var(--font-barlow)",
+                fontSize: "0.7rem", letterSpacing: "0.3em", textTransform: "uppercase",
+              }}>
                 Cancelar
               </button>
-              <button onClick={() => eliminar(confirmDel)}
-                style={{ flex: 1, padding: "12px", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.3em", textTransform: "uppercase", backgroundColor: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.5)", color: "#ef4444", cursor: "pointer" }}>
-                Eliminar
+              <button onClick={eliminarEmpleado} disabled={delLoading} style={{
+                flex: 1, padding: "13px", border: "1px solid rgba(239,68,68,0.4)",
+                backgroundColor: "rgba(239,68,68,0.08)", color: "#f87171",
+                cursor: delLoading ? "not-allowed" : "pointer", fontFamily: "var(--font-barlow)",
+                fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase",
+                opacity: delLoading ? 0.6 : 1,
+              }}>
+                {delLoading ? "Eliminando..." : "Eliminar"}
               </button>
             </div>
           </div>
@@ -255,12 +368,4 @@ export default function AdminStaff() {
       )}
     </div>
   );
-}
-
-// Convierte hex color a rgb string para usar en rgba()
-function colorToRgb(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `${r},${g},${b}`;
 }

@@ -9,7 +9,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Correo y contraseña requeridos." }, { status: 400 });
   }
 
-  const rows = await sql`SELECT id, name, email, password_hash FROM users WHERE email = ${email.toLowerCase()}`;
+  const rows = await sql`
+    SELECT id, name, email, password_hash, role, barber_name
+    FROM users WHERE email = ${email.toLowerCase()}
+  `;
   if (rows.length === 0) {
     return NextResponse.json({ error: "No existe una cuenta con ese correo." }, { status: 404 });
   }
@@ -20,5 +23,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Contraseña incorrecta." }, { status: 401 });
   }
 
-  return NextResponse.json({ ok: true, name: user.name, email: user.email });
+  return NextResponse.json({
+    ok: true,
+    name: user.name,
+    email: user.email,
+    role: user.role ?? "client",
+    barberName: user.barber_name ?? null,
+  });
 }

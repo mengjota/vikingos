@@ -16,6 +16,7 @@ export function adminLogin(password: string): boolean {
 export function adminLogout() {
   if (typeof window === "undefined") return;
   localStorage.removeItem(ADMIN_SESSION_KEY);
+  localStorage.removeItem("inv_session");
 }
 
 export function isAdminLoggedIn(): boolean {

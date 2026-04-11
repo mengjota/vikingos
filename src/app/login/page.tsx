@@ -120,11 +120,11 @@ export default function LoginPage() {
     setAdminError("");
     setAdminLoading(true);
 
-    // Intentar primero como owner en DB
+    // Intentar como owner en DB usando loginEmail + adminPass
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: adminPass.includes("@") ? adminPass : ADMIN_EMAIL, password: adminPass }),
+      body: JSON.stringify({ email: loginEmail, password: adminPass }),
     });
 
     if (res.ok) {
@@ -139,12 +139,12 @@ export default function LoginPage() {
       }
     }
 
-    // Fallback: contraseña legacy
-    if (adminLogin(adminPass)) {
+    // Fallback: contraseña legacy (solo para admin@invictus.com)
+    if (loginEmail.toLowerCase() === ADMIN_EMAIL && adminLogin(adminPass)) {
       localStorage.setItem("inv_session", JSON.stringify({ name: "Admin", email: ADMIN_EMAIL, role: "owner" }));
       router.push("/admin/dashboard");
     } else {
-      setAdminError("Credenciales incorrectas.");
+      setAdminError("Credenciales incorrectas o sin permisos de dueño.");
       setAdminLoading(false);
     }
   }

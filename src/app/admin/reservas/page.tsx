@@ -9,13 +9,20 @@ import {
   type Producto, type ProductoVendido, type Pausa,
 } from "@/lib/adminAuth";
 import type { Reservation } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 
 type MetodoPago = "efectivo" | "tarjeta" | "transferencia" | "otro";
 
-const BARBEROS = [
-  { name: "Carlos Mendoza",   specialty: "Navaja Clásica",      rune: "ᚠ", col: "#c8921a", rgb: "200,146,26" },
-  { name: "Andrés Vega",      specialty: "Degradados y Líneas", rune: "ᚢ", col: "#a78bfa", rgb: "167,139,250" },
-  { name: "Sebastián Torres", specialty: "Estilo Moderno",      rune: "ᚦ", col: "#60a5fa", rgb: "96,165,250"  },
+interface Barbero { name: string; specialty: string; col: string; rgb: string; rune: string; }
+
+// Paleta visual — se asigna por índice al cargar empleados de la DB
+const PALETA = [
+  { col: "#c8921a", rgb: "200,146,26",  rune: "ᚠ" },
+  { col: "#a78bfa", rgb: "167,139,250", rune: "ᚢ" },
+  { col: "#60a5fa", rgb: "96,165,250",  rune: "ᚦ" },
+  { col: "#4ade80", rgb: "74,222,128",  rune: "ᚨ" },
+  { col: "#f87171", rgb: "248,113,113", rune: "ᚱ" },
+  { col: "#fb923c", rgb: "251,146,60",  rune: "ᚲ" },
 ];
 
 const SERVICIOS = [
@@ -59,6 +66,7 @@ function semanaDesde(offsetSemanas: number): Date[] {
 
 export default function AdminReservas() {
   const router = useRouter();
+  const [barberos, setBarberos] = useState<Barbero[]>([]);
   const [reservas, setReservas] = useState<Reservation[]>([]);
   const [pausas, setPausas]     = useState<Pausa[]>([]);
   const [filtro, setFiltro]     = useState<"todas"|"pendiente"|"completada"|"cancelada">("todas");
@@ -73,7 +81,7 @@ export default function AdminReservas() {
 
   // ── Modal nueva reserva ──
   const [modalNueva, setModalNueva]       = useState(false);
-  const [nuevaBarbero, setNuevaBarbero]   = useState(BARBEROS[0].name);
+  const [nuevaBarbero, setNuevaBarbero]   = useState("");
   const [nuevaNombre, setNuevaNombre]     = useState("");
   const [nuevaTel, setNuevaTel]           = useState("");
   const [errorNueva, setErrorNueva]       = useState("");
@@ -99,8 +107,25 @@ export default function AdminReservas() {
 
   useEffect(() => {
     if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    reloadAll(true); // true = auto-saltar al día con próxima cita
+    reloadAll(true);
     setProductosDisp(getProductos());
+
+    // Cargar empleados desde la DB según el owner logueado
+    const s = getSession();
+    if (s) {
+      fetch("/api/admin/employees", { headers: { "x-caller-email": s.email } })
+        .then(r => r.json())
+        .then((emps: { name: string; barber_name: string }[]) => {
+          const lista: Barbero[] = emps.map((e, i) => ({
+            name: e.barber_name,
+            specialty: "Barbero",
+            ...PALETA[i % PALETA.length],
+          }));
+          setBarberos(lista);
+          if (lista.length > 0) setNuevaBarbero(lista[0].name);
+        })
+        .catch(() => {});
+    }
   }, [router]);
 
   // Cargar horas ocupadas cuando cambia barbero o fecha en modal nueva reserva
@@ -138,7 +163,7 @@ export default function AdminReservas() {
 
   // ── Nueva reserva ──
   function abrirNueva(barberoName?: string) {
-    setNuevaBarbero(barberoName ?? BARBEROS[0].name);
+    setNuevaBarbero(barberoName ?? barberos[0]?.name ?? "");
     setNuevaNombre(""); setNuevaTel(""); setErrorNueva("");
     setNuevaServicio(SERVICIOS[0].nombre); setNuevaPrecio(SERVICIOS[0].precio);
     setNuevaFecha(todayISO()); setNuevaHora("09:00");
@@ -355,8 +380,13 @@ export default function AdminReservas() {
       </div>
 
       {/* ── Columnas ── */}
-      <div style={{ maxWidth: "1500px", margin: "0 auto", padding: "24px 20px", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "20px", alignItems: "start" }}>
-        {BARBEROS.map(barb => {
+      <div style={{ maxWidth: "1500px", margin: "0 auto", padding: "24px 20px", display: "grid", gridTemplateColumns: `repeat(${Math.max(barberos.length, 1)}, minmax(280px, 1fr))`, gap: "20px", alignItems: "start" }}>
+        {barberos.length === 0 ? (
+          <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "80px 0", color: "rgba(200,180,140,0.4)", fontSize: "0.85rem", letterSpacing: "0.2em" }}>
+            No hay empleados registrados. <a href="/admin/staff" style={{ color: "#c8921a", textDecoration: "underline" }}>Crear empleados →</a>
+          </div>
+        ) : null}
+        {barberos.map(barb => {
           const items = itemsDe(barb.name);
           return (
             <div key={barb.name} style={{ border: `2px solid rgba(${barb.rgb},0.4)`, backgroundColor: "#1a1108", overflow: "hidden", boxShadow: `0 0 30px rgba(${barb.rgb},0.08)` }}>
@@ -599,8 +629,8 @@ export default function AdminReservas() {
               {/* Barbero */}
               <div>
                 <label style={{ display: "block", fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(200,146,26,0.65)", marginBottom: "10px" }}>Barbero</label>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "8px" }}>
-                  {BARBEROS.map(b => (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))", gap: "8px" }}>
+                  {barberos.map(b => (
                     <button key={b.name} onClick={() => setNuevaBarbero(b.name)}
                       style={{ padding: "12px 8px", border: `1px solid ${nuevaBarbero===b.name ? b.col : "rgba(92,58,30,0.35)"}`, backgroundColor: nuevaBarbero===b.name ? `rgba(${b.rgb},0.1)` : "transparent", color: nuevaBarbero===b.name ? b.col : "rgba(184,168,138,0.5)", cursor: "pointer", fontSize: "0.7rem", fontWeight: 700, textAlign: "center", lineHeight: 1.4 }}>
                       <span style={{ display: "block", fontSize: "1.1rem", marginBottom: "4px" }}>{b.rune}</span>

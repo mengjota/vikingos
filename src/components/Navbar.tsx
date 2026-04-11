@@ -61,20 +61,22 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
           </span>
         </a>
 
-        {/* Links desktop */}
-        <ul className="hidden md:flex items-center gap-10">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors duration-300"
-                style={{ fontFamily: "var(--font-barlow)" }}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        {/* Links desktop — solo para clientes y visitantes */}
+        {session?.role !== "employee" && (
+          <ul className="hidden md:flex items-center gap-10">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className="text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors duration-300"
+                  style={{ fontFamily: "var(--font-barlow)" }}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
 
         {/* CTAs desktop */}
         <div className="hidden md:flex items-center gap-4">
@@ -112,16 +114,19 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
               Iniciar Sesión
             </a>
           )}
-          <a
-            href="/reservar"
-            className="btn-glow border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-sm tracking-[0.3em] uppercase px-6 py-3 transition-colors duration-300"
-            style={{
-              fontFamily: "var(--font-barlow)",
-              boxShadow: "0 0 10px rgba(200,146,26,0.45), 0 0 24px rgba(200,146,26,0.15), 0 4px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(200,146,26,0.18)",
-            }}
-          >
-            Reservar Servicio
-          </a>
+          {/* Reservar solo para clientes y visitantes, no empleados ni owners */}
+          {session?.role !== "employee" && session?.role !== "owner" && (
+            <a
+              href="/reservar"
+              className="btn-glow border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-sm tracking-[0.3em] uppercase px-6 py-3 transition-colors duration-300"
+              style={{
+                fontFamily: "var(--font-barlow)",
+                boxShadow: "0 0 10px rgba(200,146,26,0.45), 0 0 24px rgba(200,146,26,0.15), 0 4px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(200,146,26,0.18)",
+              }}
+            >
+              Reservar Servicio
+            </a>
+          )}
         </div>
 
         {/* Hamburguesa mobile */}
@@ -139,7 +144,8 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
       {/* Menú mobile */}
       {menuOpen && (
         <div className="md:hidden bg-[#0f0d0a]/98 border-t border-[#c8921a]/20 px-6 py-6 flex flex-col gap-6">
-          {navLinks.map((link) => (
+          {/* Links de marketing solo para no-empleados */}
+          {session?.role !== "employee" && navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -186,14 +192,17 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
             </a>
           )}
 
-          <a
-            href="/reservar"
-            onClick={() => setMenuOpen(false)}
-            className="border border-[#c8921a] text-[#c8921a] text-sm tracking-[0.3em] uppercase px-6 py-3 text-center"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
-            Reservar Servicio
-          </a>
+          {/* Reservar solo para clientes y visitantes */}
+          {session?.role !== "employee" && session?.role !== "owner" && (
+            <a
+              href="/reservar"
+              onClick={() => setMenuOpen(false)}
+              className="border border-[#c8921a] text-[#c8921a] text-sm tracking-[0.3em] uppercase px-6 py-3 text-center"
+              style={{ fontFamily: "var(--font-barlow)" }}
+            >
+              Reservar Servicio
+            </a>
+          )}
         </div>
       )}
     </nav>

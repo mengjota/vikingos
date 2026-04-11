@@ -78,24 +78,26 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
           </ul>
         )}
 
-        {/* CTAs desktop */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* CTAs desktop & mobile */}
+        <div className="flex items-center gap-3 md:gap-4">
           {session ? (
             /* --- LOGUEADO --- */
             <>
               <a
                 href={session.role === "owner" ? "/admin/dashboard" : session.role === "employee" ? "/mi-agenda" : "/perfil"}
-                className="flex items-center gap-2 text-[#c8921a] hover:text-[#f0c040] text-sm tracking-[0.2em] uppercase transition-colors duration-300 px-3 py-2"
+                className="flex items-center gap-2 text-[#c8921a] hover:text-[#f0c040] text-sm tracking-[0.2em] uppercase transition-colors duration-300 md:px-3 md:py-2 py-2"
                 style={{ fontFamily: "var(--font-barlow)", fontWeight: 600 }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                {session.role === "owner" ? "Panel Admin" : session.role === "employee" ? "Mi Agenda" : session.name.split(" ")[0]}
+                <span className="hidden md:inline">
+                  {session.role === "owner" ? "Panel Admin" : session.role === "employee" ? "Mi Agenda" : session.name.split(" ")[0]}
+                </span>
               </a>
               <button
                 onClick={handleLogout}
-                className="text-[#b8a882]/60 hover:text-red-400 text-xs tracking-[0.3em] uppercase transition-colors duration-300 px-2 py-2"
+                className="hidden md:block text-[#b8a882]/60 hover:text-red-400 text-xs tracking-[0.3em] uppercase transition-colors duration-300 px-2 py-2"
                 style={{ fontFamily: "var(--font-barlow)" }}
               >
                 Salir
@@ -105,20 +107,20 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
             /* --- NO LOGUEADO --- */
             <a
               href="/login"
-              className="flex items-center gap-2 text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors duration-300 px-3 py-3"
+              className="flex items-center gap-2 text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors duration-300 md:px-3 md:py-3 py-2"
               style={{ fontFamily: "var(--font-barlow)" }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m0 0l3-3m-3 3l3 3" />
               </svg>
-              Iniciar Sesión
+              <span className="hidden md:inline">Iniciar Sesión</span>
             </a>
           )}
           {/* Reservar solo para clientes y visitantes, no empleados ni owners */}
           {session?.role !== "employee" && session?.role !== "owner" && (
             <a
               href="/reservar"
-              className="btn-glow border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-sm tracking-[0.3em] uppercase px-6 py-3 transition-colors duration-300"
+              className="hidden md:flex btn-glow border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-sm tracking-[0.3em] uppercase px-6 py-3 transition-colors duration-300"
               style={{
                 fontFamily: "var(--font-barlow)",
                 boxShadow: "0 0 10px rgba(200,146,26,0.45), 0 0 24px rgba(200,146,26,0.15), 0 4px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(200,146,26,0.18)",

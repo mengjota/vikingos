@@ -253,7 +253,7 @@ export default function LoginPage() {
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, rgba(96,165,250,0.5), transparent)" }} />
               <p style={{ fontSize: "2.5rem", marginBottom: "16px" }}>🛡️</p>
               <p style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1rem", color: "#f0e6c8", marginBottom: "8px" }}>
-                Como Empleado
+                Jefe de Barbería
               </p>
               <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.72rem", color: "rgba(184,168,138,0.5)", letterSpacing: "0.1em", lineHeight: 1.6 }}>
                 Gestiona tu barbería completa
@@ -288,7 +288,7 @@ export default function LoginPage() {
             <p style={{ fontSize: "2rem", marginBottom: "12px" }}>🛡️</p>
             <p style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.6rem", color: "#c8921a", marginBottom: "4px" }}>INVICTUS</p>
             <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.68rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(96,165,250,0.5)" }}>
-              Acceso de Empleado / Administrador
+              Acceso Jefe de Barbería
             </p>
           </div>
 

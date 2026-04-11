@@ -19,15 +19,27 @@ function toRes(r: Record<string, unknown>) {
   };
 }
 
-// GET — todas las reservas de esta barbería (admin)
-export async function GET() {
-  const rows = await sql`
-    SELECT id, client_name, client_email, service, price, barber,
-           date::text AS date, time, status, invoice_id, created_at
-    FROM reservations
-    WHERE barbershop_id = ${BID()}
-    ORDER BY created_at DESC
-  `;
+// GET — reservas de esta barbería; si se pasa ?email= filtra por cliente
+export async function GET(req: NextRequest) {
+  const email = new URL(req.url).searchParams.get("email");
+
+  const rows = email
+    ? await sql`
+        SELECT id, client_name, client_email, service, price, barber,
+               date::text AS date, time, status, invoice_id, created_at
+        FROM reservations
+        WHERE barbershop_id  = ${BID()}
+          AND client_email   = ${email.toLowerCase()}
+        ORDER BY date DESC, time DESC
+      `
+    : await sql`
+        SELECT id, client_name, client_email, service, price, barber,
+               date::text AS date, time, status, invoice_id, created_at
+        FROM reservations
+        WHERE barbershop_id = ${BID()}
+        ORDER BY created_at DESC
+      `;
+
   return NextResponse.json(rows.map(toRes));
 }
 

@@ -33,12 +33,11 @@ export function logout() {
   localStorage.removeItem("inv_session");
 }
 
-// Reservas del cliente — se leen desde la DB vía API
+// Reservas del cliente — filtradas en el servidor por email
 export async function getReservations(email: string): Promise<Reservation[]> {
   const res = await fetch(`/api/reservations?email=${encodeURIComponent(email)}`);
   if (!res.ok) return [];
-  const all: Reservation[] = await res.json();
-  return all.filter(r => r.clienteEmail === email.toLowerCase());
+  return res.json();
 }
 
 // Guardar reserva en la DB vía API

@@ -124,7 +124,7 @@ const servicios = [
     id: 1,
     nombre: "Corte del Guerrero",
     descripcion: "Corte clásico con tijera y máquina. Lavado y secado incluidos.",
-    precio: "$80",
+    precio: "€80",
     duracion: "45 min",
     Icon: IconScissors,
     popular: false,
@@ -133,7 +133,7 @@ const servicios = [
     id: 2,
     nombre: "Ritual de Navaja",
     descripcion: "Afeitado completo con navaja recta, toalla caliente y bálsamo.",
-    precio: "$120",
+    precio: "€120",
     duracion: "60 min",
     Icon: IconRazorBlade,
     popular: true,
@@ -142,7 +142,7 @@ const servicios = [
     id: 3,
     nombre: "Corte & Barba",
     descripcion: "La combinación completa. Corte de cabello más escultura de barba.",
-    precio: "$150",
+    precio: "€150",
     duracion: "75 min",
     Icon: IconCombScissors,
     popular: false,
@@ -151,7 +151,7 @@ const servicios = [
     id: 4,
     nombre: "La Barba del Norte",
     descripcion: "Tratamiento completo de barba: lavado, acondicionado y aceite vikingo.",
-    precio: "$100",
+    precio: "€100",
     duracion: "45 min",
     Icon: IconBeard,
     popular: false,
@@ -160,7 +160,7 @@ const servicios = [
     id: 5,
     nombre: "Corte de Niño Guerrero",
     descripcion: "Para los pequeños valientes. Corte suave y paciencia garantizada.",
-    precio: "$60",
+    precio: "€60",
     duracion: "30 min",
     Icon: IconChildScissors,
     popular: false,
@@ -169,7 +169,7 @@ const servicios = [
     id: 6,
     nombre: "El Paquete del Jarl",
     descripcion: "Corte, navaja completa, tratamiento de barba y aceite premium.",
-    precio: "$220",
+    precio: "€220",
     duracion: "120 min",
     Icon: IconCrown,
     popular: false,
@@ -244,7 +244,7 @@ export default function ReservarPage() {
             ¡Pacto Sellado!
           </h2>
           <p style={{ fontFamily: "var(--font-barlow)", fontSize: "1.1rem", color: "rgba(184,168,138,0.7)", marginBottom: "36px", fontStyle: "italic" }}>
-            Tu silla en Invictus Barbería te espera.
+            Tu silla en el salón te espera.
           </p>
           <div style={{ border: "1px solid rgba(200,146,26,0.4)", padding: "32px", textAlign: "left", backgroundColor: "#0e0b07", marginBottom: "32px", position: "relative" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, #c8921a 30%, #e8b84b 50%, #c8921a 70%, transparent)" }} />

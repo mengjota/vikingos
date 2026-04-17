@@ -7,27 +7,27 @@ const categorias = [
     id: "cuidado-barba",
     nombre: "Cuidado de Barba",
     productos: [
-      { nombre: "Aceite de Barba Vikingo", descripcion: "Mezcla artesanal de aceite de argán, jojoba y cedro. Hidrata, suaviza y da brillo.", precio: "$85", volumen: "30ml", destacado: true },
-      { nombre: "Bálsamo de Barba Nórdico", descripcion: "Manteca de karité y cera de abejas. Fija, moldea y nutre sin residuo graso.", precio: "$75", volumen: "60ml", destacado: false },
-      { nombre: "Champú de Barba", descripcion: "Limpieza profunda con extracto de pino y menta. Sin resecar.", precio: "$65", volumen: "200ml", destacado: false },
+      { nombre: "Aceite de Barba Vikingo", descripcion: "Mezcla artesanal de aceite de argán, jojoba y cedro. Hidrata, suaviza y da brillo.", precio: "€85", volumen: "30ml", destacado: true },
+      { nombre: "Bálsamo de Barba Nórdico", descripcion: "Manteca de karité y cera de abejas. Fija, moldea y nutre sin residuo graso.", precio: "€75", volumen: "60ml", destacado: false },
+      { nombre: "Champú de Barba", descripcion: "Limpieza profunda con extracto de pino y menta. Sin resecar.", precio: "€65", volumen: "200ml", destacado: false },
     ],
   },
   {
     id: "cuidado-cabello",
     nombre: "Cuidado del Cabello",
     productos: [
-      { nombre: "Pomada Mate Invictus", descripcion: "Fijación fuerte, acabado mate. Control total sin apelmazar.", precio: "$90", volumen: "100g", destacado: true },
-      { nombre: "Cera de Peinado Clásica", descripcion: "Fijación media, brillo natural. La favorita para cortes clásicos.", precio: "$80", volumen: "100g", destacado: false },
-      { nombre: "Arcilla Moldeadora", descripcion: "Textura y movimiento natural. Ideal para estilos desestructurados.", precio: "$85", volumen: "100g", destacado: false },
+      { nombre: "Pomada Mate BarberOS", descripcion: "Fijación fuerte, acabado mate. Control total sin apelmazar.", precio: "€90", volumen: "100g", destacado: true },
+      { nombre: "Cera de Peinado Clásica", descripcion: "Fijación media, brillo natural. La favorita para cortes clásicos.", precio: "€80", volumen: "100g", destacado: false },
+      { nombre: "Arcilla Moldeadora", descripcion: "Textura y movimiento natural. Ideal para estilos desestructurados.", precio: "€85", volumen: "100g", destacado: false },
     ],
   },
   {
     id: "afeitado",
     nombre: "Ritual de Afeitado",
     productos: [
-      { nombre: "Crema de Afeitado Premium", descripcion: "Base de manteca de cacao y aloe vera. Deslizamiento perfecto para la navaja.", precio: "$70", volumen: "150ml", destacado: false },
-      { nombre: "Bálsamo Post-Afeitado", descripcion: "Calma, hidrata y protege después de la navaja. Aroma amaderado seco.", precio: "$80", volumen: "100ml", destacado: true },
-      { nombre: "Alum Block", descripcion: "Cierra poros y desinfecta. Herramienta clásica del afeitado tradicional.", precio: "$45", volumen: "75g", destacado: false },
+      { nombre: "Crema de Afeitado Premium", descripcion: "Base de manteca de cacao y aloe vera. Deslizamiento perfecto para la navaja.", precio: "€70", volumen: "150ml", destacado: false },
+      { nombre: "Bálsamo Post-Afeitado", descripcion: "Calma, hidrata y protege después de la navaja. Aroma amaderado seco.", precio: "€80", volumen: "100ml", destacado: true },
+      { nombre: "Alum Block", descripcion: "Cierra poros y desinfecta. Herramienta clásica del afeitado tradicional.", precio: "€45", volumen: "75g", destacado: false },
     ],
   },
 ];
@@ -48,7 +48,7 @@ export default function ProductosPage() {
             — Los Arsenales del Guerrero —
           </p>
           <h1 style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "clamp(2rem, 5vw, 3.8rem)", fontWeight: 900, color: "#f5ead0", textAlign: "center", lineHeight: 1.15, textShadow: "0 0 60px rgba(200,146,26,0.3)", letterSpacing: "0.04em", marginBottom: "24px" }}>
-            Tienda Invictus
+            Tienda del Salón
           </h1>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "20px", marginBottom: "20px" }}>
             <div style={{ height: "1px", width: "80px", background: "linear-gradient(to right, transparent, rgba(200,146,26,0.8))" }} />

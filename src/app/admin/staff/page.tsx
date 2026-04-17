@@ -120,7 +120,7 @@ export default function AdminStaff() {
               ← Dashboard
             </a>
             <span style={{ color: "rgba(92,58,30,0.5)" }}>|</span>
-            <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.1rem", color: "#c8921a" }}>INVICTUS</span>
+            <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.1rem", color: "#c8921a" }}>BarberOS</span>
             <span style={{ fontSize: "0.65rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(184,168,138,0.3)" }}>
               Gestión de Empleados
             </span>

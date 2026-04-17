@@ -103,7 +103,7 @@ export default function AdminClientes() {
                 </span>
                 <span style={{ fontSize: "1rem", fontWeight: 900, color: "#c8921a" }}>{c.total_reservas}</span>
                 <span style={{ fontSize: "0.72rem", color: "rgba(184,168,138,0.4)" }}>
-                  {new Date(c.created_at).toLocaleDateString("es-EC", { day: "2-digit", month: "short", year: "numeric" })}
+                  {new Date(c.created_at).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })}
                 </span>
               </div>
             ))}

@@ -37,7 +37,7 @@ function addDays(date: Date, days: number): Date {
 }
 
 function formatLabel(date: Date): string {
-  return date.toLocaleDateString("es-EC", { day: "numeric", month: "short" });
+  return date.toLocaleDateString("es-ES", { day: "numeric", month: "short" });
 }
 
 function formatRango(lunes: Date): string {
@@ -109,7 +109,7 @@ export default function MiAgenda() {
         <div style={{ maxWidth: "1200px", margin: "0 auto", height: "64px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
             <a href="/" style={{ textDecoration: "none" }}>
-              <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.2rem", color: "#c8921a" }}>INVICTUS</span>
+              <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.2rem", color: "#c8921a" }}>BarberOS</span>
             </a>
             <span style={{ color: "rgba(92,58,30,0.5)" }}>|</span>
             <span style={{ fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)" }}>

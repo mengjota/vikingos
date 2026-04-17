@@ -45,7 +45,7 @@ export default function NosotrosPage() {
           letterSpacing: "0.04em",
           marginBottom: "32px",
         }}>
-          Somos Invictus
+          Nuestro Oficio
         </h1>
 
         {/* Separador */}

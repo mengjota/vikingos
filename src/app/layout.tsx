@@ -9,7 +9,6 @@ import {
 } from "next/font/google";
 import "./globals.css";
 
-// Logo / marca — solo para INVICTUS
 const cinzelDecorative = Cinzel_Decorative({
   variable: "--font-cinzel-decorative",
   subsets: ["latin"],
@@ -48,8 +47,8 @@ const imFell = IM_Fell_English({
 });
 
 export const metadata: Metadata = {
-  title: "INVICTUS BARBERIA",
-  description: "Donde el acero se encuentra con el honor. Barbería artesanal con estilo vikingo.",
+  title: "BarberOS",
+  description: "La plataforma para barberías",
 };
 
 export default function RootLayout({

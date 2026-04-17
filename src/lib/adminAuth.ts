@@ -77,7 +77,7 @@ export function createAdminReservation(data: {
     barbero: data.barbero,
     fecha: data.fecha,
     hora: data.hora,
-    creadaEl: new Date().toLocaleDateString("es-EC"),
+    creadaEl: new Date().toLocaleDateString("es-ES"),
     clienteEmail: data.clienteTelefono ? `tel:${data.clienteTelefono}` : "admin-walk-in",
     clienteNombre: data.clienteNombre,
     estado: "pendiente",
@@ -132,7 +132,7 @@ const PRODUCTOS_DEFAULT: Producto[] = [
   { id: "1", nombre: "Aceite de Barba Vikingo", descripcion: "Mezcla artesanal de aceite de argán, jojoba y cedro.", precio: 85, volumen: "30ml", categoria: "Cuidado de Barba", destacado: true },
   { id: "2", nombre: "Bálsamo de Barba Nórdico", descripcion: "Manteca de karité y cera de abejas. Fija y nutre.", precio: 75, volumen: "60ml", categoria: "Cuidado de Barba", destacado: false },
   { id: "3", nombre: "Champú de Barba", descripcion: "Limpieza profunda con extracto de pino y menta.", precio: 65, volumen: "200ml", categoria: "Cuidado de Barba", destacado: false },
-  { id: "4", nombre: "Pomada Mate Invictus", descripcion: "Fijación fuerte, acabado mate. Control total.", precio: 90, volumen: "100g", categoria: "Cuidado del Cabello", destacado: true },
+  { id: "4", nombre: "Pomada Mate BarberOS", descripcion: "Fijación fuerte, acabado mate. Control total.", precio: 90, volumen: "100g", categoria: "Cuidado del Cabello", destacado: true },
   { id: "5", nombre: "Cera de Peinado Clásica", descripcion: "Fijación media, brillo natural.", precio: 80, volumen: "100g", categoria: "Cuidado del Cabello", destacado: false },
   { id: "6", nombre: "Arcilla Moldeadora", descripcion: "Textura y movimiento natural.", precio: 85, volumen: "100g", categoria: "Cuidado del Cabello", destacado: false },
   { id: "7", nombre: "Crema de Afeitado Premium", descripcion: "Base de manteca de cacao y aloe vera.", precio: 70, volumen: "150ml", categoria: "Ritual de Afeitado", destacado: false },
@@ -207,7 +207,7 @@ export function saveFactura(f: Omit<Factura, "id" | "completadaEl">): Factura {
   const nueva: Factura = {
     ...f,
     id: "FAC-" + Date.now().toString().slice(-6),
-    completadaEl: new Date().toLocaleDateString("es-EC"),
+    completadaEl: new Date().toLocaleDateString("es-ES"),
   };
   facturas.unshift(nueva);
   localStorage.setItem("inv_facturas", JSON.stringify(facturas));

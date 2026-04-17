@@ -15,7 +15,7 @@ function formatFechaLarga(iso: string): string {
   if (!iso) return "—";
   const [y, m, d] = iso.split("-");
   const fecha = new Date(Number(y), Number(m) - 1, Number(d));
-  return fecha.toLocaleDateString("es-EC", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  return fecha.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
 
 export default function PerfilPage() {

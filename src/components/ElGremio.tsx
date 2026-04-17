@@ -73,7 +73,7 @@ export default function ElGremio() {
           className="text-[#f0e6c8] hover:text-[#c8921a] text-5xl md:text-7xl font-black leading-none mb-6 block transition-colors duration-300"
           style={{ fontFamily: "var(--font-cinzel-decorative)" }}
         >
-          NOSOTROS INVICTUS
+          NUESTRO OFICIO
         </a>
         <p
           className="text-[#b8a882] italic text-lg max-w-xl mx-auto"

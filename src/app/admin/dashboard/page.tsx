@@ -14,7 +14,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isAdminLoggedIn()) { router.push("/admin"); return; }
     const s = getSession();
-    setBarbershopName(s?.barbershopName ?? "Invictus Barbería");
+    setBarbershopName(s?.barbershopName ?? "");
 
     fetch("/api/reservations")
       .then(r => r.json())
@@ -48,7 +48,7 @@ export default function AdminDashboard() {
       <div style={{ borderBottom: "1px solid rgba(92,58,30,0.4)", backgroundColor: "#0e0b07", padding: "0 24px" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: "68px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.3rem", fontWeight: 900, color: "#c8921a" }}>INVICTUS</span>
+            <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.3rem", fontWeight: 900, color: "#c8921a" }}>BarberOS</span>
             <span style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", borderLeft: "1px solid rgba(92,58,30,0.5)", paddingLeft: "16px" }}>
               {barbershopName || "Panel Admin"}
             </span>

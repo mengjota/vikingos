@@ -27,7 +27,7 @@ function VerificarContent() {
           </div>
 
           <p style={{ fontSize: "0.65rem", letterSpacing: "0.5em", textTransform: "uppercase", color: "rgba(200,146,26,0.6)", marginBottom: "8px", fontFamily: "sans-serif" }}>
-            Invictus Barbería
+            BarberOS
           </p>
 
           <h1 style={{ fontSize: "1.6rem", fontWeight: 900, color: "#f5ead0", marginBottom: "16px", letterSpacing: "0.05em", fontFamily: "sans-serif" }}>

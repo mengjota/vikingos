@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { getSession, logout, type Session } from "@/lib/auth";
 
 const navLinks = [
-  { label: "Nosotros Invictus", href: "/nosotros" },
+  { label: "Nosotros", href: "/nosotros" },
   { label: "Servicios", href: "/servicios" },
   { label: "Productos", href: "/productos" },
 ];
@@ -51,13 +51,13 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
             className="text-[#c8921a] text-3xl font-black tracking-[0.2em] uppercase"
             style={{ fontFamily: "var(--font-cinzel-decorative)" }}
           >
-            INVICTUS
+            BarberOS
           </span>
           <span
             className="text-[#b8a882] text-[10px] tracking-[0.5em] uppercase"
             style={{ fontFamily: "var(--font-barlow)" }}
           >
-            Barberia
+            by Narvek
           </span>
         </a>
 

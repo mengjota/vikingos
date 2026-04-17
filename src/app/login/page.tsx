@@ -139,7 +139,6 @@ export default function LoginPage() {
       }
     }
 
-    // Fallback: contraseña legacy (solo para admin@invictus.com)
     if (loginEmail.toLowerCase() === ADMIN_EMAIL && adminLogin(adminPass)) {
       localStorage.setItem("inv_session", JSON.stringify({ name: "Admin", email: ADMIN_EMAIL, role: "owner" }));
       router.push("/admin/dashboard");
@@ -181,7 +180,7 @@ export default function LoginPage() {
           <div style={{ textAlign: "center", marginBottom: "56px" }}>
             <Link href="/" style={{ textDecoration: "none" }}>
               <p style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "clamp(2.5rem,8vw,4.5rem)", fontWeight: 900, color: "#c8921a", letterSpacing: "0.15em", textShadow: "0 0 60px rgba(200,146,26,0.4)" }}>
-                INVICTUS
+                BarberOS
               </p>
             </Link>
             <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", letterSpacing: "0.5em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", marginTop: "6px" }}>
@@ -286,7 +285,7 @@ export default function LoginPage() {
 
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
             <p style={{ fontSize: "2rem", marginBottom: "12px" }}>🛡️</p>
-            <p style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.6rem", color: "#c8921a", marginBottom: "4px" }}>INVICTUS</p>
+            <p style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.6rem", color: "#c8921a", marginBottom: "4px" }}>BarberOS</p>
             <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.68rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(96,165,250,0.5)" }}>
               Acceso Jefe de Barbería
             </p>
@@ -336,7 +335,7 @@ export default function LoginPage() {
         <div style={{ textAlign: "center", marginBottom: "36px" }}>
           <p style={{ fontSize: "2rem", marginBottom: "8px" }}>{portalIcon}</p>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <p style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "2.2rem", fontWeight: 900, color: "#c8921a", letterSpacing: "0.1em" }}>INVICTUS</p>
+            <p style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "2.2rem", fontWeight: 900, color: "#c8921a", letterSpacing: "0.1em" }}>BarberOS</p>
           </Link>
           <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.5em", textTransform: "uppercase", color: `rgba(${accentRgb},0.5)`, marginTop: "6px" }}>
             {portalLabel}

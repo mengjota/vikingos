@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 /* ── Partículas decorativas ────────────────────────────── */
@@ -18,6 +18,7 @@ const PARTICLES = [
 /* ── Componente principal ──────────────────────────────── */
 export default function Hero() {
   const bgRef = useRef<HTMLDivElement>(null);
+  const [shopName, setShopName] = useState("BarberOS");
 
   useEffect(() => {
     const onScroll = () => {
@@ -26,6 +27,7 @@ export default function Hero() {
       }
     };
     window.addEventListener("scroll", onScroll);
+    fetch("/api/barbershop").then(r => r.json()).then(d => { if (d.name) setShopName(d.name.toUpperCase()); });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -100,7 +102,7 @@ export default function Hero() {
       {/* ── Contenido central ── */}
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
 
-        {/* Título INVICTUS */}
+        {/* Nombre de la barbería */}
         <h1
           className="hero-e3 text-[#f0e6c8] text-7xl md:text-[9rem] font-black leading-none mb-2 tracking-tight"
           style={{
@@ -108,10 +110,10 @@ export default function Hero() {
             textShadow: "0 0 60px rgba(200,146,26,0.15)",
           }}
         >
-          INVICTUS
+          {shopName}
         </h1>
 
-        {/* Separador entre INVICTUS y BARBERÍA */}
+        {/* Separador */}
         <div className="hero-e1 flex items-center justify-center gap-4 mb-3">
           <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#c8921a]/70" />
           <span className="text-[#c8921a] text-xl">᛭</span>

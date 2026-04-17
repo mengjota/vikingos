@@ -28,7 +28,7 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "48px" }}>
           <p style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "2rem", fontWeight: 900, color: "#c8921a", letterSpacing: "0.2em", textShadow: "0 0 40px rgba(200,146,26,0.4)" }}>
-            INVICTUS
+            BarberOS
           </p>
           <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.6em", textTransform: "uppercase", color: "rgba(184,168,138,0.5)", marginTop: "6px" }}>
             Panel de Administración

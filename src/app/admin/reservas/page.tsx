@@ -26,12 +26,12 @@ const PALETA = [
 ];
 
 const SERVICIOS = [
-  { nombre: "Corte de Cabello",          precio: "$80"  },
-  { nombre: "Corte y Barba",             precio: "$150" },
-  { nombre: "Perfilado de Barba",        precio: "$60"  },
-  { nombre: "Afeitado de Barba al Ras",  precio: "$120" },
-  { nombre: "Limpieza Facial",           precio: "$100" },
-  { nombre: "Rizos Permanentes",         precio: "$220" },
+  { nombre: "Corte de Cabello",          precio: "€80"  },
+  { nombre: "Corte y Barba",             precio: "€150" },
+  { nombre: "Perfilado de Barba",        precio: "€60"  },
+  { nombre: "Afeitado de Barba al Ras",  precio: "€120" },
+  { nombre: "Limpieza Facial",           precio: "€100" },
+  { nombre: "Rizos Permanentes",         precio: "€220" },
 ];
 
 const HORAS = [
@@ -373,7 +373,7 @@ export default function AdminReservas() {
           <div style={{ flexShrink: 0, textAlign: "right" }}>
             <p style={{ fontSize: "0.55rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(200,180,140,0.5)", marginBottom: "2px" }}>Viendo</p>
             <p style={{ fontSize: "0.9rem", fontWeight: 800, color: "#f0c040", textShadow: "0 0 10px rgba(240,192,64,0.4)" }}>
-              {new Date(fechaSeleccionada + "T12:00:00").toLocaleDateString("es-EC", { weekday: "long", day: "numeric", month: "long" })}
+              {new Date(fechaSeleccionada + "T12:00:00").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
             </p>
           </div>
         </div>

@@ -82,7 +82,7 @@ export default function AdminFichajes() {
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "28px 20px" }}>
 
         {/* Stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(autofit, minmax(200px, 1fr))", gap: "14px", marginBottom: "28px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "14px", marginBottom: "28px" }}>
           {[
             { label: "Turnos Registrados", value: filtrados.length, color: "#c8921a", bg: "rgba(200,146,26,0.05)" },
             { label: "En turno ahora",     value: activos,          color: "#4ade80", bg: "rgba(74,222,128,0.05)" },

@@ -2,8 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAdminLoggedIn, getFacturas, type Factura } from "@/lib/adminAuth";
+import { getSession } from "@/lib/auth";
 
+export interface Factura {
+  id: string;
+  reservaId: string;
+  clienteEmail: string;
+  clienteNombre: string;
+  servicio: string;
+  barbero: string;
+  fecha: string;
+  hora: string;
+  precioServicio: number;
+  metodoPago: "efectivo" | "tarjeta" | "transferencia" | "otro" | string;
+  productosAdicionales: { nombre: string; precio: number; cantidad: number }[];
+  subtotalProductos: number;
+  total: number;
+  completadaEl: string;
+}
 export default function AdminFacturacion() {
   const router = useRouter();
   const [facturas, setFacturas] = useState<Factura[]>([]);
@@ -12,8 +28,13 @@ export default function AdminFacturacion() {
   const [filtroMetodo, setFiltroMetodo] = useState("todos");
 
   useEffect(() => {
-    if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    setFacturas(getFacturas());
+    getSession().then((s) => {
+      if (!s || s.role !== "owner") {
+        router.push("/admin");
+        return;
+      }
+      fetch("/api/admin/invoices").then(r => r.json()).then(setFacturas);
+    });
   }, [router]);
 
   const barberos = ["todos", ...Array.from(new Set(facturas.map((f) => f.barbero)))];

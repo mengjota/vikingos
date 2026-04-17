@@ -27,11 +27,12 @@ export default function PerfilPage() {
   const [confirmCancel, setConfirmCancel] = useState<Reservation | null>(null);
 
   useEffect(() => {
-    const s = getSession();
-    if (!s || s.role === "employee") { router.push("/login"); return; }
-    if (s.role === "owner") { router.push("/admin/dashboard"); return; }
-    setSession(s);
-    getReservations(s.email).then(setReservas).finally(() => setLoading(false));
+    getSession().then((s) => {
+      if (!s || s.role === "employee") { router.push("/login"); return; }
+      if (s.role === "owner") { router.push("/admin/dashboard"); return; }
+      setSession(s);
+      getReservations(s.email).then(setReservas).finally(() => setLoading(false));
+    });
   }, [router]);
 
   function handleLogout() { logout(); router.push("/"); }

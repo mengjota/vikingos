@@ -23,7 +23,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
   }, []);
 
   useEffect(() => {
-    setSession(getSession());
+    getSession().then(setSession);
   }, []);
 
   function handleLogout() {

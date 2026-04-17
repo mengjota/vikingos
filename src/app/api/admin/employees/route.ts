@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import sql from "@/lib/db";
+import { verifySession } from "@/lib/session";
 
 async function getOwnerBarbershop(email: string): Promise<string | null> {
   if (!email) return null;
@@ -13,7 +14,8 @@ async function getOwnerBarbershop(email: string): Promise<string | null> {
 
 // GET — lista empleados de la barbería del owner
 export async function GET(req: NextRequest) {
-  const callerEmail = req.headers.get("x-caller-email") ?? "";
+  const session = await verifySession();
+  const callerEmail = session?.email ?? "";
   const barbershopId = await getOwnerBarbershop(callerEmail);
   if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
@@ -28,7 +30,9 @@ export async function GET(req: NextRequest) {
 
 // POST — crear cuenta de empleado en la barbería del owner
 export async function POST(req: NextRequest) {
-  const { callerEmail, name, email, password, barberName } = await req.json();
+  const session = await verifySession();
+  const callerEmail = session?.email ?? "";
+  const { name, email, password, barberName } = await req.json();
 
   const barbershopId = await getOwnerBarbershop(callerEmail);
   if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
@@ -57,7 +61,9 @@ export async function POST(req: NextRequest) {
 
 // DELETE — eliminar empleado (solo de la barbería del owner)
 export async function DELETE(req: NextRequest) {
-  const { callerEmail, employeeId } = await req.json();
+  const session = await verifySession();
+  const callerEmail = session?.email ?? "";
+  const { employeeId } = await req.json();
 
   const barbershopId = await getOwnerBarbershop(callerEmail);
   if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });

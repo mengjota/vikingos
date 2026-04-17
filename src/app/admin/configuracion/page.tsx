@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAdminLoggedIn, adminLogout } from "@/lib/adminAuth";
 import { getSession } from "@/lib/auth";
 
 export default function AdminConfiguracion() {
@@ -17,22 +16,23 @@ export default function AdminConfiguracion() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    const s = getSession();
-    if (!s) { router.push("/admin"); return; }
-    setSession(s);
+    getSession().then((s) => {
+      if (!s || s.role !== "owner") { 
+        router.push("/admin"); 
+        return; 
+      }
+      setSession(s);
 
-    // Cargar nombre actual de la barbería
-    fetch("/api/admin/mi-barberia", {
-      headers: { "x-caller-email": s.email },
-    })
-      .then(r => r.json())
-      .then(data => {
-        setBarbershopName(data.name ?? "");
-        setInputName(data.name ?? "");
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      // Cargar nombre actual de la barbería
+      fetch("/api/admin/mi-barberia")
+        .then(r => r.json())
+        .then(data => {
+          setBarbershopName(data.name ?? "");
+          setInputName(data.name ?? "");
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    });
   }, [router]);
 
   async function handleSave(e: React.FormEvent<HTMLElement>) {
@@ -42,12 +42,12 @@ export default function AdminConfiguracion() {
     if (!inputName.trim()) { setErrorMsg("El nombre no puede estar vacío."); return; }
     setSaving(true);
 
-    const s = getSession();
+    const s = await getSession();
     if (!s) return;
 
     const res = await fetch("/api/admin/mi-barberia", {
       method: "PUT",
-      headers: { "Content-Type": "application/json", "x-caller-email": s.email },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: inputName.trim() }),
     });
     const data = await res.json();
@@ -66,7 +66,10 @@ export default function AdminConfiguracion() {
     setTimeout(() => setSuccessMsg(""), 3500);
   }
 
-  function handleLogout() { adminLogout(); router.push("/admin"); }
+  async function handleLogout() { 
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/admin"); 
+  }
 
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "14px 16px", backgroundColor: "#0a0806",

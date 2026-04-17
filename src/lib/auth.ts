@@ -21,16 +21,22 @@ export interface Reservation {
   facturaId?: string;
 }
 
-export function getSession(): Session | null {
+export async function getSession(): Promise<Session | null> {
   if (typeof window === "undefined") return null;
-  const raw = localStorage.getItem("inv_session");
-  if (!raw) return null;
-  try { return JSON.parse(raw); } catch { return null; }
+  try {
+    const res = await fetch("/api/auth/me");
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.session;
+  } catch {
+    return null;
+  }
 }
 
-export function logout() {
+export async function logout() {
   if (typeof window === "undefined") return;
-  localStorage.removeItem("inv_session");
+  await fetch("/api/auth/logout", { method: "POST" });
+  window.location.href = "/login";
 }
 
 // Reservas del cliente — filtradas en el servidor por email

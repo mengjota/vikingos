@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAdminLoggedIn } from "@/lib/adminAuth";
 import { getSession } from "@/lib/auth";
 
 interface Empleado {
@@ -30,19 +29,22 @@ export default function AdminStaff() {
   const [session, setSession] = useState<ReturnType<typeof getSession>>(null);
 
   useEffect(() => {
-    if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    setSession(getSession());
-    cargarEmpleados();
+    getSession().then((s) => {
+      if (!s || s.role !== "owner") {
+        router.push("/admin");
+        return;
+      }
+      setSession(s);
+      cargarEmpleados();
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   async function cargarEmpleados() {
     setLoading(true);
-    const s = getSession();
+    const s = await getSession();
     if (!s) return;
-    const res = await fetch("/api/admin/employees", {
-      headers: { "x-caller-email": s.email },
-    });
+    const res = await fetch("/api/admin/employees");
     if (res.ok) setEmpleados(await res.json());
     setLoading(false);
   }
@@ -51,14 +53,13 @@ export default function AdminStaff() {
     e.preventDefault();
     setFormError("");
     setFormLoading(true);
-    const s = getSession();
+    const s = await getSession();
     if (!s) return;
 
     const res = await fetch("/api/admin/employees", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        callerEmail: s.email,
         name: form.name,
         email: form.email,
         password: form.password,
@@ -79,13 +80,13 @@ export default function AdminStaff() {
   async function eliminarEmpleado() {
     if (!confirmDel) return;
     setDelLoading(true);
-    const s = getSession();
+    const s = await getSession();
     if (!s) return;
 
     const res = await fetch("/api/admin/employees", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ callerEmail: s.email, employeeId: confirmDel.id }),
+      body: JSON.stringify({ employeeId: confirmDel.id }),
     });
     setDelLoading(false);
     if (res.ok) {

@@ -2,14 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  isAdminLoggedIn,
-  saveFactura, getProductos,
-  getPausas, savePausa, deletePausa,
-  type Producto, type ProductoVendido, type Pausa,
-} from "@/lib/adminAuth";
-import type { Reservation } from "@/lib/auth";
-import { getSession } from "@/lib/auth";
+import { type Reservation, getSession } from "@/lib/auth";
+
+export interface Producto { id: string; nombre: string; precio: number; }
+export interface ProductoVendido { nombre: string; precio: number; cantidad: number; }
+export interface Pausa { id: string; barbero: string; fecha: string; horaInicio: string; horaFin: string; motivo: string; }
 
 type MetodoPago = "efectivo" | "tarjeta" | "transferencia" | "otro";
 
@@ -106,14 +103,15 @@ export default function AdminReservas() {
   const [errorPausa, setErrorPausa]     = useState("");
 
   useEffect(() => {
-    if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    reloadAll(true);
-    setProductosDisp(getProductos());
+    getSession().then((s) => {
+      if (!s || s.role !== "owner") {
+        router.push("/admin");
+        return;
+      }
+      reloadAll(true);
+      fetch("/api/admin/products").then(r => r.json()).then(setProductosDisp);
 
-    // Cargar empleados desde la DB según el owner logueado
-    const s = getSession();
-    if (s) {
-      fetch("/api/admin/employees", { headers: { "x-caller-email": s.email } })
+      fetch("/api/admin/employees")
         .then(r => r.json())
         .then((emps: { name: string; barber_name: string }[]) => {
           const lista: Barbero[] = emps.map((e, i) => ({
@@ -125,7 +123,7 @@ export default function AdminReservas() {
           if (lista.length > 0) setNuevaBarbero(lista[0].name);
         })
         .catch(() => {});
-    }
+    });
   }, [router]);
 
   // Cargar horas ocupadas cuando cambia barbero o fecha en modal nueva reserva
@@ -138,9 +136,11 @@ export default function AdminReservas() {
   }, [nuevaBarbero, nuevaFecha, modalNueva]);
 
   async function reloadAll(autoJump = false) {
-    const resData: Reservation[] = await fetch("/api/reservations").then(r => r.json());
-    setReservas(resData);
-    setPausas(getPausas());
+    try {
+      const resData: Reservation[] = await fetch("/api/reservations").then(r => r.json());
+      setReservas(resData);
+      const pausasData: Pausa[] = await fetch("/api/admin/pauses").then(r => r.json());
+      setPausas(pausasData);
 
     // Auto-saltar al día con la próxima cita pendiente más cercana
     if (autoJump) {
@@ -158,6 +158,8 @@ export default function AdminReservas() {
         if (diasDiff >= 1) setOffsetSemana(Math.floor(diasDiff));
         else if (diasDiff < 0) setOffsetSemana(Math.ceil(diasDiff));
       }
+    } catch {
+      // Ignorar errores en parseo inicial
     }
   }
 
@@ -208,13 +210,20 @@ export default function AdminReservas() {
     setGuardando(true);
     const precioServicio     = parseFloat(modalCompletar.precio?.replace(/[^0-9.]/g, "")) || 0;
     const subtotalProductos  = productosEnFactura.reduce((s, p) => s + p.precio * p.cantidad, 0);
-    const factura = saveFactura({
+    const factura = {
       reservaId: modalCompletar.id, clienteEmail: modalCompletar.clienteEmail ?? "",
       clienteNombre: modalCompletar.clienteNombre ?? "Cliente", servicio: modalCompletar.servicio,
       barbero: modalCompletar.barbero, fecha: modalCompletar.fecha, hora: modalCompletar.hora,
       precioServicio, metodoPago, productosAdicionales: productosEnFactura,
       subtotalProductos, total: precioServicio + subtotalProductos,
+    };
+    
+    // Guardar factura en base de datos
+    const fRes = await fetch("/api/admin/invoices", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(factura)
     });
+    const { id: facturaId } = await fRes.json();
+
     await fetch(`/api/reservations/${modalCompletar.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -235,7 +244,12 @@ export default function AdminReservas() {
     if (!pausaInicio) { setErrorPausa("Selecciona la hora de inicio."); return; }
     if (!pausaFin)    { setErrorPausa("Selecciona la hora de fin."); return; }
     if (pausaFin <= pausaInicio) { setErrorPausa("La hora de fin debe ser después del inicio."); return; }
-    savePausa({ barbero: pausaBarbero, fecha: pausaFecha, horaInicio: pausaInicio, horaFin: pausaFin, motivo: pausaMotivo });
+    
+    await fetch("/api/admin/pauses", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ barbero: pausaBarbero, fecha: pausaFecha, horaInicio: pausaInicio, horaFin: pausaFin, motivo: pausaMotivo })
+    });
+    
     reloadAll(); setModalPausa(false);
   }
 
@@ -439,7 +453,7 @@ export default function AdminReservas() {
                             <p style={{ fontSize: "0.65rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(251,146,60,0.85)" }}>{p.motivo}</p>
                             <p style={{ fontSize: "0.62rem", color: "rgba(200,180,140,0.65)", marginTop: "2px" }}>{p.fecha}</p>
                           </div>
-                          <button onClick={() => { deletePausa(p.id); reloadAll(); }}
+                          <button onClick={async () => { await fetch("/api/admin/pauses", { method: "DELETE", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ id: p.id }) }); reloadAll(); }}
                             style={{ background: "none", border: "1px solid rgba(239,68,68,0.5)", color: "rgba(239,68,68,0.8)", cursor: "pointer", padding: "4px 8px", fontSize: "0.7rem" }}>
                             ✕
                           </button>

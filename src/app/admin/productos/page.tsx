@@ -2,8 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAdminLoggedIn, getProductos, saveProducto, deleteProducto, type Producto } from "@/lib/adminAuth";
+import { getSession } from "@/lib/auth";
 
+export interface Producto {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  volumen: "50ml" | "100ml" | "100g" | "250ml" | string;
+  categoria: string;
+  destacado?: boolean;
+}
 const CATEGORIAS = ["Cuidado de Barba", "Cuidado del Cabello", "Ritual de Afeitado", "Accesorios"];
 
 const VACIO: Omit<Producto, "id"> = {
@@ -19,11 +28,19 @@ export default function AdminProductos() {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    setProductos(getProductos());
+    getSession().then((s) => {
+      if (!s || s.role !== "owner") {
+        router.push("/admin");
+        return;
+      }
+      reload();
+    });
   }, [router]);
 
-  function reload() { setProductos(getProductos()); }
+  async function reload() {
+    const res = await fetch("/api/admin/products");
+    if (res.ok) setProductos(await res.json());
+  }
 
   function abrirNuevo() {
     setEditando(null);
@@ -37,17 +54,30 @@ export default function AdminProductos() {
     setModal(true);
   }
 
-  function guardar() {
+  async function guardar() {
     if (!form.nombre.trim() || form.precio <= 0) return;
-    saveProducto(form, editando ?? undefined);
-    reload();
-    setModal(false);
+    const body = { ...form, id: editando ?? undefined };
+    const res = await fetch("/api/admin/products", {
+      method: editando ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      reload();
+      setModal(false);
+    }
   }
 
-  function eliminar(id: string) {
-    deleteProducto(id);
-    reload();
-    setConfirmDelete(null);
+  async function eliminar(id: string) {
+    const res = await fetch("/api/admin/products", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) {
+      reload();
+      setConfirmDelete(null);
+    }
   }
 
   const categorias = CATEGORIAS;

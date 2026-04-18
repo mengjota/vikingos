@@ -9,6 +9,7 @@ interface Empleado {
   name: string;
   email: string;
   barber_name: string;
+  pin: string | null;
   created_at: string;
 }
 
@@ -25,6 +26,10 @@ export default function AdminStaff() {
   const [confirmDel, setConfirmDel] = useState<Empleado | null>(null);
   const [delLoading, setDelLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [editEmp, setEditEmp] = useState<Empleado | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", barberName: "", pin: "" });
+  const [editError, setEditError] = useState("");
+  const [editLoading, setEditLoading] = useState(false);
 
   const [session, setSession] = useState<Awaited<ReturnType<typeof getSession>>>(null);
 
@@ -90,6 +95,35 @@ export default function AdminStaff() {
       }
     } catch (_) {}
     finally { setDelLoading(false); }
+  }
+
+  function abrirEditar(emp: Empleado) {
+    setEditEmp(emp);
+    setEditForm({ name: emp.name, barberName: emp.barber_name, pin: emp.pin ?? "" });
+    setEditError("");
+  }
+
+  async function guardarEdicion() {
+    if (!editEmp) return;
+    if (editForm.pin && !/^\d{4}$/.test(editForm.pin)) { setEditError("El PIN debe ser exactamente 4 dígitos"); return; }
+    setEditLoading(true);
+    try {
+      const res = await fetch("/api/admin/employees", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employeeId: editEmp.id, name: editForm.name, barberName: editForm.barberName, pin: editForm.pin || null }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) { setEditError(d.error ?? `Error ${res.status}`); return; }
+      setSuccessMsg(`Datos de ${editForm.name} actualizados`);
+      setTimeout(() => setSuccessMsg(""), 3000);
+      setEditEmp(null);
+      cargarEmpleados();
+    } catch (_) {
+      setEditError("Error de conexión");
+    } finally {
+      setEditLoading(false);
+    }
   }
 
   const labelStyle: React.CSSProperties = {
@@ -200,23 +234,25 @@ export default function AdminStaff() {
                     Barbero: {emp.barber_name}
                   </p>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <span style={{
-                    padding: "4px 12px", border: "1px solid rgba(74,222,128,0.3)",
-                    backgroundColor: "rgba(74,222,128,0.05)", color: "#4ade80",
-                    fontSize: "0.62rem", letterSpacing: "0.3em", textTransform: "uppercase",
-                  }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                  {emp.pin ? (
+                    <span style={{ padding: "4px 10px", border: "1px solid rgba(200,146,26,0.3)", backgroundColor: "rgba(200,146,26,0.05)", color: "#c8921a", fontSize: "0.6rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
+                      PIN ••••
+                    </span>
+                  ) : (
+                    <span style={{ padding: "4px 10px", border: "1px solid rgba(92,58,30,0.3)", color: "rgba(184,168,138,0.3)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                      Sin PIN
+                    </span>
+                  )}
+                  <span style={{ padding: "4px 10px", border: "1px solid rgba(74,222,128,0.3)", backgroundColor: "rgba(74,222,128,0.05)", color: "#4ade80", fontSize: "0.6rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
                     Activo
                   </span>
-                  <button
-                    onClick={() => setConfirmDel(emp)}
-                    style={{
-                      padding: "8px 18px", border: "1px solid rgba(239,68,68,0.3)",
-                      backgroundColor: "transparent", color: "rgba(239,68,68,0.6)",
-                      cursor: "pointer", fontFamily: "var(--font-barlow)",
-                      fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase",
-                    }}
-                  >
+                  <button onClick={() => abrirEditar(emp)}
+                    style={{ padding: "8px 14px", border: "1px solid rgba(200,146,26,0.35)", backgroundColor: "transparent", color: "#c8921a", cursor: "pointer", fontFamily: "var(--font-barlow)", fontSize: "0.62rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
+                    Editar
+                  </button>
+                  <button onClick={() => setConfirmDel(emp)}
+                    style={{ padding: "8px 14px", border: "1px solid rgba(239,68,68,0.3)", backgroundColor: "transparent", color: "rgba(239,68,68,0.6)", cursor: "pointer", fontFamily: "var(--font-barlow)", fontSize: "0.62rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
                     Eliminar
                   </button>
                 </div>
@@ -311,6 +347,41 @@ export default function AdminStaff() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Editar empleado */}
+      {editEmp && (
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", zIndex: 100, backdropFilter: "blur(4px)" }}>
+          <div style={{ width: "100%", maxWidth: "480px", backgroundColor: "#0e0b07", border: "1px solid rgba(200,146,26,0.4)", padding: "40px", boxShadow: "0 0 80px rgba(200,146,26,0.12)", position: "relative" }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "linear-gradient(to right, transparent, #c8921a, transparent)" }} />
+            <h2 style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.1rem", color: "#f0e6c8", marginBottom: "6px" }}>Editar Empleado</h2>
+            <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", color: "rgba(184,168,138,0.4)", marginBottom: "28px", letterSpacing: "0.1em" }}>{editEmp.email}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+              <div>
+                <label style={labelStyle}>Nombre completo</label>
+                <input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Nombre en reservas</label>
+                <input value={editForm.barberName} onChange={e => setEditForm(f => ({ ...f, barberName: e.target.value }))} style={inputStyle} />
+                <p style={{ fontSize: "0.62rem", color: "rgba(200,146,26,0.4)", marginTop: "5px" }}>Debe coincidir con el nombre al crear citas</p>
+              </div>
+              <div>
+                <label style={labelStyle}>PIN de fichaje (4 dígitos)</label>
+                <input value={editForm.pin} onChange={e => setEditForm(f => ({ ...f, pin: e.target.value.replace(/\D/g, "").slice(0, 4) }))}
+                  placeholder="Ej: 1234" maxLength={4} style={{ ...inputStyle, letterSpacing: "0.5em", fontSize: "1.2rem" }} />
+                <p style={{ fontSize: "0.62rem", color: "rgba(184,168,138,0.35)", marginTop: "5px" }}>El empleado usará este PIN en <strong style={{ color: "rgba(200,146,26,0.5)" }}>/fichar</strong> para registrar entrada/salida</p>
+              </div>
+              {editError && <p style={{ color: "#f87171", fontSize: "0.75rem" }}>⚠ {editError}</p>}
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button onClick={() => setEditEmp(null)} style={{ flex: 1, padding: "13px", border: "1px solid rgba(92,58,30,0.5)", backgroundColor: "transparent", color: "rgba(184,168,138,0.5)", cursor: "pointer", fontFamily: "var(--font-barlow)", fontSize: "0.7rem", letterSpacing: "0.3em", textTransform: "uppercase" }}>Cancelar</button>
+                <button onClick={guardarEdicion} disabled={editLoading} style={{ flex: 2, padding: "13px", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", cursor: editLoading ? "not-allowed" : "pointer", fontFamily: "var(--font-barlow)", fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.35em", textTransform: "uppercase", color: "#080604", opacity: editLoading ? 0.7 : 1 }}>
+                  {editLoading ? "Guardando..." : "Guardar"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

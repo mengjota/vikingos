@@ -19,13 +19,48 @@ export async function GET(req: NextRequest) {
   const barbershopId = await getOwnerBarbershop(callerEmail);
   if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS pin VARCHAR(10)`.catch(() => {});
+
   const rows = await sql`
-    SELECT id, name, email, barber_name, created_at
+    SELECT id, name, email, barber_name, pin, created_at
     FROM users
     WHERE role = 'employee' AND barbershop_id = ${barbershopId}
     ORDER BY name
   `;
   return NextResponse.json(rows);
+}
+
+// PUT — editar datos del empleado (nombre, barber_name, pin)
+export async function PUT(req: NextRequest) {
+  const session = await verifySession();
+  const callerEmail = session?.email ?? "";
+  const barbershopId = await getOwnerBarbershop(callerEmail);
+  if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+
+  const { employeeId, name, barberName, pin } = await req.json();
+  if (!employeeId) return NextResponse.json({ error: "ID requerido" }, { status: 400 });
+  if (pin && !/^\d{4}$/.test(pin)) return NextResponse.json({ error: "El PIN debe ser de 4 dígitos" }, { status: 400 });
+
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS pin VARCHAR(10)`.catch(() => {});
+
+  // Verificar que el PIN no esté usado por otro empleado de la misma barbería
+  if (pin) {
+    const conflict = await sql`
+      SELECT id FROM users WHERE pin = ${pin} AND barbershop_id = ${barbershopId} AND id != ${employeeId}
+    `;
+    if (conflict.length > 0) return NextResponse.json({ error: "Ese PIN ya lo usa otro empleado" }, { status: 409 });
+  }
+
+  const [row] = await sql`
+    UPDATE users SET
+      name        = COALESCE(${name ?? null}, name),
+      barber_name = COALESCE(${barberName ?? null}, barber_name),
+      pin         = COALESCE(${pin ?? null}, pin)
+    WHERE id = ${employeeId} AND role = 'employee' AND barbershop_id = ${barbershopId}
+    RETURNING id, name, email, barber_name, pin
+  `;
+  if (!row) return NextResponse.json({ error: "Empleado no encontrado" }, { status: 404 });
+  return NextResponse.json({ ok: true, employee: row });
 }
 
 // POST — crear cuenta de empleado en la barbería del owner

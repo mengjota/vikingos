@@ -11,6 +11,21 @@ async function getOwnerBarbershop(email: string): Promise<string | null> {
   return (rows[0].barbershop_id as string) ?? (process.env.BARBERSHOP_ID ?? "narvek");
 }
 
+async function ensureServicesTable() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS services (
+      id SERIAL PRIMARY KEY,
+      barbershop_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      price TEXT NOT NULL,
+      duration_min INT DEFAULT 30,
+      description TEXT DEFAULT '',
+      active BOOLEAN DEFAULT true,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+}
+
 // GET — lista servicios de la barbería del owner
 export async function GET(req: NextRequest) {
   const session = await verifySession();
@@ -18,13 +33,18 @@ export async function GET(req: NextRequest) {
   const barbershopId = await getOwnerBarbershop(callerEmail);
   if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const rows = await sql`
-    SELECT id, barbershop_id, name, price, duration_min, description, active, created_at
-    FROM services
-    WHERE barbershop_id = ${barbershopId}
-    ORDER BY id ASC
-  `;
-  return NextResponse.json(rows);
+  try {
+    const rows = await sql`
+      SELECT id, barbershop_id, name, price, duration_min, description, active, created_at
+      FROM services
+      WHERE barbershop_id = ${barbershopId}
+      ORDER BY id ASC
+    `;
+    return NextResponse.json(rows);
+  } catch {
+    await ensureServicesTable();
+    return NextResponse.json([]);
+  }
 }
 
 // POST — crear servicio
@@ -39,6 +59,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Nombre y precio son requeridos" }, { status: 400 });
   }
 
+  await ensureServicesTable();
   const [row] = await sql`
     INSERT INTO services (barbershop_id, name, price, duration_min, description)
     VALUES (${barbershopId}, ${name}, ${price}, ${duration_min ?? 30}, ${description ?? ''})

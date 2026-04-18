@@ -30,6 +30,8 @@ export default function PerfilBarberoPage() {
   const [ok, setOk]                   = useState(false);
   const [error, setError]             = useState("");
 
+  const isOwner = session?.role === "owner";
+
   useEffect(() => {
     getSession().then(async s => {
       if (!s || (s.role !== "employee" && s.role !== "owner")) {
@@ -64,10 +66,13 @@ export default function PerfilBarberoPage() {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true); setOk(false); setError("");
+    const payload = isOwner
+      ? { userId: session?.userId, barberName, specialty, isBarber, schedule }
+      : { userId: session?.userId, barberName, specialty, isBarber }; // empleados no envían horario
     const res = await fetch("/api/admin/barber-schedules", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: session?.userId, barberName, specialty, isBarber, schedule }),
+      body: JSON.stringify(payload),
     });
     setSaving(false);
     if (res.ok) setOk(true);
@@ -143,12 +148,21 @@ export default function PerfilBarberoPage() {
           {isBarber && (
             <section style={{ border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "#0e0b07", padding: "28px", position: "relative" }}>
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, rgba(167,139,250,0.5), transparent)" }} />
-              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(167,139,250,0.6)", marginBottom: "20px" }}>
-                Mis Días de Trabajo
-              </p>
-              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.72rem", color: "rgba(184,168,138,0.4)", marginBottom: "20px" }}>
-                Marca los días que trabajas. Los clientes solo podrán reservarte esos días.
-              </p>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "8px" }}>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(167,139,250,0.6)" }}>
+                  Días de Trabajo
+                </p>
+                {!isOwner && (
+                  <span style={{ fontFamily: "var(--font-barlow)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "rgba(200,146,26,0.5)", border: "1px solid rgba(200,146,26,0.2)", padding: "3px 10px" }}>
+                    Solo lectura — el jefe gestiona los horarios
+                  </span>
+                )}
+              </div>
+              {isOwner && (
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.72rem", color: "rgba(184,168,138,0.4)", marginBottom: "20px" }}>
+                  Marca los días que trabajas. Los clientes solo podrán reservarte esos días.
+                </p>
+              )}
 
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {DIAS_ORDER.map(dow => {
@@ -159,23 +173,36 @@ export default function PerfilBarberoPage() {
                       padding: "14px 16px",
                       border: `1px solid ${day.is_working ? "rgba(167,139,250,0.25)" : "rgba(92,58,30,0.2)"}`,
                       backgroundColor: day.is_working ? "rgba(167,139,250,0.04)" : "transparent",
-                      transition: "all 0.2s",
                     }}>
-                      {/* Toggle */}
-                      <button type="button" onClick={() => toggleDay(dow)} style={{
-                        width: "40px", height: "22px", borderRadius: "11px", border: "none", cursor: "pointer",
-                        backgroundColor: day.is_working ? "rgba(167,139,250,0.8)" : "rgba(92,58,30,0.4)",
-                        position: "relative", transition: "background 0.3s", flexShrink: 0,
-                      }}>
-                        <span style={{
-                          position: "absolute", top: "3px",
-                          left: day.is_working ? "20px" : "3px",
-                          width: "16px", height: "16px", borderRadius: "50%",
-                          backgroundColor: "#f0e6c8", transition: "left 0.3s",
-                        }} />
-                      </button>
+                      {/* Toggle — solo editable por owner */}
+                      {isOwner ? (
+                        <button type="button" onClick={() => toggleDay(dow)} style={{
+                          width: "40px", height: "22px", borderRadius: "11px", border: "none", cursor: "pointer",
+                          backgroundColor: day.is_working ? "rgba(167,139,250,0.8)" : "rgba(92,58,30,0.4)",
+                          position: "relative", transition: "background 0.3s", flexShrink: 0,
+                        }}>
+                          <span style={{
+                            position: "absolute", top: "3px",
+                            left: day.is_working ? "20px" : "3px",
+                            width: "16px", height: "16px", borderRadius: "50%",
+                            backgroundColor: "#f0e6c8", transition: "left 0.3s",
+                          }} />
+                        </button>
+                      ) : (
+                        <div style={{
+                          width: "40px", height: "22px", borderRadius: "11px",
+                          backgroundColor: day.is_working ? "rgba(167,139,250,0.4)" : "rgba(92,58,30,0.2)",
+                          position: "relative", flexShrink: 0,
+                        }}>
+                          <span style={{
+                            position: "absolute", top: "3px",
+                            left: day.is_working ? "20px" : "3px",
+                            width: "16px", height: "16px", borderRadius: "50%",
+                            backgroundColor: "rgba(240,230,200,0.5)",
+                          }} />
+                        </div>
+                      )}
 
-                      {/* Día */}
                       <span style={{
                         fontFamily: "var(--font-barlow)", fontSize: "0.85rem", fontWeight: 700,
                         letterSpacing: "0.1em", textTransform: "uppercase",
@@ -185,8 +212,7 @@ export default function PerfilBarberoPage() {
                         {DIAS_LABELS[dow]}
                       </span>
 
-                      {/* Horas */}
-                      {day.is_working && (
+                      {day.is_working && isOwner && (
                         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <input type="time" value={day.start_time} onChange={e => updateTime(dow, "start_time", e.target.value)}
                             style={{ ...S.input, width: "110px", padding: "8px 10px", fontSize: "0.85rem" }} />
@@ -194,6 +220,11 @@ export default function PerfilBarberoPage() {
                           <input type="time" value={day.end_time} onChange={e => updateTime(dow, "end_time", e.target.value)}
                             style={{ ...S.input, width: "110px", padding: "8px 10px", fontSize: "0.85rem" }} />
                         </div>
+                      )}
+                      {day.is_working && !isOwner && (
+                        <span style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", color: "rgba(167,139,250,0.6)" }}>
+                          {day.start_time} — {day.end_time}
+                        </span>
                       )}
                       {!day.is_working && (
                         <span style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", color: "rgba(184,168,138,0.25)", letterSpacing: "0.2em" }}>

@@ -82,7 +82,7 @@ export async function PUT(req: NextRequest) {
   const { userId, barberName, specialty, isBarber, schedule } = await req.json();
   const bid = session.barbershopId ?? (process.env.BARBERSHOP_ID ?? "narvek");
 
-  // Employee solo puede editar su propio perfil; owner puede editar cualquiera
+  // Employee solo puede editar su propio perfil y NO puede cambiar su horario
   if (session.role === "employee" && userId !== session.userId) {
     return NextResponse.json({ error: "Solo puedes editar tu propio perfil" }, { status: 403 });
   }
@@ -95,6 +95,11 @@ export async function PUT(req: NextRequest) {
       is_barber        = ${isBarber ?? true}
     WHERE id = ${userId} AND barbershop_id = ${bid}
   `;
+
+  // Solo el jefe puede modificar horarios
+  if (session.role !== "owner") {
+    return NextResponse.json({ ok: true });
+  }
 
   // Guardar horario
   if (Array.isArray(schedule)) {

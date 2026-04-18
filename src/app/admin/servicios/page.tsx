@@ -51,30 +51,45 @@ export default function AdminServicios() {
   async function guardar() {
     if (!form.name.trim() || !form.price.trim()) { setErr("Nombre y precio son obligatorios."); return; }
     setSaving(true); setErr("");
-    const method = editId ? "PUT" : "POST";
-    const body = editId ? { id: editId, ...form } : form;
-    const res = await fetch("/api/admin/services", {
-      method, headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    setSaving(false);
-    if (!res.ok) { const d = await res.json(); setErr(d.error ?? "Error al guardar."); return; }
-    await load(); setModal(false);
+    try {
+      const method = editId ? "PUT" : "POST";
+      const body = editId ? { id: editId, ...form } : form;
+      const res = await fetch("/api/admin/services", {
+        method, headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setErr(d.error ?? `Error ${res.status} al guardar.`);
+        return;
+      }
+      await load();
+      setModal(false);
+    } catch (e) {
+      setErr("Error de conexión. Inténtalo de nuevo.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function eliminar(id: number) {
-    await fetch("/api/admin/services", {
-      method: "DELETE", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    await load(); setConfirmDel(null);
+    try {
+      await fetch("/api/admin/services", {
+        method: "DELETE", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+    } catch (_) {}
+    await load();
+    setConfirmDel(null);
   }
 
   async function toggleActivo(s: Servicio) {
-    await fetch("/api/admin/services", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: s.id, active: !s.active }),
-    });
+    try {
+      await fetch("/api/admin/services", {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: s.id, active: !s.active }),
+      });
+    } catch (_) {}
     await load();
   }
 

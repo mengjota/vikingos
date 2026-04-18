@@ -66,15 +66,19 @@ export default function HorariosPage() {
 
   async function handleSave() {
     setSaving(true);
-    const payload = schedule.map(d => ({ ...d, slot_minutes: slotMinutes }));
-    await fetch("/api/admin/horarios", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    try {
+      const payload = schedule.map(d => ({ ...d, slot_minutes: slotMinutes }));
+      await fetch("/api/admin/horarios", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (_) {}
+    finally {
+      setSaving(false);
+    }
   }
 
   if (loading) return (

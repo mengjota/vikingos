@@ -72,36 +72,48 @@ export default function AdminProductos() {
   }
 
   async function guardar() {
-    if (!form.name.trim() || form.price <= 0) return;
-    const body = { ...form, id: editId ?? undefined };
-    const res = await fetch("/api/admin/products", {
-      method: editId ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    if (res.ok) {
+    if (!form.name.trim() || form.price <= 0) { setErr("Nombre y precio son obligatorios."); return; }
+    setSaving(true); setErr("");
+    try {
+      const body = { ...form, id: editId ?? undefined };
+      const res = await fetch("/api/admin/products", {
+        method: editId ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setErr(d.error ?? `Error ${res.status} al guardar.`);
+        return;
+      }
       await load();
       setModal(false);
+    } catch (_) {
+      setErr("Error de conexión. Inténtalo de nuevo.");
+    } finally {
+      setSaving(false);
     }
   }
 
   async function eliminar(id: number) {
-    const res = await fetch("/api/admin/products", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    if (res.ok) {
-      await load();
-      setConfirmDel(null);
-    }
+    try {
+      await fetch("/api/admin/products", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+    } catch (_) {}
+    await load();
+    setConfirmDel(null);
   }
 
   async function toggleActivo(p: Producto) {
-    await fetch("/api/admin/products", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: p.id, active: !p.active }),
-    });
+    try {
+      await fetch("/api/admin/products", {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: p.id, active: !p.active }),
+      });
+    } catch (_) {}
     await load();
   }
 

@@ -84,9 +84,20 @@ export default function EmpleadoHub() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#080604", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#080604" }}>
       <div style={{ position: "fixed", inset: 0, background: "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(200,146,26,0.06) 0%, transparent 65%)", pointerEvents: "none" }} />
 
+      {/* Top bar: nombre + salir */}
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 20, display: "flex", justifyContent: "flex-end", alignItems: "center", padding: "14px 28px", gap: "20px" }}>
+        <span style={{ fontFamily: "var(--font-barlow)", fontSize: "0.72rem", letterSpacing: "0.2em", color: "rgba(184,168,138,0.5)" }}>
+          {session.name}
+        </span>
+        <button onClick={handleLogout} style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-barlow)", fontSize: "0.62rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(239,68,68,0.5)" }}>
+          Salir
+        </button>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "80px 24px 24px" }}>
       <div style={{ width: "100%", maxWidth: "760px", position: "relative" }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "36px" }}>
@@ -154,17 +165,7 @@ export default function EmpleadoHub() {
           ))}
         </div>
 
-        {/* Logout */}
-        <div style={{ textAlign: "center" }}>
-          <button onClick={handleLogout} style={{
-            background: "none", border: "none", cursor: "pointer",
-            fontFamily: "var(--font-barlow)", fontSize: "0.6rem",
-            letterSpacing: "0.35em", textTransform: "uppercase",
-            color: "rgba(184,168,138,0.25)",
-          }}>
-            Cerrar Sesión
-          </button>
-        </div>
+      </div>
       </div>
     </div>
   );

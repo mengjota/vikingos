@@ -63,6 +63,7 @@ export default function AdminDashboard() {
             </span>
           </div>
           <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+            <a href="/empleado" style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", textDecoration: "none" }}>← Hub</a>
             <a href="/" style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", textDecoration: "none" }}>Ver Sitio</a>
             <button onClick={handleLogout} style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(239,68,68,0.6)", background: "none", border: "none", cursor: "pointer" }}>
               Salir

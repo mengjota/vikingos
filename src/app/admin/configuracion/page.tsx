@@ -28,7 +28,7 @@ export default function AdminConfiguracion() {
 
   useEffect(() => {
     getSession().then((s) => {
-      if (!s || s.role !== "owner") { router.push("/login"); return; }
+      if (!s || s.role !== "owner") { router.push("/staff"); return; }
       setSession(s);
       fetch("/api/admin/mi-barberia")
         .then(r => r.json())

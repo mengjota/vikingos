@@ -201,32 +201,38 @@ export default function ReservarPage() {
   const barbero  = barberos.find(b => b.id === barberoId);
 
   async function confirmar() {
-    if (!nombre.trim() || !telefono.trim() || !fecha || !hora) return;
+    if (!nombre.trim()) { setErrorReserva("Introduce tu nombre."); return; }
+    if (!telefono.trim()) { setErrorReserva("Introduce tu teléfono."); return; }
+    if (!fecha) { setErrorReserva("Selecciona una fecha."); return; }
+    if (!hora) { setErrorReserva("Selecciona una hora."); return; }
     setSubmitting(true);
     setErrorReserva("");
-
-    const res = await fetch("/api/reservations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        clienteNombre: nombre.trim(),
-        clienteEmail:  null,
-        clientePhone:  telefono.trim(),
-        servicio:      servicio?.name ?? "Sin especificar",
-        precio:        servicio?.price ?? "—",
-        barbero:       barbero?.name ?? "El que más pronto me pueda atender",
-        fecha,
-        hora,
-      }),
-    });
-
-    setSubmitting(false);
-    if (!res.ok) {
-      const d = await res.json();
-      setErrorReserva(d.error ?? "Error al confirmar la reserva.");
-      return;
+    try {
+      const res = await fetch("/api/reservations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clienteNombre: nombre.trim(),
+          clienteEmail:  null,
+          clientePhone:  telefono.trim(),
+          servicio:      servicio?.name ?? "Sin especificar",
+          precio:        servicio?.price ?? "—",
+          barbero:       barbero?.name ?? "El que más pronto me pueda atender",
+          fecha,
+          hora,
+        }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setErrorReserva(d.error ?? `Error ${res.status} al confirmar la reserva.`);
+        return;
+      }
+      setConfirmado(true);
+    } catch (_) {
+      setErrorReserva("Error de conexión. Inténtalo de nuevo.");
+    } finally {
+      setSubmitting(false);
     }
-    setConfirmado(true);
   }
 
   /* ── Confirmación ── */

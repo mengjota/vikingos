@@ -106,7 +106,7 @@ export default function AdminServicios() {
               style={{ fontFamily: "var(--font-barlow)", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.35em", textTransform: "uppercase", padding: "10px 24px", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", color: "#080604", cursor: "pointer", boxShadow: "0 0 20px rgba(200,146,26,0.35)" }}>
               + Nuevo
             </button>
-            <button onClick={() => () => logout()}
+            <button onClick={() => logout()}
               style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(239,68,68,0.5)", background: "none", border: "none", cursor: "pointer" }}>
               Salir
             </button>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
 
-const BID = () => process.env.BARBERSHOP_ID ?? "narvek";
+const BID = (override?: string | null) => override ?? process.env.BARBERSHOP_ID ?? "narvek";
 
 function genSlots(openTime: string, closeTime: string, slotMin: number): string[] {
   const slots: string[] = [];
@@ -22,7 +22,7 @@ function genSlots(openTime: string, closeTime: string, slotMin: number): string[
 // GET /api/availability?schedule=true   → devuelve el horario semanal (para el calendario)
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const bid = BID();
+  const bid = BID(searchParams.get("barbershopId"));
 
   // ── Modo schedule: devuelve qué días de la semana están abiertos ──
   if (searchParams.get("schedule") === "true") {

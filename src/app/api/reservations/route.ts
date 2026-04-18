@@ -66,12 +66,13 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  const finalBid = d.barbershopId ?? bid;
   const [row] = await sql`
     INSERT INTO reservations
       (client_name, client_email, client_phone, service, price, barber, date, time, status, barbershop_id)
     VALUES
       (${d.clienteNombre}, ${d.clienteEmail ?? null}, ${d.clientePhone ?? null}, ${d.servicio}, ${d.precio},
-       ${d.barbero}, ${d.fecha}::date, ${d.hora}, 'pendiente', ${bid})
+       ${d.barbero}, ${d.fecha}::date, ${d.hora}, 'pendiente', ${finalBid})
     RETURNING id, client_name, client_email, client_phone, service, price, barber,
               date::text AS date, time, status, invoice_id, created_at
   `;

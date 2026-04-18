@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   }
 
   const barberName   = users[0].barber_name as string;
-  const barbershopId = (users[0].barbershop_id as string) ?? (process.env.BARBERSHOP_ID ?? "invictus");
+  const barbershopId = (users[0].barbershop_id as string) ?? (process.env.BARBERSHOP_ID ?? "narvek");
 
   const start = new Date(weekStart + "T00:00:00");
   const end   = new Date(start);

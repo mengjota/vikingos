@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
 
-const BID = () => process.env.BARBERSHOP_ID ?? "invictus";
+const BID = () => process.env.BARBERSHOP_ID ?? "narvek";
 
 function toRes(r: Record<string, unknown>) {
   return {
@@ -68,11 +68,11 @@ export async function POST(req: NextRequest) {
 
   const [row] = await sql`
     INSERT INTO reservations
-      (client_name, client_email, service, price, barber, date, time, status, barbershop_id)
+      (client_name, client_email, client_phone, service, price, barber, date, time, status, barbershop_id)
     VALUES
-      (${d.clienteNombre}, ${d.clienteEmail ?? null}, ${d.servicio}, ${d.precio},
+      (${d.clienteNombre}, ${d.clienteEmail ?? null}, ${d.clientePhone ?? null}, ${d.servicio}, ${d.precio},
        ${d.barbero}, ${d.fecha}::date, ${d.hora}, 'pendiente', ${bid})
-    RETURNING id, client_name, client_email, service, price, barber,
+    RETURNING id, client_name, client_email, client_phone, service, price, barber,
               date::text AS date, time, status, invoice_id, created_at
   `;
   return NextResponse.json(toRes(row), { status: 201 });

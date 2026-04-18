@@ -269,7 +269,7 @@ export default function AdminStaff() {
               </div>
               <div>
                 <label style={labelStyle}>Correo electrónico</label>
-                <input type="email" required placeholder="carlos@invictus.com" value={form.email}
+                <input type="email" required placeholder="carlos@correo.com" value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   style={inputStyle} />
               </div>

@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json([], { status: 200 });
   }
 
-  const bid = process.env.BARBERSHOP_ID ?? "invictus";
+  const bid = process.env.BARBERSHOP_ID ?? "narvek";
   const rows = await sql`
     SELECT time FROM reservations
     WHERE barber = ${barbero}

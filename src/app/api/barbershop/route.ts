@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import sql from "@/lib/db";
 
-const BID = () => process.env.BARBERSHOP_ID ?? "invictus";
+const BID = () => process.env.BARBERSHOP_ID ?? "narvek";
 
 // GET /api/barbershop — info pública de la barbería de este despliegue
 export async function GET() {

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import sql from "@/lib/db";
 
 export async function GET() {
-  const bid = process.env.BARBERSHOP_ID ?? "invictus";
+  const bid = process.env.BARBERSHOP_ID ?? "narvek";
 
   // Clientes que tienen al menos una reserva en esta barbería
   // o que se registraron sin barbershop_id (clientes públicos)

@@ -4,7 +4,7 @@ import sql from "@/lib/db";
 // GET /api/barbers — devuelve los barberos activos de esta barbería
 // La barbería se determina por la variable de entorno BARBERSHOP_ID
 export async function GET() {
-  const barbershopId = process.env.BARBERSHOP_ID ?? "invictus";
+  const barbershopId = process.env.BARBERSHOP_ID ?? "narvek";
 
   const rows = await sql`
     SELECT id, name, email, barber_name, barbershop_id

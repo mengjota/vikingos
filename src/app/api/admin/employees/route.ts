@@ -9,7 +9,7 @@ async function getOwnerBarbershop(email: string): Promise<string | null> {
     SELECT role, barbershop_id FROM users WHERE email = ${email.toLowerCase()}
   `;
   if (rows.length === 0 || rows[0].role !== "owner") return null;
-  return (rows[0].barbershop_id as string) ?? (process.env.BARBERSHOP_ID ?? "invictus");
+  return (rows[0].barbershop_id as string) ?? (process.env.BARBERSHOP_ID ?? "narvek");
 }
 
 // GET — lista empleados de la barbería del owner

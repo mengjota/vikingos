@@ -38,14 +38,15 @@ export default function AdminDashboard() {
   }
 
   const nav = [
-    { href: "/admin/reservas",       label: "Reservas",      sub: "Gestionar citas y pagos",      icon: "📋" },
-    { href: "/admin/servicios",      label: "Servicios",     sub: "Tu catálogo de servicios",      icon: "✂️" },
-    { href: "/admin/staff",          label: "Empleados",     sub: "Crear y eliminar cuentas",      icon: "⚔️" },
-    { href: "/admin/clientes",       label: "Clientes",      sub: "Usuarios registrados",          icon: "👥" },
-    { href: "/admin/productos",      label: "Tienda",        sub: "Administrar catálogo",          icon: "🛍️" },
-    { href: "/admin/facturacion",    label: "Facturación",   sub: "Historial de pagos",            icon: "💰" },
-    { href: "/admin/fichajes",       label: "Control Horario",sub: "Turnos y fichajes de staff",     icon: "⏱️" },
-    { href: "/admin/configuracion",  label: "Configuración", sub: "Nombre y ajustes de barbería",  icon: "⚙️" },
+    { href: "/admin/reservas",       label: "Reservas",       sub: "Gestionar citas y pagos",       icon: "📋" },
+    { href: "/admin/horarios",       label: "Horarios",       sub: "Días y horas de apertura",      icon: "🗓️" },
+    { href: "/admin/servicios",      label: "Servicios",      sub: "Tu catálogo de servicios",      icon: "✂️" },
+    { href: "/admin/staff",          label: "Empleados",      sub: "Crear y eliminar cuentas",      icon: "⚔️" },
+    { href: "/admin/clientes",       label: "Clientes",       sub: "Usuarios registrados",          icon: "👥" },
+    { href: "/admin/productos",      label: "Tienda",         sub: "Administrar catálogo",          icon: "🛍️" },
+    { href: "/admin/facturacion",    label: "Facturación",    sub: "Historial de pagos",            icon: "💰" },
+    { href: "/admin/fichajes",       label: "Control Horario",sub: "Turnos y fichajes de staff",    icon: "⏱️" },
+    { href: "/admin/configuracion",  label: "Configuración",  sub: "Nombre y ajustes de barbería", icon: "⚙️" },
   ];
 
   return (

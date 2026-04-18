@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Rol inválido. Usa: owner, employee, client" }, { status: 400 });
   }
 
-  const bid = barbershopId ?? process.env.BARBERSHOP_ID ?? "invictus";
+  const bid = barbershopId ?? process.env.BARBERSHOP_ID ?? "narvek";
 
   const result = await sql`
     UPDATE users

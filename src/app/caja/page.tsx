@@ -134,7 +134,7 @@ export default function CajaPage() {
       </div>
 
       <div style={{ maxWidth: "960px", margin: "0 auto", padding: "32px 24px" }}>
-        <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(200,146,26,0.5)", marginBottom: "4px", textTransform: "capitalize" as const }}>{hoyStr}</p>
+        <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "capitalize" as const, color: "rgba(200,146,26,0.5)", marginBottom: "4px" }}>{hoyStr}</p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px", marginTop: "24px" }}>
 

@@ -260,7 +260,7 @@ export default function MiAgenda() {
             CARGANDO AGENDA...
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
+          <div className="agenda-week" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
             {Array.from({ length: 7 }, (_, i) => {
               const fecha = formatFecha(addDays(lunes, i));
               const diaLabel = DIAS[i];

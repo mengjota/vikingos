@@ -455,6 +455,61 @@ select:focus {
     inset 0 1px 0 rgba(200,146,26,0.35);
 }
 
+/* ══════════════════════════════════════════════════
+   RESPONSIVE MOBILE — breakpoints globales
+   ══════════════════════════════════════════════════ */
+
+/* Calendario /reservar — 7 columnas fijas, se ajustan en móvil */
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+@media (max-width: 480px) {
+  .cal-grid { gap: 2px; }
+  .cal-grid button { height: 34px !important; font-size: 0.7rem !important; }
+  .cal-grid > div  { font-size: 0.55rem !important; padding-bottom: 2px; }
+}
+
+/* Barra de pasos /reservar — en móvil muy pequeño, ocultar líneas */
+@media (max-width: 420px) {
+  .step-connector { display: none !important; }
+  .step-bar { gap: 20px !important; }
+}
+
+/* Agenda semanal /mi-agenda — 1 columna en móvil */
+@media (max-width: 640px) {
+  .agenda-week { grid-template-columns: 1fr !important; }
+}
+
+/* Admin: scroll horizontal en tablas/listas largas */
+.admin-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Estadísticas admin — 2 col en móvil */
+@media (max-width: 520px) {
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* Filtros admin — columna en móvil */
+@media (max-width: 640px) {
+  .admin-filters { flex-direction: column !important; }
+  .admin-filters select,
+  .admin-filters input[type="month"] { width: 100%; }
+}
+
+/* Headers de páginas — wrap en móvil */
+@media (max-width: 640px) {
+  .page-header-inner { height: auto !important; padding: 12px 16px !important; flex-wrap: wrap; gap: 8px; }
+}
+
+/* Formularios — 1 col en móvil */
+@media (max-width: 520px) {
+  .form-grid { grid-template-columns: 1fr !important; }
+  .form-grid > [style*="gridColumn"] { grid-column: 1 !important; }
+}
+
+/* Cards reservas/ventas — stack vertical en móvil */
+@media (max-width: 580px) {
+  .card-row { flex-direction: column !important; align-items: flex-start !important; }
+  .card-row .price-col { align-self: flex-end; }
+}
+
 /* Separador rúnico */
 .rune-divider {
   display: flex;

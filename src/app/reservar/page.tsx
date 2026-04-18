@@ -110,14 +110,14 @@ function MiniCal({ value, onChange, schedule }: {
       </div>
 
       {/* Cabecera días */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px", marginBottom: "4px" }}>
+      <div className="cal-grid" style={{ marginBottom: "4px" }}>
         {DAY_LABELS.map(d => (
           <div key={d} style={{ textAlign: "center", fontFamily: "var(--font-barlow)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "rgba(200,146,26,0.5)", paddingBottom: "4px" }}>{d}</div>
         ))}
       </div>
 
       {/* Grid días */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px" }}>
+      <div className="cal-grid">
         {cells.map((day, i) => {
           if (!day) return <div key={i} />;
           const iso = isoOf(day);
@@ -303,7 +303,7 @@ export default function ReservarPage() {
 
       {/* Steps */}
       <div style={{ borderTop: "1px solid rgba(92,58,30,0.3)", borderBottom: "1px solid rgba(92,58,30,0.3)", padding: "24px", backgroundColor: "rgba(14,11,7,0.8)" }}>
-        <div style={{ maxWidth: "600px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="step-bar" style={{ maxWidth: "600px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
           {[{ num: 1, label: "Servicio" }, { num: 2, label: "Maestro" }, { num: 3, label: "Confirmar" }].map((p, i) => (
             <div key={p.num} style={{ display: "flex", alignItems: "center" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
@@ -321,7 +321,7 @@ export default function ReservarPage() {
                   {p.label}
                 </span>
               </div>
-              {i < 2 && <div style={{ width: "80px", height: "1px", margin: "0 8px 20px", backgroundColor: paso > p.num ? "#c8921a" : "rgba(92,58,30,0.4)", transition: "background 0.4s" }} />}
+              {i < 2 && <div className="step-connector" style={{ width: "80px", height: "1px", margin: "0 8px 20px", backgroundColor: paso > p.num ? "#c8921a" : "rgba(92,58,30,0.4)", transition: "background 0.4s" }} />}
             </div>
           ))}
         </div>

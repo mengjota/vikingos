@@ -67,6 +67,11 @@ export async function POST(req: NextRequest) {
   }
 
   const finalBid = d.barbershopId ?? bid;
+
+  // Auto-add missing columns if schema is behind migrations
+  await sql`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS client_phone TEXT`.catch(() => {});
+  await sql`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS barbershop_id TEXT`.catch(() => {});
+
   const [row] = await sql`
     INSERT INTO reservations
       (client_name, client_email, client_phone, service, price, barber, date, time, status, barbershop_id)

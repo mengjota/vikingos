@@ -49,6 +49,8 @@ const imFell = IM_Fell_English({
 export const metadata: Metadata = {
   title: "BarberOS",
   description: "La plataforma para barberías",
+  manifest: "/manifest.json",
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "BarberOS" },
 };
 
 export default function RootLayout({

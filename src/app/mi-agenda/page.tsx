@@ -77,8 +77,8 @@ export default function MiAgenda() {
 
   useEffect(() => {
     getSession().then((s) => {
-      if (!s || s.role !== "employee") {
-        router.push("/login");
+      if (!s || (s.role !== "employee" && s.role !== "owner")) {
+        router.push("/staff");
         return;
       }
       setSession(s);
@@ -95,6 +95,15 @@ export default function MiAgenda() {
         .catch(() => setClockLoading(false));
     });
   }, [router, lunes, cargarAgenda]);
+
+  // Auto-refresh cada 60s
+  useEffect(() => {
+    if (!session) return;
+    const interval = setInterval(() => {
+      cargarAgenda(session.email, formatFecha(lunes));
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [session, lunes, cargarAgenda]);
 
   async function toggleClock() {
     setClockLoading(true);
@@ -116,6 +125,15 @@ export default function MiAgenda() {
 
   function handleLogout() {
     logout("/staff");
+  }
+
+  async function updateCita(id: string, estado: "completada" | "cancelada") {
+    await fetch(`/api/reservations/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ estado }),
+    });
+    setCitas(prev => prev.map(c => c.id === id ? { ...c, estado } : c));
   }
 
   function semanaAnterior() { setLunes(prev => addDays(prev, -7)); }
@@ -346,6 +364,22 @@ export default function MiAgenda() {
                             <p style={{ fontSize: "0.7rem", color: "rgba(200,146,26,0.6)", marginTop: "2px", fontWeight: 600 }}>
                               {cita.precio}
                             </p>
+                            {cita.estado === "pendiente" && (
+                              <div style={{ display: "flex", gap: "6px", marginTop: "10px" }}>
+                                <button onClick={() => updateCita(cita.id, "completada")} style={{
+                                  flex: 1, padding: "6px 4px", fontSize: "0.58rem", fontFamily: "var(--font-barlow)",
+                                  letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer",
+                                  border: "1px solid rgba(74,222,128,0.4)", backgroundColor: "rgba(74,222,128,0.06)",
+                                  color: "rgba(74,222,128,0.9)",
+                                }}>✓ Completada</button>
+                                <button onClick={() => updateCita(cita.id, "cancelada")} style={{
+                                  flex: 1, padding: "6px 4px", fontSize: "0.58rem", fontFamily: "var(--font-barlow)",
+                                  letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer",
+                                  border: "1px solid rgba(239,68,68,0.3)", backgroundColor: "rgba(239,68,68,0.04)",
+                                  color: "rgba(239,68,68,0.7)",
+                                }}>✕ Cancelar</button>
+                              </div>
+                            )}
                           </div>
                         );
                       })

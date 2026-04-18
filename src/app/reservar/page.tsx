@@ -47,7 +47,8 @@ const IconChildScissors = ({ active }: { active: boolean }) => (
 const ICONS = [IconScissors, IconRazorBlade, IconCombScissors, IconBeard, IconCrown, IconChildScissors];
 
 /* ── Tipos ─────────────────────────────────────────────── */
-interface Barbero { id: number; name: string; specialty: string; rune: string; }
+interface BarberoScheduleDay { day_of_week: number; is_working: boolean; }
+interface Barbero { id: number; name: string; specialty: string; rune: string; schedule: BarberoScheduleDay[] | null; }
 interface DbService { id: number; name: string; price: string; duration_min: number; description: string; }
 interface DaySchedule { day_of_week: number; active: boolean; }
 
@@ -61,10 +62,11 @@ function toISO(d: Date) {
 function todayISO() { return toISO(new Date()); }
 
 /* ── Componente calendario ─────────────────────────────── */
-function MiniCal({ value, onChange, schedule }: {
+function MiniCal({ value, onChange, schedule, barberSchedule }: {
   value: string;
   onChange: (d: string) => void;
   schedule: DaySchedule[];
+  barberSchedule?: { day_of_week: number; is_working: boolean }[] | null;
 }) {
   const [month, setMonth] = useState(() => {
     const n = new Date();
@@ -81,8 +83,14 @@ function MiniCal({ value, onChange, schedule }: {
   function isOpen(day: number) {
     const date = new Date(month.getFullYear(), month.getMonth(), day);
     const dow = date.getDay();
-    const cfg = schedule.find(s => s.day_of_week === dow);
-    return cfg ? cfg.active : dow !== 0;
+    const shopCfg = schedule.find(s => s.day_of_week === dow);
+    const shopOpen = shopCfg ? shopCfg.active : dow !== 0;
+    if (!shopOpen) return false;
+    if (barberSchedule) {
+      const barberCfg = barberSchedule.find(s => s.day_of_week === dow);
+      return barberCfg ? barberCfg.is_working : dow !== 0;
+    }
+    return true;
   }
   function isPast(day: number) {
     const iso = toISO(new Date(month.getFullYear(), month.getMonth(), day));
@@ -159,7 +167,7 @@ export default function ReservarPage() {
   const [barberoId, setBarberoId] = useState<number | null>(null);
   const [servicios, setServicios] = useState<DbService[]>([]);
   const [barberos, setBarberos] = useState<Barbero[]>([
-    { id: 0, name: "El que más pronto me pueda atender", specialty: "Cualquier maestro disponible", rune: "᛭" },
+    { id: 0, name: "El que más pronto me pueda atender", specialty: "Cualquier maestro disponible", rune: "᛭", schedule: null },
   ]);
 
   const [fecha, setFecha] = useState("");
@@ -417,7 +425,7 @@ export default function ReservarPage() {
               <div>
                 <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "#c8921a", marginBottom: "16px" }}>Elige una Fecha</p>
                 <div style={{ border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "#0e0b07", padding: "20px" }}>
-                  <MiniCal value={fecha} onChange={f => { setFecha(f); setHora(""); }} schedule={schedule} />
+                  <MiniCal value={fecha} onChange={f => { setFecha(f); setHora(""); }} schedule={schedule} barberSchedule={barbero?.schedule ?? null} />
                 </div>
               </div>
 

@@ -6,6 +6,7 @@ const secretKey = process.env.JWT_SECRET || "fallback-secret-para-desarrollo-sol
 const key = new TextEncoder().encode(secretKey);
 
 export interface SessionPayload {
+  userId?: number | null;
   name: string;
   email: string;
   role: "owner" | "employee" | "client";

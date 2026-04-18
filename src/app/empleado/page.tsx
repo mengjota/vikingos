@@ -4,17 +4,36 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, logout, type Session } from "@/lib/auth";
 
+interface Stats { ventas: number; totalHoy: number; citas: number; }
+
 export default function EmpleadoHub() {
   const router = useRouter();
   const [session, setSession] = useState<Session | null | undefined>(undefined);
+  const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
-    getSession().then(s => {
+    getSession().then(async s => {
       if (!s || (s.role !== "employee" && s.role !== "owner")) {
         router.replace("/staff");
         return;
       }
       setSession(s);
+
+      // Cargar stats del día
+      const hoy = new Date().toISOString().split("T")[0];
+      const [vRes, aRes] = await Promise.all([
+        fetch(`/api/ventas?desde=${hoy}&hasta=${hoy}`),
+        fetch(`/api/mi-agenda?email=${encodeURIComponent(s.email)}&weekStart=${hoy}`),
+      ]);
+      if (vRes.ok) {
+        const ventas = await vRes.json();
+        const total = Array.isArray(ventas) ? ventas.reduce((sum: number, v: { precio_total: string }) => sum + parseFloat(v.precio_total), 0) : 0;
+        const citasData = aRes.ok ? await aRes.json() : {};
+        const citasHoy = Array.isArray(citasData.reservations)
+          ? citasData.reservations.filter((c: { fecha: string; estado: string }) => c.fecha === hoy && c.estado !== "cancelada").length
+          : 0;
+        setStats({ ventas: Array.isArray(ventas) ? ventas.length : 0, totalHoy: total, citas: citasHoy });
+      }
     });
   }, [router]);
 
@@ -48,12 +67,19 @@ export default function EmpleadoHub() {
       href: "/caja",
       accent: "200,146,26",
     },
+    {
+      icon: "👤",
+      title: "Mi Perfil",
+      desc: "Edita tu nombre público, especialidad y días que trabajas.",
+      href: "/empleado/perfil",
+      accent: "96,165,250",
+    },
     ...(isOwner ? [{
       icon: "🛡️",
       title: "Panel Admin",
       desc: "Gestiona la barbería, empleados, servicios y facturación.",
       href: "/admin/dashboard",
-      accent: "96,165,250",
+      accent: "200,146,26",
     }] : []),
   ];
 
@@ -61,9 +87,9 @@ export default function EmpleadoHub() {
     <div style={{ minHeight: "100vh", backgroundColor: "#080604", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}>
       <div style={{ position: "fixed", inset: 0, background: "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(200,146,26,0.06) 0%, transparent 65%)", pointerEvents: "none" }} />
 
-      <div style={{ width: "100%", maxWidth: "680px", position: "relative" }}>
+      <div style={{ width: "100%", maxWidth: "760px", position: "relative" }}>
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "48px" }}>
+        <div style={{ textAlign: "center", marginBottom: "36px" }}>
           <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.5em", textTransform: "uppercase", color: "rgba(200,146,26,0.5)", marginBottom: "10px" }}>
             {isOwner ? "Jefe de Barbería" : "Barbero"}
           </p>
@@ -77,14 +103,30 @@ export default function EmpleadoHub() {
           </div>
         </div>
 
+        {/* Stats del día */}
+        {stats && (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "28px" }}>
+            {[
+              { label: "Citas hoy", value: stats.citas, accent: "167,139,250" },
+              { label: "Ventas hoy", value: stats.ventas, accent: "200,146,26" },
+              { label: "Facturado hoy", value: `${stats.totalHoy.toFixed(0)}€`, accent: "74,222,128" },
+            ].map(s => (
+              <div key={s.label} style={{ border: `1px solid rgba(${s.accent},0.2)`, backgroundColor: "#0e0b07", padding: "16px", textAlign: "center" }}>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "1.4rem", fontWeight: 900, color: `rgba(${s.accent},0.9)`, marginBottom: "4px" }}>{s.value}</p>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.6rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)" }}>{s.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Cards */}
-        <div style={{ display: "grid", gridTemplateColumns: isOwner ? "repeat(auto-fit, minmax(200px, 1fr))" : "1fr 1fr", gap: "16px", marginBottom: "40px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(cards.length, 2)}, 1fr)`, gap: "16px", marginBottom: "32px" }}>
           {cards.map(card => (
             <a key={card.href} href={card.href} style={{ textDecoration: "none" }}>
               <div style={{
                 border: `1px solid rgba(${card.accent},0.25)`,
                 backgroundColor: "#0e0b07",
-                padding: "32px 24px",
+                padding: "28px 22px",
                 textAlign: "center",
                 position: "relative",
                 overflow: "hidden",
@@ -101,10 +143,10 @@ export default function EmpleadoHub() {
                 }}
               >
                 <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: `linear-gradient(to right, transparent, rgba(${card.accent},0.6), transparent)` }} />
-                <p style={{ fontSize: "2.2rem", marginBottom: "14px" }}>{card.icon}</p>
-                <p style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1rem", color: "#f0e6c8", marginBottom: "10px" }}>{card.title}</p>
-                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.72rem", color: "rgba(184,168,138,0.5)", letterSpacing: "0.05em", lineHeight: 1.6 }}>{card.desc}</p>
-                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.6rem", letterSpacing: "0.35em", textTransform: "uppercase", color: `rgba(${card.accent},0.7)`, marginTop: "18px" }}>
+                <p style={{ fontSize: "2rem", marginBottom: "12px" }}>{card.icon}</p>
+                <p style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "0.9rem", color: "#f0e6c8", marginBottom: "8px" }}>{card.title}</p>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", color: "rgba(184,168,138,0.5)", letterSpacing: "0.05em", lineHeight: 1.6 }}>{card.desc}</p>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.58rem", letterSpacing: "0.35em", textTransform: "uppercase", color: `rgba(${card.accent},0.7)`, marginTop: "14px" }}>
                   Entrar →
                 </p>
               </div>

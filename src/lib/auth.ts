@@ -1,4 +1,5 @@
 export interface Session {
+  userId: number;
   name: string;
   email: string;
   role: "owner" | "employee" | "client";

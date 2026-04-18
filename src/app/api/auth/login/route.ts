@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
   }
 
   const sessionPayload = {
+    userId: user.id as number,
     name: user.name,
     email: user.email,
     role: user.role ?? "client",

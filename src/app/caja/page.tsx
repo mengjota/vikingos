@@ -56,12 +56,17 @@ export default function CajaPage() {
   const [error, setError]         = useState("");
   const [ok, setOk]               = useState(false);
 
+  const hoyStr = new Date().toISOString().split("T")[0];
+  const [filtroDesde, setFiltroDesde] = useState(hoyStr);
+  const [filtroHasta, setFiltroHasta] = useState(hoyStr);
+
   const total = parseFloat(precio) || 0;
   const { base, iva } = calcIva(total);
 
-  const cargarVentas = useCallback(async () => {
-    const hoy = new Date().toISOString().split("T")[0];
-    const res = await fetch(`/api/ventas?desde=${hoy}&hasta=${hoy}`);
+  const cargarVentas = useCallback(async (desde?: string, hasta?: string) => {
+    const d = desde ?? new Date().toISOString().split("T")[0];
+    const h = hasta ?? d;
+    const res = await fetch(`/api/ventas?desde=${d}&hasta=${h}`);
     if (res.ok) setVentas(await res.json());
   }, []);
 
@@ -74,7 +79,7 @@ export default function CajaPage() {
       const bid = s.barbershopId ?? "narvek";
       fetch(`/api/services?barbershopId=${bid}`)
         .then(r => r.json()).then(setServices).catch(() => {});
-      cargarVentas();
+      cargarVentas(hoyStr, hoyStr);
     });
   }, [router, cargarVentas]);
 
@@ -100,7 +105,7 @@ export default function CajaPage() {
       if (!res.ok) { setError(d.error ?? `Error ${res.status}`); return; }
       setOk(true);
       setServicio(""); setPrecio(""); setNotas(""); setMetodo("efectivo");
-      cargarVentas();
+      cargarVentas(filtroDesde, filtroHasta);
       setTimeout(() => setOk(false), 2500);
     } catch (_) {
       setError("Error de conexión.");
@@ -113,7 +118,8 @@ export default function CajaPage() {
   const baseHoy  = ventas.reduce((s, v) => s + parseFloat(v.precio_base), 0);
   const ivaHoy   = ventas.reduce((s, v) => s + parseFloat(v.iva_importe), 0);
 
-  const hoyStr = new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
+  const esSoloHoy = filtroDesde === filtroHasta && filtroDesde === new Date().toISOString().split("T")[0];
+  const periodoLabel = esSoloHoy ? new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" }) : `${filtroDesde} — ${filtroHasta}`;
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#060504" }}>
@@ -135,7 +141,7 @@ export default function CajaPage() {
       </div>
 
       <div style={{ maxWidth: "960px", margin: "0 auto", padding: "32px 24px" }}>
-        <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "capitalize" as const, color: "rgba(200,146,26,0.5)", marginBottom: "4px" }}>{hoyStr}</p>
+        <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "capitalize" as const, color: "rgba(200,146,26,0.5)", marginBottom: "4px" }}>{periodoLabel}</p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px", marginTop: "24px" }}>
 
@@ -219,12 +225,33 @@ export default function CajaPage() {
             </div>
           </div>
 
-          {/* ── RESUMEN DEL DÍA ── */}
+          {/* ── RESUMEN / HISTORIAL ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {/* Totales del día */}
+            {/* Filtro de fechas */}
+            <div style={{ border: "1px solid rgba(92,58,30,0.3)", backgroundColor: "#0a0806", padding: "16px 20px", display: "flex", gap: "12px", alignItems: "flex-end", flexWrap: "wrap" }}>
+              <div>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.58rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.6)", marginBottom: "6px" }}>Desde</p>
+                <input type="date" value={filtroDesde} onChange={e => setFiltroDesde(e.target.value)}
+                  style={{ backgroundColor: "#060504", border: "1px solid rgba(92,58,30,0.5)", color: "#f0e6c8", fontFamily: "var(--font-barlow)", fontSize: "0.85rem", padding: "8px 10px", outline: "none" }} />
+              </div>
+              <div>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.58rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.6)", marginBottom: "6px" }}>Hasta</p>
+                <input type="date" value={filtroHasta} onChange={e => setFiltroHasta(e.target.value)}
+                  style={{ backgroundColor: "#060504", border: "1px solid rgba(92,58,30,0.5)", color: "#f0e6c8", fontFamily: "var(--font-barlow)", fontSize: "0.85rem", padding: "8px 10px", outline: "none" }} />
+              </div>
+              <button onClick={() => cargarVentas(filtroDesde, filtroHasta)} style={{
+                padding: "8px 16px", border: "1px solid rgba(200,146,26,0.4)", backgroundColor: "rgba(200,146,26,0.08)",
+                color: "#c8921a", fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em",
+                textTransform: "uppercase", cursor: "pointer",
+              }}>
+                Buscar
+              </button>
+            </div>
+
+            {/* Totales del período */}
             <div style={{ border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "#0a0806", padding: "24px", position: "relative" }}>
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, #4ade8080, transparent)" }} />
-              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(184,168,138,0.45)", marginBottom: "16px" }}>Resumen de hoy</p>
+              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(184,168,138,0.45)", marginBottom: "16px" }}>Resumen {esSoloHoy ? "de hoy" : "del período"}</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 {[
                   { l: "Ventas", v: ventas.length.toString(), c: "#c8921a" },
@@ -240,9 +267,9 @@ export default function CajaPage() {
               </div>
             </div>
 
-            {/* Lista de ventas de hoy */}
+            {/* Lista de ventas */}
             <div style={{ border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "#0a0806", padding: "20px", flex: 1 }}>
-              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(184,168,138,0.45)", marginBottom: "16px" }}>Ventas de hoy</p>
+              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(184,168,138,0.45)", marginBottom: "16px" }}>{esSoloHoy ? "Ventas de hoy" : `${ventas.length} ventas en el período`}</p>
               {ventas.length === 0 ? (
                 <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", color: "rgba(184,168,138,0.2)", letterSpacing: "0.2em" }}>Sin ventas aún</p>
               ) : (

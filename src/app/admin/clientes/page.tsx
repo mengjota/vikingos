@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAdminLoggedIn } from "@/lib/adminAuth";
+import { getSession } from "@/lib/auth";
 
 interface Cliente {
   id: number;
@@ -20,10 +20,16 @@ export default function AdminClientes() {
   const [buscar, setBuscar]     = useState("");
 
   useEffect(() => {
-    if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    fetch("/api/admin/clientes")
-      .then(r => r.json())
-      .then(data => { setClientes(data); setLoading(false); });
+    getSession().then((s) => {
+      if (!s || s.role !== "owner") {
+        router.push("/admin");
+        return;
+      }
+      fetch("/api/admin/clientes")
+        .then(r => r.json())
+        .then(data => { setClientes(data); setLoading(false); })
+        .catch(() => setLoading(false));
+    });
   }, [router]);
 
   const filtrados = clientes.filter(c =>

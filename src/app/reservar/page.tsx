@@ -153,12 +153,13 @@ export default function ReservarPage() {
   }, []);
 
   useEffect(() => {
-    const s = getSession();
-    if (s) {
-      setSessionEmail(s.email);
-      setSessionNombre(s.name);
-      if (!nombre) setNombre(s.name);
-    }
+    getSession().then((s) => {
+      if (s) {
+        setSessionEmail(s.email);
+        setSessionNombre(s.name);
+        if (!nombre) setNombre(s.name);
+      }
+    });
   }, []);
 
   // Cargar horas ocupadas desde la DB cuando cambia barbero o fecha
@@ -690,7 +691,7 @@ export default function ReservarPage() {
               </button>
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   if (fecha && hora && nombre && telefono) {
                     if (!sessionEmail) {
                       setPedirLogin(true);
@@ -698,7 +699,7 @@ export default function ReservarPage() {
                     }
                     if (servicio && barbero) {
                       try {
-                        saveReservation(sessionEmail, sessionNombre, { servicio: servicio.name, precio: servicio.price, barbero: barbero.name, fecha, hora });
+                        await saveReservation(sessionEmail, sessionNombre, { servicio: servicio.nombre, precio: servicio.precio, barbero: barbero.name, fecha, hora });
                         setErrorReserva("");
                         setConfirmado(true);
                       } catch (e) {

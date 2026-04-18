@@ -1,9 +1,9 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAdminLoggedIn, adminLogout } from "@/lib/adminAuth";
-import { getSession } from "@/lib/auth";
+import { getSession, logout } from "@/lib/auth";
+
+
 
 interface Servicio {
   id: number; name: string; price: string; duration_min: number; description: string; active: boolean;
@@ -27,17 +27,16 @@ export default function AdminServicios() {
   const [confirmDel, setConfirmDel] = useState<number | null>(null);
   const [err, setErr] = useState("");
 
-  function callerEmail() { return getSession()?.email ?? ""; }
+
 
   async function load() {
-    const res = await fetch("/api/admin/services", { headers: { "x-caller-email": callerEmail() } });
+    const res = await fetch("/api/admin/services", );
     if (res.ok) setServicios(await res.json());
     setLoading(false);
   }
 
   useEffect(() => {
-    if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    load();
+    getSession().then(s => { if (!s || s.role !== "owner") { router.push("/login"); return; } load(); });
   }, [router]);
 
   function abrirNuevo() { setEditId(null); setForm(VACIO); setErr(""); setModal(true); }
@@ -53,7 +52,7 @@ export default function AdminServicios() {
     const method = editId ? "PUT" : "POST";
     const body = editId ? { id: editId, ...form } : form;
     const res = await fetch("/api/admin/services", {
-      method, headers: { "Content-Type": "application/json", "x-caller-email": callerEmail() },
+      method, headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
     setSaving(false);
@@ -63,7 +62,7 @@ export default function AdminServicios() {
 
   async function eliminar(id: number) {
     await fetch("/api/admin/services", {
-      method: "DELETE", headers: { "Content-Type": "application/json", "x-caller-email": callerEmail() },
+      method: "DELETE", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
     });
     await load(); setConfirmDel(null);
@@ -71,7 +70,7 @@ export default function AdminServicios() {
 
   async function toggleActivo(s: Servicio) {
     await fetch("/api/admin/services", {
-      method: "PUT", headers: { "Content-Type": "application/json", "x-caller-email": callerEmail() },
+      method: "PUT", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: s.id, active: !s.active }),
     });
     await load();
@@ -90,7 +89,7 @@ export default function AdminServicios() {
               style={{ fontFamily: "var(--font-barlow)", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.35em", textTransform: "uppercase", padding: "10px 24px", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", color: "#080604", cursor: "pointer", boxShadow: "0 0 20px rgba(200,146,26,0.35)" }}>
               + Nuevo
             </button>
-            <button onClick={() => { adminLogout(); router.push("/admin"); }}
+            <button onClick={() => () => logout()}
               style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(239,68,68,0.5)", background: "none", border: "none", cursor: "pointer" }}>
               Salir
             </button>

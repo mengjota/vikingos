@@ -2,13 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAdminLoggedIn, adminLogout } from "@/lib/adminAuth";
-import { getSession } from "@/lib/auth";
+import { getSession, logout } from "@/lib/auth";
 
-interface Producto {
-  id: number; name: string; description: string; price: number;
-  price_display: string; volume: string; category: string; featured: boolean; active: boolean;
+export interface Producto {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  volumen: "50ml" | "100ml" | "100g" | "250ml" | string;
+  categoria: string;
+  destacado?: boolean;
 }
+const CATEGORIAS = ["Cuidado de Barba", "Cuidado del Cabello", "Ritual de Afeitado", "Accesorios"];
 
 const CATEGORIAS = ["Cuidado de Barba", "Cuidado del Cabello", "Ritual de Afeitado", "Accesorios", "Otros"];
 const VACIO = { name: "", description: "", price: 0, volume: "", category: CATEGORIAS[0], featured: false };
@@ -29,20 +34,35 @@ export default function AdminProductos() {
   const [confirmDel, setConfirmDel] = useState<number | null>(null);
   const [err, setErr] = useState("");
 
-  function callerEmail() { return getSession()?.email ?? ""; }
+
 
   async function load() {
-    const res = await fetch("/api/admin/products", { headers: { "x-caller-email": callerEmail() } });
+    const res = await fetch("/api/admin/products", );
     if (res.ok) setProductos(await res.json());
     setLoading(false);
   }
 
   useEffect(() => {
-    if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    load();
+    getSession().then((s) => {
+      if (!s || s.role !== "owner") {
+        router.push("/admin");
+        return;
+      }
+      reload();
+    });
   }, [router]);
 
-  function abrirNuevo() { setEditId(null); setForm(VACIO); setErr(""); setModal(true); }
+  async function reload() {
+    const res = await fetch("/api/admin/products");
+    if (res.ok) setProductos(await res.json());
+  }
+
+  function abrirNuevo() {
+    setEditando(null);
+    setForm(VACIO);
+    setModal(true);
+  }
+
   function abrirEditar(p: Producto) {
     setEditId(p.id);
     setForm({ name: p.name, description: p.description, price: p.price, volume: p.volume, category: p.category, featured: p.featured });
@@ -50,30 +70,34 @@ export default function AdminProductos() {
   }
 
   async function guardar() {
-    if (!form.name.trim() || form.price <= 0) { setErr("Nombre y precio son obligatorios."); return; }
-    setSaving(true); setErr("");
-    const method = editId ? "PUT" : "POST";
-    const body = editId ? { id: editId, ...form } : form;
+    if (!form.nombre.trim() || form.precio <= 0) return;
+    const body = { ...form, id: editando ?? undefined };
     const res = await fetch("/api/admin/products", {
-      method, headers: { "Content-Type": "application/json", "x-caller-email": callerEmail() },
+      method: editando ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    setSaving(false);
-    if (!res.ok) { const d = await res.json(); setErr(d.error ?? "Error al guardar."); return; }
-    await load(); setModal(false);
+    if (res.ok) {
+      reload();
+      setModal(false);
+    }
   }
 
-  async function eliminar(id: number) {
-    await fetch("/api/admin/products", {
-      method: "DELETE", headers: { "Content-Type": "application/json", "x-caller-email": callerEmail() },
+  async function eliminar(id: string) {
+    const res = await fetch("/api/admin/products", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
     });
-    await load(); setConfirmDel(null);
+    if (res.ok) {
+      reload();
+      setConfirmDelete(null);
+    }
   }
 
   async function toggleActivo(p: Producto) {
     await fetch("/api/admin/products", {
-      method: "PUT", headers: { "Content-Type": "application/json", "x-caller-email": callerEmail() },
+      method: "PUT", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: p.id, active: !p.active }),
     });
     await load();
@@ -95,7 +119,7 @@ export default function AdminProductos() {
               style={{ fontFamily: "var(--font-barlow)", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.35em", textTransform: "uppercase", padding: "10px 24px", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", color: "#080604", cursor: "pointer", boxShadow: "0 0 20px rgba(200,146,26,0.35)" }}>
               + Nuevo Producto
             </button>
-            <button onClick={() => { adminLogout(); router.push("/admin"); }}
+            <button onClick={() => () => logout()}
               style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(239,68,68,0.5)", background: "none", border: "none", cursor: "pointer" }}>
               Salir
             </button>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
+import { verifySession } from "@/lib/session";
 
 async function getOwnerBarbershop(email: string): Promise<string | null> {
   if (!email) return null;
@@ -12,7 +13,8 @@ async function getOwnerBarbershop(email: string): Promise<string | null> {
 
 // GET — lista servicios de la barbería del owner
 export async function GET(req: NextRequest) {
-  const callerEmail = req.headers.get("x-caller-email") ?? "";
+  const session = await verifySession();
+  const callerEmail = session?.email ?? "";
   const barbershopId = await getOwnerBarbershop(callerEmail);
   if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
@@ -27,7 +29,8 @@ export async function GET(req: NextRequest) {
 
 // POST — crear servicio
 export async function POST(req: NextRequest) {
-  const callerEmail = req.headers.get("x-caller-email") ?? "";
+  const session = await verifySession();
+  const callerEmail = session?.email ?? "";
   const barbershopId = await getOwnerBarbershop(callerEmail);
   if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
@@ -46,7 +49,8 @@ export async function POST(req: NextRequest) {
 
 // PUT — actualizar servicio
 export async function PUT(req: NextRequest) {
-  const callerEmail = req.headers.get("x-caller-email") ?? "";
+  const session = await verifySession();
+  const callerEmail = session?.email ?? "";
   const barbershopId = await getOwnerBarbershop(callerEmail);
   if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
@@ -71,7 +75,8 @@ export async function PUT(req: NextRequest) {
 
 // DELETE — eliminar servicio
 export async function DELETE(req: NextRequest) {
-  const callerEmail = req.headers.get("x-caller-email") ?? "";
+  const session = await verifySession();
+  const callerEmail = session?.email ?? "";
   const barbershopId = await getOwnerBarbershop(callerEmail);
   if (!barbershopId) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 

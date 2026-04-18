@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
+import { verifySession } from "@/lib/session";
 
 async function getOwnerInfo(email: string) {
   if (!email) return null;
@@ -16,7 +17,8 @@ async function getOwnerInfo(email: string) {
 }
 
 export async function GET(req: NextRequest) {
-  const email = req.headers.get("x-caller-email") ?? "";
+  const session = await verifySession();
+  const email = session?.email ?? "";
   const info = await getOwnerInfo(email);
   if (!info) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
@@ -31,7 +33,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  const email = req.headers.get("x-caller-email") ?? "";
+  const session = await verifySession();
+  const email = session?.email ?? "";
   const info = await getOwnerInfo(email);
   if (!info) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { adminLogin } from "@/lib/adminAuth";
 
 const ADMIN_EMAIL = "admin@invictus.com";
 
@@ -50,17 +49,7 @@ export default function LoginPage() {
     setLoginError("");
     setLoginLoading(true);
 
-    // Acceso admin legacy por email
-    if (loginEmail.toLowerCase() === ADMIN_EMAIL) {
-      if (adminLogin(loginPass)) {
-        localStorage.setItem("inv_session", JSON.stringify({ name: "Admin", email: ADMIN_EMAIL, role: "owner" }));
-        router.push("/admin/dashboard");
-      } else {
-        setLoginError("Contraseña incorrecta.");
-        setLoginLoading(false);
-      }
-      return;
-    }
+    // Acceso admin legacy desactivado en favor del backend.
 
     const res = await fetch("/api/auth/login", {
       method: "POST",
@@ -81,14 +70,7 @@ export default function LoginPage() {
       return;
     }
 
-    localStorage.setItem("inv_session", JSON.stringify({
-      name: data.name,
-      email: data.email,
-      role: data.role ?? "client",
-      barberName: data.barberName ?? null,
-      barbershopId: data.barbershopId ?? null,
-      barbershopName: data.barbershopName ?? null,
-    }));
+
 
     if (data.role === "owner")    { router.push("/admin/dashboard"); return; }
     if (data.role === "employee") { router.push("/mi-agenda"); return; }
@@ -130,22 +112,12 @@ export default function LoginPage() {
     if (res.ok) {
       const data = await res.json();
       if (data.role === "owner") {
-        localStorage.setItem("inv_session", JSON.stringify({
-          name: data.name, email: data.email, role: "owner",
-          barbershopId: data.barbershopId, barbershopName: data.barbershopName,
-        }));
         router.push("/admin/dashboard");
         return;
       }
     }
-
-    if (loginEmail.toLowerCase() === ADMIN_EMAIL && adminLogin(adminPass)) {
-      localStorage.setItem("inv_session", JSON.stringify({ name: "Admin", email: ADMIN_EMAIL, role: "owner" }));
-      router.push("/admin/dashboard");
-    } else {
-      setAdminError("Credenciales incorrectas o sin permisos de dueño.");
-      setAdminLoading(false);
-    }
+    setAdminError("Credenciales incorrectas o sin permisos de dueño.");
+    setAdminLoading(false);
   }
 
   const inputStyle: React.CSSProperties = {

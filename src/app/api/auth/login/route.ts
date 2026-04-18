@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import sql from "@/lib/db";
+import { createSession } from "@/lib/session";
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
@@ -26,13 +27,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Contraseña incorrecta." }, { status: 401 });
   }
 
-  return NextResponse.json({
-    ok: true,
+  const sessionPayload = {
     name: user.name,
     email: user.email,
     role: user.role ?? "client",
     barberName: user.barber_name ?? null,
     barbershopId: user.barbershop_id ?? null,
     barbershopName: user.barbershop_name ?? null,
+  };
+
+  await createSession(sessionPayload as any);
+
+  return NextResponse.json({
+    ok: true,
+    ...sessionPayload
   });
 }

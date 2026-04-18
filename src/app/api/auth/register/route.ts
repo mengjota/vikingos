@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import sql from "@/lib/db";
+import { createSession } from "@/lib/session";
 
 export async function POST(req: NextRequest) {
   const { name, email, password, barbershopId } = await req.json();
@@ -30,5 +31,16 @@ export async function POST(req: NextRequest) {
     VALUES (${name}, ${email.toLowerCase()}, ${hash}, true, 'client', ${validBarbershopId})
   `;
 
-  return NextResponse.json({ ok: true });
+  const sessionPayload = {
+    name,
+    email: email.toLowerCase(),
+    role: "client",
+    barberName: null,
+    barbershopId: validBarbershopId,
+    barbershopName: null, // Si quisieras, podrías consultarlo.
+  };
+
+  await createSession(sessionPayload as any);
+
+  return NextResponse.json({ ok: true, ...sessionPayload });
 }

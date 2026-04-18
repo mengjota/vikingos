@@ -59,6 +59,11 @@ export default function MiAgenda() {
   const [barberName, setBarberName] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // Control horario
+  const [clockedIn, setClockedIn] = useState(false);
+  const [clockLoading, setClockLoading] = useState(true);
+  const [currentLog, setCurrentLog] = useState<{ id: number, clock_in: string } | null>(null);
+
   const cargarAgenda = useCallback(async (email: string, weekStart: string) => {
     setLoading(true);
     const res = await fetch(`/api/mi-agenda?email=${encodeURIComponent(email)}&weekStart=${weekStart}`);
@@ -71,14 +76,43 @@ export default function MiAgenda() {
   }, []);
 
   useEffect(() => {
-    const s = getSession();
-    if (!s || s.role !== "employee") {
-      router.push("/login");
-      return;
-    }
-    setSession(s);
-    cargarAgenda(s.email, formatFecha(lunes));
+    getSession().then((s) => {
+      if (!s || s.role !== "employee") {
+        router.push("/login");
+        return;
+      }
+      setSession(s);
+      cargarAgenda(s.email, formatFecha(lunes));
+
+      // Verificar turno
+      fetch('/api/employee/clock')
+        .then(r => r.json())
+        .then(d => {
+          setClockedIn(d.active);
+          setCurrentLog(d.currentLog);
+          setClockLoading(false);
+        })
+        .catch(() => setClockLoading(false));
+    });
   }, [router, lunes, cargarAgenda]);
+
+  async function toggleClock() {
+    setClockLoading(true);
+    try {
+      const res = await fetch("/api/employee/clock", { method: "POST" });
+      const data = await res.json();
+      if(res.ok) {
+        setClockedIn(data.active);
+        setCurrentLog(data.currentLog || null);
+      } else {
+        alert(data.error || "Ocurrió un error al registrar el fichaje.");
+      }
+    } catch {
+      alert("Error de red intentando fichar.");
+    } finally {
+      setClockLoading(false);
+    }
+  }
 
   function handleLogout() {
     logout();
@@ -133,7 +167,7 @@ export default function MiAgenda() {
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 24px" }}>
 
         {/* Titulo + barbero */}
-        <div style={{ marginBottom: "36px" }}>
+        <div style={{ marginBottom: "28px" }}>
           <p style={{ fontSize: "0.68rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(200,146,26,0.6)", marginBottom: "6px" }}>
             Barbero
           </p>
@@ -141,6 +175,32 @@ export default function MiAgenda() {
             {barberName || session?.name || "—"}
           </h1>
         </div>
+
+        {/* Fichaje Module */}
+        {!clockLoading && (
+          <div style={{ marginBottom: "32px", padding: "18px 24px", border: `1px solid ${clockedIn ? "rgba(74,222,128,0.4)" : "rgba(200,146,26,0.3)"}`, backgroundColor: clockedIn ? "rgba(74,222,128,0.06)" : "#0e0b07", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", borderRadius: "4px" }}>
+            <div>
+              <p style={{ fontSize: "0.68rem", letterSpacing: "0.25em", textTransform: "uppercase", color: clockedIn ? "#4ade80" : "rgba(184,168,138,0.5)", marginBottom: "4px", fontWeight: 800 }}>
+                {clockedIn ? "🟢 En turno activo" : "⚪ Fuera de turno"}
+              </p>
+              {clockedIn && currentLog && (
+                <p style={{ fontSize: "0.85rem", color: "#f0e6c8", fontWeight: 600 }}>
+                  Entrada: {new Date(currentLog.clock_in).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              )}
+            </div>
+            <button onClick={toggleClock} disabled={clockLoading} style={{
+              padding: "14px 24px", fontSize: "0.75rem", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer",
+              backgroundColor: clockedIn ? "rgba(239,68,68,0.15)" : "rgba(200,146,26,0.15)",
+              border: `1px solid ${clockedIn ? "rgba(239,68,68,0.5)" : "rgba(200,146,26,0.5)"}`,
+              color: clockedIn ? "rgba(239,68,68,0.9)" : "#c8921a",
+              transition: "all 0.2s",
+              boxShadow: clockedIn ? "inset 0 0 12px rgba(239,68,68,0.1)" : "inset 0 0 12px rgba(200,146,26,0.1)"
+            }}>
+              {clockedIn ? "🛑 Terminar Turno" : "⏱️ Iniciar Turno"}
+            </button>
+          </div>
+        )}
 
         {/* Navegación de semana */}
         <div style={{

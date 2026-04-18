@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAdminLoggedIn, adminLogout } from "@/lib/adminAuth";
 import { getSession } from "@/lib/auth";
 
 export default function AdminDashboard() {
@@ -12,9 +11,13 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAdminLoggedIn()) { router.push("/admin"); return; }
-    const s = getSession();
-    setBarbershopName(s?.barbershopName ?? "");
+    getSession().then((s) => {
+      if (!s || s.role !== "owner") {
+        router.push("/admin"); 
+        return; 
+      }
+      setBarbershopName(s.barbershopName ?? "");
+    });
 
     fetch("/api/reservations")
       .then(r => r.json())
@@ -29,7 +32,10 @@ export default function AdminDashboard() {
       .catch(() => setLoading(false));
   }, [router]);
 
-  function handleLogout() { adminLogout(); router.push("/admin"); }
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/admin");
+  }
 
   const nav = [
     { href: "/admin/reservas",       label: "Reservas",      sub: "Gestionar citas y pagos",      icon: "📋" },
@@ -38,7 +44,8 @@ export default function AdminDashboard() {
     { href: "/admin/clientes",       label: "Clientes",      sub: "Usuarios registrados",          icon: "👥" },
     { href: "/admin/productos",      label: "Tienda",        sub: "Administrar catálogo",          icon: "🛍️" },
     { href: "/admin/facturacion",    label: "Facturación",   sub: "Historial de pagos",            icon: "💰" },
-    { href: "/admin/configuracion",  label: "Mi Barbería",   sub: "Nombre, dirección y contacto",  icon: "⚙️" },
+    { href: "/admin/fichajes",       label: "Control Horario",sub: "Turnos y fichajes de staff",     icon: "⏱️" },
+    { href: "/admin/configuracion",  label: "Configuración", sub: "Nombre y ajustes de barbería",  icon: "⚙️" },
   ];
 
   return (

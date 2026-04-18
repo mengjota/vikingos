@@ -47,7 +47,7 @@ export default function AdminProductos() {
   useEffect(() => {
     getSession().then((s) => {
       if (!s || s.role !== "owner") {
-        router.push("/admin");
+        router.push("/staff");
         return;
       }
       load();

@@ -30,7 +30,7 @@ export default function AdminFacturacion() {
   useEffect(() => {
     getSession().then((s) => {
       if (!s || s.role !== "owner") {
-        router.push("/admin");
+        router.push("/staff");
         return;
       }
       fetch("/api/admin/invoices").then(r => r.json()).then(setFacturas);

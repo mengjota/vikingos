@@ -105,7 +105,7 @@ export default function AdminReservas() {
   useEffect(() => {
     getSession().then((s) => {
       if (!s || s.role !== "owner") {
-        router.push("/admin");
+        router.push("/staff");
         return;
       }
       reloadAll(true);

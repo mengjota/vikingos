@@ -22,7 +22,7 @@ export default function AdminClientes() {
   useEffect(() => {
     getSession().then((s) => {
       if (!s || s.role !== "owner") {
-        router.push("/admin");
+        router.push("/staff");
         return;
       }
       fetch("/api/admin/clientes")

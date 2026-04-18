@@ -54,5 +54,20 @@ export async function POST(req: NextRequest) {
   await sql`UPDATE users SET barbershop_id = 'invictus' WHERE barbershop_id IS NULL AND role IN ('owner','employee')`;
   steps.push("v2: empleados/owners existentes migrados a 'invictus'");
 
+  // ── cleanup: eliminar barberías de prueba ───────────────────
+  // Encuentra la barbería real (Inmortales) para reasignar referencias
+  const realShops = await sql`SELECT id FROM barbershops WHERE name ILIKE '%inmortales%' LIMIT 1`;
+  if (realShops.length > 0) {
+    const realId = realShops[0].id as string;
+    // Reasignar users y reservas que apunten a barberías falsas
+    await sql`UPDATE users SET barbershop_id = ${realId} WHERE barbershop_id NOT IN (SELECT id FROM barbershops WHERE name ILIKE '%inmortales%') AND barbershop_id IS NOT NULL`;
+    await sql`UPDATE reservations SET barbershop_id = ${realId} WHERE barbershop_id NOT IN (SELECT id FROM barbershops WHERE name ILIKE '%inmortales%') AND barbershop_id IS NOT NULL`;
+    // Eliminar barberías que no son la real
+    await sql`DELETE FROM barbershops WHERE name NOT ILIKE '%inmortales%'`;
+    steps.push(`cleanup: barberías de prueba eliminadas, todo migrado a '${realId}'`);
+  } else {
+    steps.push("cleanup: no se encontró 'Barberia los Inmortales', limpieza omitida");
+  }
+
   return NextResponse.json({ ok: true, steps });
 }

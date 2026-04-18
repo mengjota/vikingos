@@ -33,10 +33,10 @@ export async function getSession(): Promise<Session | null> {
   }
 }
 
-export async function logout() {
+export async function logout(redirectTo = "/login") {
   if (typeof window === "undefined") return;
   await fetch("/api/auth/logout", { method: "POST" });
-  window.location.href = "/login";
+  window.location.href = redirectTo;
 }
 
 // Reservas del cliente — filtradas en el servidor por email

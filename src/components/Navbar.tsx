@@ -14,7 +14,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, setSession] = useState<Session | null | undefined>(undefined);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -26,11 +26,11 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
     getSession().then(setSession);
   }, []);
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    const dest = session?.role === "employee" || session?.role === "owner" ? "/staff" : "/login";
     setSession(null);
     setMenuOpen(false);
-    router.push("/");
+    await logout(dest);
   }
 
   return (
@@ -62,7 +62,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
         </a>
 
         {/* Links desktop — solo para clientes y visitantes */}
-        {session?.role !== "employee" && (
+        {(!session || session.role === "client") && (
           <ul className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -80,7 +80,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
 
         {/* CTAs desktop & mobile */}
         <div className="flex items-center gap-3 md:gap-4">
-          {session ? (
+          {session === undefined ? null : session ? (
             /* --- LOGUEADO --- */
             <>
               <a
@@ -146,8 +146,8 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
       {/* Menú mobile */}
       {menuOpen && (
         <div className="md:hidden bg-[#0f0d0a]/98 border-t border-[#c8921a]/20 px-6 py-6 flex flex-col gap-6">
-          {/* Links de marketing solo para no-empleados */}
-          {session?.role !== "employee" && navLinks.map((link) => (
+          {/* Links de marketing solo para clientes y visitantes */}
+          {(!session || session.role === "client") && navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -159,7 +159,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
             </a>
           ))}
 
-          {session ? (
+          {session === undefined ? null : session ? (
             <>
               <a
                 href={session.role === "owner" ? "/admin/dashboard" : session.role === "employee" ? "/mi-agenda" : "/mis-reservas"}
@@ -195,7 +195,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
           )}
 
           {/* Reservar solo para clientes y visitantes */}
-          {session?.role !== "employee" && session?.role !== "owner" && (
+          {(!session || session.role === "client") && (
             <a
               href="/reservar"
               onClick={() => setMenuOpen(false)}

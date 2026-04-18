@@ -17,6 +17,20 @@ export async function GET() {
   const bid = await getOwnerBid(session?.email ?? "");
   if (!bid) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
+  // Auto-crear tabla si no existe
+  await sql`
+    CREATE TABLE IF NOT EXISTS barbershop_hours (
+      id           SERIAL PRIMARY KEY,
+      barbershop_id TEXT NOT NULL,
+      day_of_week  INT  NOT NULL,
+      open_time    TEXT NOT NULL DEFAULT '09:00',
+      close_time   TEXT NOT NULL DEFAULT '20:00',
+      slot_minutes INT  NOT NULL DEFAULT 30,
+      active       BOOLEAN NOT NULL DEFAULT true,
+      UNIQUE(barbershop_id, day_of_week)
+    )
+  `;
+
   const rows = await sql`
     SELECT day_of_week, open_time, close_time, slot_minutes, active
     FROM barbershop_hours

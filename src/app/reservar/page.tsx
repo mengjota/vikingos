@@ -171,13 +171,14 @@ export default function ReservarPage() {
   const [telefono, setTelefono] = useState("");
 
   const [schedule, setSchedule] = useState<DaySchedule[]>([]);
+  const [serviciosLoaded, setServiciosLoaded] = useState(false);
   const [confirmado, setConfirmado] = useState(false);
   const [errorReserva, setErrorReserva] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   // Cargar datos iniciales
   useEffect(() => {
-    fetch("/api/services").then(r => r.json()).then((d: DbService[]) => { if (Array.isArray(d)) setServicios(d); }).catch(() => {});
+    fetch("/api/services").then(r => r.json()).then((d: DbService[]) => { if (Array.isArray(d)) setServicios(d); }).catch(() => {}).finally(() => setServiciosLoaded(true));
     fetch("/api/barbers").then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setBarberos(d); }).catch(() => {});
     fetch("/api/availability?schedule=true").then(r => r.json()).then(setSchedule).catch(() => {});
   }, []);
@@ -334,8 +335,14 @@ export default function ReservarPage() {
         {/* ── PASO 1: Servicios ── */}
         {paso === 1 && (
           <div>
-            {servicios.length === 0 && (
+            {!serviciosLoaded && (
               <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(184,168,138,0.3)", fontFamily: "var(--font-barlow)", fontSize: "0.8rem", letterSpacing: "0.3em" }}>CARGANDO SERVICIOS...</div>
+            )}
+            {serviciosLoaded && servicios.length === 0 && (
+              <div style={{ textAlign: "center", padding: "60px 0", border: "1px solid rgba(92,58,30,0.3)", backgroundColor: "#0e0b07" }}>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.3)", marginBottom: "8px" }}>Sin servicios disponibles</p>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", color: "rgba(184,168,138,0.2)" }}>El equipo está configurando el catálogo</p>
+              </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
               {servicios.map((s, idx) => {

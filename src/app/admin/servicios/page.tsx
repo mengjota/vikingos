@@ -30,13 +30,15 @@ export default function AdminServicios() {
 
 
   async function load() {
-    const res = await fetch("/api/admin/services", );
-    if (res.ok) setServicios(await res.json());
+    try {
+      const res = await fetch("/api/admin/services");
+      if (res.ok) setServicios(await res.json());
+    } catch (_) {}
     setLoading(false);
   }
 
   useEffect(() => {
-    getSession().then(s => { if (!s || s.role !== "owner") { router.push("/login"); return; } load(); });
+    getSession().then(s => { if (!s || s.role !== "owner") { router.push("/login"); return; } load(); }).catch(() => setLoading(false));
   }, [router]);
 
   function abrirNuevo() { setEditId(null); setForm(VACIO); setErr(""); setModal(true); }

@@ -26,11 +26,16 @@ export async function GET(req: NextRequest) {
 
   // ── Modo schedule: devuelve qué días de la semana están abiertos ──
   if (searchParams.get("schedule") === "true") {
-    const rows = await sql`
-      SELECT day_of_week, open_time, close_time, slot_minutes, active
-      FROM barbershop_hours
-      WHERE barbershop_id = ${bid}
-    `;
+    let rows: Awaited<ReturnType<typeof sql>> = [];
+    try {
+      rows = await sql`
+        SELECT day_of_week, open_time, close_time, slot_minutes, active
+        FROM barbershop_hours
+        WHERE barbershop_id = ${bid}
+      `;
+    } catch {
+      // Tabla no existe aún — devolver defaults
+    }
     // Si no hay config, devolver defaults: Lun-Sab abiertos
     if (rows.length === 0) {
       const defaults = [1,2,3,4,5,6].map(d => ({ day_of_week: d, open_time: "09:00", close_time: "20:00", slot_minutes: 30, active: true }));
@@ -56,11 +61,16 @@ export async function GET(req: NextRequest) {
   const dayOfWeek = new Date(fecha + "T12:00:00").getDay();
 
   // Obtener horario de ese día
-  const hoursRows = await sql`
-    SELECT open_time, close_time, slot_minutes, active
-    FROM barbershop_hours
-    WHERE barbershop_id = ${bid} AND day_of_week = ${dayOfWeek}
-  `;
+  let hoursRows: Awaited<ReturnType<typeof sql>> = [];
+  try {
+    hoursRows = await sql`
+      SELECT open_time, close_time, slot_minutes, active
+      FROM barbershop_hours
+      WHERE barbershop_id = ${bid} AND day_of_week = ${dayOfWeek}
+    `;
+  } catch {
+    // Tabla no existe — usar defaults
+  }
 
   const config = hoursRows[0];
   // Sin config: usar defaults Lun-Sab abiertos, Dom cerrado

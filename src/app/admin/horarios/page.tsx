@@ -46,15 +46,18 @@ export default function HorariosPage() {
 
   useEffect(() => {
     getSession().then(s => {
-      if (!s || s.role !== "owner") { router.push("/login"); return; }
+      if (!s || s.role !== "owner") { router.push("/staff"); return; }
       fetch("/api/admin/horarios")
         .then(r => r.json())
         .then((data: DayConfig[]) => {
-          setSchedule(data);
-          if (data.length > 0) setSlotMinutes(data[0].slot_minutes);
-          setLoading(false);
-        });
-    });
+          if (Array.isArray(data)) {
+            setSchedule(data);
+            if (data.length > 0) setSlotMinutes(data[0].slot_minutes);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }).catch(() => { router.push("/staff"); });
   }, [router]);
 
   function updateDay(dow: number, field: keyof DayConfig, value: string | number | boolean) {

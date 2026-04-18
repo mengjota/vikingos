@@ -37,8 +37,10 @@ export default function AdminProductos() {
 
 
   async function load() {
-    const res = await fetch("/api/admin/products", );
-    if (res.ok) setProductos(await res.json());
+    try {
+      const res = await fetch("/api/admin/products");
+      if (res.ok) setProductos(await res.json());
+    } catch (_) {}
     setLoading(false);
   }
 
@@ -48,8 +50,8 @@ export default function AdminProductos() {
         router.push("/admin");
         return;
       }
-      reload();
-    });
+      load();
+    }).catch(() => setLoading(false));
   }, [router]);
 
   async function reload() {

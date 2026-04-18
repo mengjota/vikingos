@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { getSession, logout, type Session } from "@/lib/auth";
 
 const navLinks = [
@@ -13,10 +14,11 @@ const navLinks = [
 const isClientOrGuest = (s: Session | null | undefined) =>
   s === null || s?.role === "client";
 
-export default function Navbar({ transparentOnTop = false }: { transparentOnTop?: boolean }) {
+export default function Navbar({ transparentOnTop = false, staffPage = false }: { transparentOnTop?: boolean; staffPage?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [session, setSession] = useState<Session | null | undefined>(undefined);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -25,8 +27,9 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
   }, []);
 
   useEffect(() => {
+    setSession(undefined);
     getSession().then(s => setSession(s ?? null));
-  }, []);
+  }, [pathname]);
 
   async function handleLogout() {
     const dest = session?.role === "employee" || session?.role === "owner" ? "/staff" : "/login";
@@ -61,7 +64,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
         </a>
 
         {/* Links desktop — SOLO para clientes y visitantes sin sesión */}
-        {loaded && isClientOrGuest(session) && (
+        {!staffPage && loaded && isClientOrGuest(session) && (
           <ul className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -79,7 +82,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
 
         {/* Área derecha: auth + CTA */}
         <div className="flex items-center gap-3 md:gap-4">
-          {loaded && (
+          {!staffPage && loaded && (
             session ? (
               /* --- LOGUEADO (employee / owner / client) --- */
               <>
@@ -125,7 +128,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
           )}
 
           {/* Botón "Reservar Servicio" — SOLO clientes y visitantes */}
-          {loaded && isClientOrGuest(session) && (
+          {!staffPage && loaded && isClientOrGuest(session) && (
             <a
               href="/reservar"
               className="hidden md:flex btn-glow border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-sm tracking-[0.3em] uppercase px-6 py-3 transition-colors duration-300"
@@ -155,7 +158,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
       {menuOpen && loaded && (
         <div className="md:hidden bg-[#0f0d0a]/98 border-t border-[#c8921a]/20 px-6 py-6 flex flex-col gap-6">
           {/* Links de marketing — SOLO para clientes y visitantes */}
-          {isClientOrGuest(session) && navLinks.map((link) => (
+          {!staffPage && isClientOrGuest(session) && navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -167,7 +170,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
             </a>
           ))}
 
-          {session ? (
+          {!staffPage && session ? (
             <>
               <a
                 href={session.role === "owner" ? "/admin/dashboard" : session.role === "employee" ? "/mi-agenda" : "/mis-reservas"}
@@ -207,7 +210,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
           )}
 
           {/* Botón reservar — SOLO clientes y visitantes */}
-          {isClientOrGuest(session) && (
+          {!staffPage && isClientOrGuest(session) && (
             <a
               href="/reservar"
               onClick={() => setMenuOpen(false)}

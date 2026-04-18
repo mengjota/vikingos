@@ -55,8 +55,8 @@ export default function StaffPage() {
       return;
     }
 
-    if (data.role === "owner")    { router.push("/admin/dashboard"); return; }
-    if (data.role === "employee") { router.push("/mi-agenda"); return; }
+    if (data.role === "owner")    { router.push("/empleado"); return; }
+    if (data.role === "employee") { router.push("/empleado"); return; }
     router.push("/");
   }
 

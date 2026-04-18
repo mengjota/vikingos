@@ -699,7 +699,7 @@ export default function ReservarPage() {
                     }
                     if (servicio && barbero) {
                       try {
-                        await saveReservation(sessionEmail, sessionNombre, { servicio: servicio.nombre, precio: servicio.precio, barbero: barbero.name, fecha, hora });
+                        await saveReservation(sessionEmail, sessionNombre, { servicio: servicio.name, precio: servicio.price, barbero: barbero.name, fecha, hora });
                         setErrorReserva("");
                         setConfirmado(true);
                       } catch (e) {

@@ -3,7 +3,7 @@ import { verifySession } from "@/lib/session";
 import sql from "@/lib/db";
 
 export async function GET(req: NextRequest) {
-  const session = await verifySession(req);
+  const session = await verifySession();
   if (!session || (session.role !== "employee" && session.role !== "owner")) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await verifySession(req);
+  const session = await verifySession();
   if (!session || (session.role !== "employee" && session.role !== "owner")) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }

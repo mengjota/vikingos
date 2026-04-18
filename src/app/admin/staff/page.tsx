@@ -26,7 +26,7 @@ export default function AdminStaff() {
   const [delLoading, setDelLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
-  const [session, setSession] = useState<ReturnType<typeof getSession>>(null);
+  const [session, setSession] = useState<Awaited<ReturnType<typeof getSession>>>(null);
 
   useEffect(() => {
     getSession().then((s) => {

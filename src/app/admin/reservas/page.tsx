@@ -158,7 +158,8 @@ export default function AdminReservas() {
         if (diasDiff >= 1) setOffsetSemana(Math.floor(diasDiff));
         else if (diasDiff < 0) setOffsetSemana(Math.ceil(diasDiff));
       }
-    } catch {
+    }
+    } catch (_) {
       // Ignorar errores en parseo inicial
     }
   }
@@ -227,7 +228,7 @@ export default function AdminReservas() {
     await fetch(`/api/reservations/${modalCompletar.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ estado: "completada", facturaId: factura.id }),
+      body: JSON.stringify({ estado: "completada", facturaId }),
     });
     reloadAll(); setGuardando(false); setModalCompletar(null);
   }
@@ -239,7 +240,7 @@ export default function AdminReservas() {
     setModalPausa(true);
   }
 
-  function guardarPausa() {
+  async function guardarPausa() {
     setErrorPausa("");
     if (!pausaInicio) { setErrorPausa("Selecciona la hora de inicio."); return; }
     if (!pausaFin)    { setErrorPausa("Selecciona la hora de fin."); return; }

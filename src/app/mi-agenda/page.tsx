@@ -53,7 +53,7 @@ const estadoConfig = {
 
 export default function MiAgenda() {
   const router = useRouter();
-  const [session, setSession] = useState<ReturnType<typeof getSession>>(null);
+  const [session, setSession] = useState<Awaited<ReturnType<typeof getSession>>>(null);
   const [lunes, setLunes] = useState<Date>(getLunesDeEstaSemana());
   const [citas, setCitas] = useState<Cita[]>([]);
   const [barberName, setBarberName] = useState("");

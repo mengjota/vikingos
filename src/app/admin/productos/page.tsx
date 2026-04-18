@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import { getSession, logout } from "@/lib/auth";
 
 export interface Producto {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  precio: number;
-  volumen: "50ml" | "100ml" | "100g" | "250ml" | string;
-  categoria: string;
-  destacado?: boolean;
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  price_display: string;
+  volume: string;
+  category: string;
+  featured: boolean;
+  active: boolean;
 }
-const CATEGORIAS = ["Cuidado de Barba", "Cuidado del Cabello", "Ritual de Afeitado", "Accesorios"];
-
 const CATEGORIAS = ["Cuidado de Barba", "Cuidado del Cabello", "Ritual de Afeitado", "Accesorios", "Otros"];
 const VACIO = { name: "", description: "", price: 0, volume: "", category: CATEGORIAS[0], featured: false };
 
@@ -58,7 +58,7 @@ export default function AdminProductos() {
   }
 
   function abrirNuevo() {
-    setEditando(null);
+    setEditId(null);
     setForm(VACIO);
     setModal(true);
   }
@@ -70,28 +70,28 @@ export default function AdminProductos() {
   }
 
   async function guardar() {
-    if (!form.nombre.trim() || form.precio <= 0) return;
-    const body = { ...form, id: editando ?? undefined };
+    if (!form.name.trim() || form.price <= 0) return;
+    const body = { ...form, id: editId ?? undefined };
     const res = await fetch("/api/admin/products", {
-      method: editando ? "PUT" : "POST",
+      method: editId ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
     if (res.ok) {
-      reload();
+      await load();
       setModal(false);
     }
   }
 
-  async function eliminar(id: string) {
+  async function eliminar(id: number) {
     const res = await fetch("/api/admin/products", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
     });
     if (res.ok) {
-      reload();
-      setConfirmDelete(null);
+      await load();
+      setConfirmDel(null);
     }
   }
 

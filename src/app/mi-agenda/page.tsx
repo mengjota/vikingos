@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { getSession, logout } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
+import StaffNav from "@/components/StaffNav";
 
 interface Cita {
   id: string;
@@ -123,10 +124,6 @@ export default function MiAgenda() {
     }
   }
 
-  function handleLogout() {
-    logout("/staff");
-  }
-
   async function updateCita(id: string, estado: "completada" | "cancelada") {
     await fetch(`/api/reservations/${id}`, {
       method: "PATCH",
@@ -155,39 +152,7 @@ export default function MiAgenda() {
     <div style={{ minHeight: "100vh", backgroundColor: "#060504", fontFamily: "var(--font-barlow)" }}>
       <div style={{ position: "fixed", inset: 0, background: "radial-gradient(ellipse 70% 40% at 50% 0%, rgba(200,146,26,0.07) 0%, transparent 65%)", pointerEvents: "none" }} />
 
-      {/* Header */}
-      <div style={{ backgroundColor: "#0a0806", borderBottom: "1px solid rgba(92,58,30,0.45)", padding: "0 24px", position: "sticky", top: 0, zIndex: 10 }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", height: "64px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <a href="/empleado" style={{ textDecoration: "none" }}>
-              <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.2rem", color: "#c8921a" }}>BarberOS</span>
-            </a>
-            <span style={{ color: "rgba(92,58,30,0.5)" }}>|</span>
-            <span style={{ fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)" }}>
-              Mi Agenda
-            </span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <a href="/empleado"
-              style={{ fontSize: "0.65rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", textDecoration: "none", fontFamily: "var(--font-barlow)" }}>
-              ← Hub
-            </a>
-            <a href="/caja"
-              style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "#c8921a", border: "1px solid rgba(200,146,26,0.4)", padding: "6px 14px", textDecoration: "none" }}>
-              Caja →
-            </a>
-            {session && (
-              <span style={{ fontSize: "0.72rem", letterSpacing: "0.2em", color: "rgba(184,168,138,0.5)" }}>
-                {session.name}
-              </span>
-            )}
-            <button onClick={handleLogout}
-              style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(239,68,68,0.5)", background: "none", border: "none", cursor: "pointer" }}>
-              Salir
-            </button>
-          </div>
-        </div>
-      </div>
+      <StaffNav isOwner={session?.role === "owner"} />
 
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 24px" }}>
 

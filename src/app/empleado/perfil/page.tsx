@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, type Session } from "@/lib/auth";
+import StaffNav from "@/components/StaffNav";
 
 const DIAS_LABELS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const DIAS_ORDER  = [1, 2, 3, 4, 5, 6, 0]; // Lun primero
@@ -91,13 +92,7 @@ export default function PerfilBarberoPage() {
     <div style={{ minHeight: "100vh", backgroundColor: "#060504" }}>
       <div style={{ position: "fixed", inset: 0, background: "radial-gradient(ellipse 60% 35% at 50% 0%, rgba(200,146,26,0.06) 0%, transparent 60%)", pointerEvents: "none" }} />
 
-      {/* Header */}
-      <div style={{ backgroundColor: "#0a0806", borderBottom: "1px solid rgba(92,58,30,0.45)", padding: "0 24px" }}>
-        <div style={{ maxWidth: "760px", margin: "0 auto", height: "64px", display: "flex", alignItems: "center", gap: "20px" }}>
-          <a href="/empleado" style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", textDecoration: "none", fontFamily: "var(--font-barlow)" }}>← Hub</a>
-          <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1rem", color: "#c8921a" }}>Mi Perfil de Barbero</span>
-        </div>
-      </div>
+      <StaffNav isOwner={isOwner} />
 
       <div style={{ maxWidth: "760px", margin: "0 auto", padding: "40px 24px 80px" }}>
         <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
@@ -111,37 +106,71 @@ export default function PerfilBarberoPage() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
               <div>
                 <label style={S.label}>Nombre que verán los clientes</label>
-                <input value={barberName} onChange={e => setBarberName(e.target.value)}
-                  placeholder="Ej: Alfonso" style={S.input} />
+                {isOwner ? (
+                  <input value={barberName} onChange={e => setBarberName(e.target.value)}
+                    placeholder="Ej: Alfonso" style={S.input} />
+                ) : (
+                  <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.95rem", color: "#f0e6c8", padding: "13px 0" }}>
+                    {barberName || "—"}
+                  </p>
+                )}
               </div>
               <div>
                 <label style={S.label}>Especialidad</label>
-                <input value={specialty} onChange={e => setSpecialty(e.target.value)}
-                  placeholder="Ej: Barba y degradado clásico" style={S.input} />
+                {isOwner ? (
+                  <input value={specialty} onChange={e => setSpecialty(e.target.value)}
+                    placeholder="Ej: Barba y degradado clásico" style={S.input} />
+                ) : (
+                  <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.95rem", color: "#f0e6c8", padding: "13px 0" }}>
+                    {specialty || "—"}
+                  </p>
+                )}
               </div>
             </div>
             <div style={{ marginTop: "20px", display: "flex", alignItems: "center", gap: "14px" }}>
-              <button type="button" onClick={() => setIsBarber(!isBarber)} style={{
-                width: "48px", height: "26px", borderRadius: "13px", border: "none", cursor: "pointer",
-                backgroundColor: isBarber ? "#c8921a" : "rgba(92,58,30,0.5)",
-                position: "relative", transition: "background 0.3s",
-              }}>
-                <span style={{
-                  position: "absolute", top: "3px",
-                  left: isBarber ? "24px" : "3px",
-                  width: "20px", height: "20px", borderRadius: "50%",
-                  backgroundColor: "#f0e6c8", transition: "left 0.3s",
-                }} />
-              </button>
+              {isOwner ? (
+                <button type="button" onClick={() => setIsBarber(!isBarber)} style={{
+                  width: "48px", height: "26px", borderRadius: "13px", border: "none", cursor: "pointer",
+                  backgroundColor: isBarber ? "#c8921a" : "rgba(92,58,30,0.5)",
+                  position: "relative", transition: "background 0.3s",
+                }}>
+                  <span style={{
+                    position: "absolute", top: "3px",
+                    left: isBarber ? "24px" : "3px",
+                    width: "20px", height: "20px", borderRadius: "50%",
+                    backgroundColor: "#f0e6c8", transition: "left 0.3s",
+                  }} />
+                </button>
+              ) : (
+                <div style={{
+                  width: "48px", height: "26px", borderRadius: "13px",
+                  backgroundColor: isBarber ? "rgba(200,146,26,0.4)" : "rgba(92,58,30,0.3)",
+                  position: "relative",
+                }}>
+                  <span style={{
+                    position: "absolute", top: "3px",
+                    left: isBarber ? "24px" : "3px",
+                    width: "20px", height: "20px", borderRadius: "50%",
+                    backgroundColor: "rgba(240,230,200,0.5)",
+                  }} />
+                </div>
+              )}
               <div>
                 <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", color: "#f0e6c8" }}>
                   {isBarber ? "Acepto reservas de clientes" : "No aparezco en el sistema de reservas"}
                 </p>
                 <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", color: "rgba(184,168,138,0.4)" }}>
-                  {isBarber ? "Los clientes podrán seleccionarte al reservar" : "El jefe podrá reactivarlo en cualquier momento"}
+                  {isOwner
+                    ? (isBarber ? "Los clientes podrán seleccionarte al reservar" : "El jefe podrá reactivarlo en cualquier momento")
+                    : "El jefe gestiona este ajuste"}
                 </p>
               </div>
             </div>
+            {!isOwner && (
+              <p style={{ marginTop: "16px", fontFamily: "var(--font-barlow)", fontSize: "0.62rem", letterSpacing: "0.25em", color: "rgba(200,146,26,0.45)", border: "1px solid rgba(200,146,26,0.15)", padding: "6px 12px", display: "inline-block" }}>
+                Solo lectura — el jefe gestiona este perfil
+              </p>
+            )}
           </section>
 
           {/* ── Horario semanal ── */}
@@ -242,17 +271,19 @@ export default function PerfilBarberoPage() {
           {error && <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.78rem", color: "#f87171" }}>⚠ {error}</p>}
           {ok && <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.78rem", color: "#4ade80" }}>✓ Perfil guardado correctamente</p>}
 
-          {/* Submit */}
-          <button type="submit" disabled={saving} style={{
-            padding: "16px 32px", border: "none", cursor: saving ? "not-allowed" : "pointer",
-            background: "linear-gradient(135deg,#a06010,#c8921a)", color: "#080604",
-            fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 800,
-            letterSpacing: "0.4em", textTransform: "uppercase",
-            boxShadow: "0 0 30px rgba(200,146,26,0.3)", opacity: saving ? 0.7 : 1,
-            alignSelf: "flex-start",
-          }}>
-            {saving ? "GUARDANDO..." : "GUARDAR CAMBIOS"}
-          </button>
+          {/* Submit — only owner can save */}
+          {isOwner && (
+            <button type="submit" disabled={saving} style={{
+              padding: "16px 32px", border: "none", cursor: saving ? "not-allowed" : "pointer",
+              background: "linear-gradient(135deg,#a06010,#c8921a)", color: "#080604",
+              fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 800,
+              letterSpacing: "0.4em", textTransform: "uppercase",
+              boxShadow: "0 0 30px rgba(200,146,26,0.3)", opacity: saving ? 0.7 : 1,
+              alignSelf: "flex-start",
+            }}>
+              {saving ? "GUARDANDO..." : "GUARDAR CAMBIOS"}
+            </button>
+          )}
         </form>
       </div>
     </div>

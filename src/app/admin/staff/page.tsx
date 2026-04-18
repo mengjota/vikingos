@@ -13,6 +13,14 @@ interface Empleado {
   created_at: string;
 }
 
+interface DaySchedule { day_of_week: number; is_working: boolean; start_time: string; end_time: string; }
+
+const DIAS_LABELS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+const DIAS_ORDER  = [1, 2, 3, 4, 5, 6, 0];
+const DEFAULT_SCHEDULE: DaySchedule[] = Array.from({ length: 7 }, (_, i) => ({
+  day_of_week: i, is_working: i !== 0, start_time: "09:00", end_time: "20:00",
+}));
+
 const VACIO = { name: "", email: "", password: "", barberName: "" };
 
 export default function AdminStaff() {
@@ -30,6 +38,10 @@ export default function AdminStaff() {
   const [editForm, setEditForm] = useState({ name: "", barberName: "", pin: "" });
   const [editError, setEditError] = useState("");
   const [editLoading, setEditLoading] = useState(false);
+  const [editSchedule, setEditSchedule] = useState<DaySchedule[]>(DEFAULT_SCHEDULE);
+  const [editIsBarber, setEditIsBarber] = useState(true);
+  const [editSpecialty, setEditSpecialty] = useState("");
+  const [scheduleLoading, setScheduleLoading] = useState(false);
 
   const [session, setSession] = useState<Awaited<ReturnType<typeof getSession>>>(null);
 
@@ -97,10 +109,27 @@ export default function AdminStaff() {
     finally { setDelLoading(false); }
   }
 
-  function abrirEditar(emp: Empleado) {
+  async function abrirEditar(emp: Empleado) {
     setEditEmp(emp);
     setEditForm({ name: emp.name, barberName: emp.barber_name, pin: emp.pin ?? "" });
     setEditError("");
+    setEditSchedule(DEFAULT_SCHEDULE);
+    setEditIsBarber(true);
+    setEditSpecialty("");
+    setScheduleLoading(true);
+    try {
+      const res = await fetch("/api/admin/barber-schedules");
+      if (res.ok) {
+        const data = await res.json();
+        const own = data.find((b: { userId: number }) => b.userId === emp.id);
+        if (own) {
+          setEditSchedule(own.schedule ?? DEFAULT_SCHEDULE);
+          setEditIsBarber(own.isBarber !== false);
+          setEditSpecialty(own.specialty ?? "");
+        }
+      }
+    } catch (_) {}
+    setScheduleLoading(false);
   }
 
   async function guardarEdicion() {
@@ -115,6 +144,11 @@ export default function AdminStaff() {
       });
       const d = await res.json().catch(() => ({}));
       if (!res.ok) { setEditError(d.error ?? `Error ${res.status}`); return; }
+      await fetch("/api/admin/barber-schedules", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: editEmp.id, barberName: editForm.barberName, specialty: editSpecialty, isBarber: editIsBarber, schedule: editSchedule }),
+      });
       setSuccessMsg(`Datos de ${editForm.name} actualizados`);
       setTimeout(() => setSuccessMsg(""), 3000);
       setEditEmp(null);
@@ -124,6 +158,14 @@ export default function AdminStaff() {
     } finally {
       setEditLoading(false);
     }
+  }
+
+  function toggleEditDay(dow: number) {
+    setEditSchedule(prev => prev.map(d => d.day_of_week === dow ? { ...d, is_working: !d.is_working } : d));
+  }
+
+  function updateEditTime(dow: number, field: "start_time" | "end_time", val: string) {
+    setEditSchedule(prev => prev.map(d => d.day_of_week === dow ? { ...d, [field]: val } : d));
   }
 
   const labelStyle: React.CSSProperties = {
@@ -247,7 +289,7 @@ export default function AdminStaff() {
                   <span style={{ padding: "4px 10px", border: "1px solid rgba(74,222,128,0.3)", backgroundColor: "rgba(74,222,128,0.05)", color: "#4ade80", fontSize: "0.6rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
                     Activo
                   </span>
-                  <button onClick={() => abrirEditar(emp)}
+                  <button onClick={() => void abrirEditar(emp)}
                     style={{ padding: "8px 14px", border: "1px solid rgba(200,146,26,0.35)", backgroundColor: "transparent", color: "#c8921a", cursor: "pointer", fontFamily: "var(--font-barlow)", fontSize: "0.62rem", letterSpacing: "0.25em", textTransform: "uppercase" }}>
                     Editar
                   </button>
@@ -354,7 +396,7 @@ export default function AdminStaff() {
       {/* Modal: Editar empleado */}
       {editEmp && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", zIndex: 100, backdropFilter: "blur(4px)" }}>
-          <div style={{ width: "100%", maxWidth: "480px", backgroundColor: "#0e0b07", border: "1px solid rgba(200,146,26,0.4)", padding: "40px", boxShadow: "0 0 80px rgba(200,146,26,0.12)", position: "relative" }}>
+          <div style={{ width: "100%", maxWidth: "620px", maxHeight: "90vh", overflowY: "auto", backgroundColor: "#0e0b07", border: "1px solid rgba(200,146,26,0.4)", padding: "40px", boxShadow: "0 0 80px rgba(200,146,26,0.12)", position: "relative" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "linear-gradient(to right, transparent, #c8921a, transparent)" }} />
             <h2 style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.1rem", color: "#f0e6c8", marginBottom: "6px" }}>Editar Empleado</h2>
             <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", color: "rgba(184,168,138,0.4)", marginBottom: "28px", letterSpacing: "0.1em" }}>{editEmp.email}</p>
@@ -369,11 +411,79 @@ export default function AdminStaff() {
                 <p style={{ fontSize: "0.62rem", color: "rgba(200,146,26,0.4)", marginTop: "5px" }}>Debe coincidir con el nombre al crear citas</p>
               </div>
               <div>
+                <label style={labelStyle}>Especialidad</label>
+                <input value={editSpecialty} onChange={e => setEditSpecialty(e.target.value)}
+                  placeholder="Ej: Barba y degradado clásico" style={inputStyle} />
+              </div>
+              <div>
                 <label style={labelStyle}>PIN de fichaje (4 dígitos)</label>
                 <input value={editForm.pin} onChange={e => setEditForm(f => ({ ...f, pin: e.target.value.replace(/\D/g, "").slice(0, 4) }))}
                   placeholder="Ej: 1234" maxLength={4} style={{ ...inputStyle, letterSpacing: "0.5em", fontSize: "1.2rem" }} />
                 <p style={{ fontSize: "0.62rem", color: "rgba(184,168,138,0.35)", marginTop: "5px" }}>El empleado usará este PIN en <strong style={{ color: "rgba(200,146,26,0.5)" }}>/fichar</strong> para registrar entrada/salida</p>
               </div>
+
+              {/* Toggle activo como barbero */}
+              <div style={{ display: "flex", alignItems: "center", gap: "14px", padding: "14px 16px", border: "1px solid rgba(92,58,30,0.3)", backgroundColor: "#0a0806" }}>
+                <button type="button" onClick={() => setEditIsBarber(v => !v)} style={{
+                  width: "44px", height: "24px", borderRadius: "12px", border: "none", cursor: "pointer",
+                  backgroundColor: editIsBarber ? "#c8921a" : "rgba(92,58,30,0.5)",
+                  position: "relative", transition: "background 0.3s", flexShrink: 0,
+                }}>
+                  <span style={{ position: "absolute", top: "3px", left: editIsBarber ? "22px" : "3px", width: "18px", height: "18px", borderRadius: "50%", backgroundColor: "#f0e6c8", transition: "left 0.3s" }} />
+                </button>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.78rem", color: "#f0e6c8" }}>
+                  {editIsBarber ? "Aparece en reservas de clientes" : "No aparece en el sistema de reservas"}
+                </p>
+              </div>
+
+              {/* Horario semanal */}
+              <div style={{ border: "1px solid rgba(167,139,250,0.2)", backgroundColor: "#0a0806", padding: "20px", position: "relative" }}>
+                <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, rgba(167,139,250,0.5), transparent)" }} />
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.62rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(167,139,250,0.6)", marginBottom: "14px" }}>
+                  Horario Semanal
+                </p>
+                {scheduleLoading ? (
+                  <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", color: "rgba(184,168,138,0.3)", letterSpacing: "0.2em" }}>Cargando...</p>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {DIAS_ORDER.map(dow => {
+                      const day = editSchedule.find(d => d.day_of_week === dow) ?? DEFAULT_SCHEDULE[dow];
+                      return (
+                        <div key={dow} style={{
+                          display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap",
+                          padding: "10px 12px",
+                          border: `1px solid ${day.is_working ? "rgba(167,139,250,0.2)" : "rgba(92,58,30,0.15)"}`,
+                          backgroundColor: day.is_working ? "rgba(167,139,250,0.03)" : "transparent",
+                        }}>
+                          <button type="button" onClick={() => toggleEditDay(dow)} style={{
+                            width: "36px", height: "20px", borderRadius: "10px", border: "none", cursor: "pointer",
+                            backgroundColor: day.is_working ? "rgba(167,139,250,0.8)" : "rgba(92,58,30,0.4)",
+                            position: "relative", transition: "background 0.2s", flexShrink: 0,
+                          }}>
+                            <span style={{ position: "absolute", top: "2px", left: day.is_working ? "18px" : "2px", width: "16px", height: "16px", borderRadius: "50%", backgroundColor: "#f0e6c8", transition: "left 0.2s" }} />
+                          </button>
+                          <span style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: day.is_working ? "#f0e6c8" : "rgba(184,168,138,0.3)", width: "32px" }}>
+                            {DIAS_LABELS[dow]}
+                          </span>
+                          {day.is_working && (
+                            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                              <input type="time" value={day.start_time} onChange={e => updateEditTime(dow, "start_time", e.target.value)}
+                                style={{ backgroundColor: "#060504", border: "1px solid rgba(92,58,30,0.4)", color: "#f0e6c8", fontFamily: "var(--font-barlow)", fontSize: "0.8rem", padding: "5px 8px", outline: "none", width: "100px" }} />
+                              <span style={{ color: "rgba(184,168,138,0.4)", fontSize: "0.75rem" }}>—</span>
+                              <input type="time" value={day.end_time} onChange={e => updateEditTime(dow, "end_time", e.target.value)}
+                                style={{ backgroundColor: "#060504", border: "1px solid rgba(92,58,30,0.4)", color: "#f0e6c8", fontFamily: "var(--font-barlow)", fontSize: "0.8rem", padding: "5px 8px", outline: "none", width: "100px" }} />
+                            </div>
+                          )}
+                          {!day.is_working && (
+                            <span style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", color: "rgba(184,168,138,0.2)", letterSpacing: "0.2em" }}>NO TRABAJA</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               {editError && <p style={{ color: "#f87171", fontSize: "0.75rem" }}>⚠ {editError}</p>}
               <div style={{ display: "flex", gap: "10px" }}>
                 <button onClick={() => setEditEmp(null)} style={{ flex: 1, padding: "13px", border: "1px solid rgba(92,58,30,0.5)", backgroundColor: "transparent", color: "rgba(184,168,138,0.5)", cursor: "pointer", fontFamily: "var(--font-barlow)", fontSize: "0.7rem", letterSpacing: "0.3em", textTransform: "uppercase" }}>Cancelar</button>

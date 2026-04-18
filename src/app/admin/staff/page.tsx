@@ -42,59 +42,54 @@ export default function AdminStaff() {
 
   async function cargarEmpleados() {
     setLoading(true);
-    const s = await getSession();
-    if (!s) return;
-    const res = await fetch("/api/admin/employees");
-    if (res.ok) setEmpleados(await res.json());
-    setLoading(false);
+    try {
+      const res = await fetch("/api/admin/employees");
+      if (res.ok) setEmpleados(await res.json());
+    } catch (_) {}
+    finally { setLoading(false); }
   }
 
   async function crearEmpleado(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setFormError("");
     setFormLoading(true);
-    const s = await getSession();
-    if (!s) return;
-
-    const res = await fetch("/api/admin/employees", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: form.name,
-        email: form.email,
-        password: form.password,
-        barberName: form.barberName,
-      }),
-    });
-    const data = await res.json();
-    setFormLoading(false);
-    if (!res.ok) { setFormError(data.error ?? "Error al crear empleado"); return; }
-
-    setModal(false);
-    setForm(VACIO);
-    setSuccessMsg(`Cuenta creada para ${form.name}`);
-    setTimeout(() => setSuccessMsg(""), 3000);
-    cargarEmpleados();
+    try {
+      const res = await fetch("/api/admin/employees", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, email: form.email, password: form.password, barberName: form.barberName }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { setFormError(data.error ?? `Error ${res.status} al crear empleado`); return; }
+      setModal(false);
+      setForm(VACIO);
+      setSuccessMsg(`Cuenta creada para ${form.name}`);
+      setTimeout(() => setSuccessMsg(""), 3000);
+      cargarEmpleados();
+    } catch (_) {
+      setFormError("Error de conexión. Inténtalo de nuevo.");
+    } finally {
+      setFormLoading(false);
+    }
   }
 
   async function eliminarEmpleado() {
     if (!confirmDel) return;
     setDelLoading(true);
-    const s = await getSession();
-    if (!s) return;
-
-    const res = await fetch("/api/admin/employees", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ employeeId: confirmDel.id }),
-    });
-    setDelLoading(false);
-    if (res.ok) {
-      setSuccessMsg(`Cuenta de ${confirmDel.name} eliminada`);
-      setTimeout(() => setSuccessMsg(""), 3000);
-      setConfirmDel(null);
-      cargarEmpleados();
-    }
+    try {
+      const res = await fetch("/api/admin/employees", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employeeId: confirmDel.id }),
+      });
+      if (res.ok) {
+        setSuccessMsg(`Cuenta de ${confirmDel.name} eliminada`);
+        setTimeout(() => setSuccessMsg(""), 3000);
+        setConfirmDel(null);
+        cargarEmpleados();
+      }
+    } catch (_) {}
+    finally { setDelLoading(false); }
   }
 
   const labelStyle: React.CSSProperties = {
@@ -233,7 +228,7 @@ export default function AdminStaff() {
         {/* Info */}
         <div style={{ marginTop: "40px", padding: "20px 24px", border: "1px solid rgba(92,58,30,0.25)", backgroundColor: "rgba(200,146,26,0.03)" }}>
           <p style={{ fontSize: "0.68rem", letterSpacing: "0.15em", color: "rgba(184,168,138,0.35)", lineHeight: 1.8 }}>
-            ⚔ Los empleados inician sesión en <strong style={{ color: "rgba(200,146,26,0.5)" }}>/login</strong> con su correo y contraseña. Solo pueden ver su propia agenda semanal. El campo "Nombre en reservas" debe coincidir exactamente con el nombre del barbero al crear citas.
+            ⚔ Los empleados inician sesión en <strong style={{ color: "rgba(200,146,26,0.5)" }}>/staff</strong> con su correo y contraseña. Solo pueden ver su propia agenda semanal. El campo "Nombre en reservas" debe coincidir exactamente con el nombre del barbero al crear citas.
           </p>
         </div>
       </div>

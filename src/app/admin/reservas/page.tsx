@@ -177,22 +177,26 @@ export default function AdminReservas() {
     setErrorNueva("");
     if (!nuevaNombre.trim()) { setErrorNueva("Ingresa el nombre del cliente."); return; }
     if (!nuevaFecha)         { setErrorNueva("Selecciona una fecha."); return; }
-    const res = await fetch("/api/reservations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        clienteNombre: nuevaNombre,
-        clienteEmail:  nuevaTel ? `tel:${nuevaTel}` : "admin-walk-in",
-        servicio: nuevaServicio, precio: nuevaPrecio,
-        barbero: nuevaBarbero, fecha: nuevaFecha, hora: nuevaHora,
-      }),
-    });
-    if (!res.ok) {
-      const d = await res.json();
-      setErrorNueva(d.error ?? "Error al crear la reserva.");
-      return;
+    try {
+      const res = await fetch("/api/reservations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clienteNombre: nuevaNombre,
+          clienteEmail:  nuevaTel ? `tel:${nuevaTel}` : "admin-walk-in",
+          servicio: nuevaServicio, precio: nuevaPrecio,
+          barbero: nuevaBarbero, fecha: nuevaFecha, hora: nuevaHora,
+        }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setErrorNueva(d.error ?? `Error ${res.status} al crear la reserva.`);
+        return;
+      }
+      reloadAll(); setModalNueva(false);
+    } catch (_) {
+      setErrorNueva("Error de conexión. Inténtalo de nuevo.");
     }
-    reloadAll(); setModalNueva(false);
   }
 
   // ── Completar servicio ──
@@ -209,28 +213,28 @@ export default function AdminReservas() {
   async function completarServicio() {
     if (!modalCompletar) return;
     setGuardando(true);
-    const precioServicio     = parseFloat(modalCompletar.precio?.replace(/[^0-9.]/g, "")) || 0;
-    const subtotalProductos  = productosEnFactura.reduce((s, p) => s + p.precio * p.cantidad, 0);
-    const factura = {
-      reservaId: modalCompletar.id, clienteEmail: modalCompletar.clienteEmail ?? "",
-      clienteNombre: modalCompletar.clienteNombre ?? "Cliente", servicio: modalCompletar.servicio,
-      barbero: modalCompletar.barbero, fecha: modalCompletar.fecha, hora: modalCompletar.hora,
-      precioServicio, metodoPago, productosAdicionales: productosEnFactura,
-      subtotalProductos, total: precioServicio + subtotalProductos,
-    };
-    
-    // Guardar factura en base de datos
-    const fRes = await fetch("/api/admin/invoices", {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(factura)
-    });
-    const { id: facturaId } = await fRes.json();
-
-    await fetch(`/api/reservations/${modalCompletar.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ estado: "completada", facturaId }),
-    });
-    reloadAll(); setGuardando(false); setModalCompletar(null);
+    try {
+      const precioServicio     = parseFloat(modalCompletar.precio?.replace(/[^0-9.]/g, "")) || 0;
+      const subtotalProductos  = productosEnFactura.reduce((s, p) => s + p.precio * p.cantidad, 0);
+      const factura = {
+        reservaId: modalCompletar.id, clienteEmail: modalCompletar.clienteEmail ?? "",
+        clienteNombre: modalCompletar.clienteNombre ?? "Cliente", servicio: modalCompletar.servicio,
+        barbero: modalCompletar.barbero, fecha: modalCompletar.fecha, hora: modalCompletar.hora,
+        precioServicio, metodoPago, productosAdicionales: productosEnFactura,
+        subtotalProductos, total: precioServicio + subtotalProductos,
+      };
+      const fRes = await fetch("/api/admin/invoices", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(factura)
+      });
+      const fJson = await fRes.json().catch(() => ({}));
+      await fetch(`/api/reservations/${modalCompletar.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ estado: "completada", facturaId: fJson.id ?? null }),
+      });
+      reloadAll(); setModalCompletar(null);
+    } catch (_) {}
+    finally { setGuardando(false); }
   }
 
   // ── Pausas ──
@@ -245,13 +249,15 @@ export default function AdminReservas() {
     if (!pausaInicio) { setErrorPausa("Selecciona la hora de inicio."); return; }
     if (!pausaFin)    { setErrorPausa("Selecciona la hora de fin."); return; }
     if (pausaFin <= pausaInicio) { setErrorPausa("La hora de fin debe ser después del inicio."); return; }
-    
-    await fetch("/api/admin/pauses", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ barbero: pausaBarbero, fecha: pausaFecha, horaInicio: pausaInicio, horaFin: pausaFin, motivo: pausaMotivo })
-    });
-    
-    reloadAll(); setModalPausa(false);
+    try {
+      await fetch("/api/admin/pauses", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ barbero: pausaBarbero, fecha: pausaFecha, horaInicio: pausaInicio, horaFin: pausaFin, motivo: pausaMotivo })
+      });
+      reloadAll(); setModalPausa(false);
+    } catch (_) {
+      setErrorPausa("Error de conexión. Inténtalo de nuevo.");
+    }
   }
 
   // Reservas + pausas mezcladas

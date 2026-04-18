@@ -45,21 +45,23 @@ export default function AdminConfiguracion() {
     e.preventDefault();
     setMsg(null);
     setSaving(true);
-
-    const res = await fetch("/api/admin/mi-barberia", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: form.name, address: form.address, phone: form.phone, description: form.description }),
-    });
-    const json = await res.json();
-    setSaving(false);
-
-    if (!res.ok) { setMsg({ type: "err", text: json.error ?? "Error al guardar." }); return; }
-
-    const updated = { ...data, name: json.name, address: json.address, phone: json.phone, description: json.description };
-    setData(updated); setForm(updated);
-    setMsg({ type: "ok", text: "¡Datos guardados correctamente!" });
-    setTimeout(() => setMsg(null), 3500);
+    try {
+      const res = await fetch("/api/admin/mi-barberia", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, address: form.address, phone: form.phone, description: form.description }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) { setMsg({ type: "err", text: json.error ?? `Error ${res.status} al guardar.` }); return; }
+      const updated = { ...data, name: json.name, address: json.address, phone: json.phone, description: json.description };
+      setData(updated); setForm(updated);
+      setMsg({ type: "ok", text: "¡Datos guardados correctamente!" });
+      setTimeout(() => setMsg(null), 3500);
+    } catch (_) {
+      setMsg({ type: "err", text: "Error de conexión. Inténtalo de nuevo." });
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (

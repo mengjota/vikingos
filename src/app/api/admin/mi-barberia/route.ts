@@ -2,8 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
 import { verifySession } from "@/lib/session";
 
+async function ensureBarbershipCols() {
+  await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS address TEXT DEFAULT ''`.catch(() => {});
+  await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS phone TEXT DEFAULT ''`.catch(() => {});
+  await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS description TEXT DEFAULT ''`.catch(() => {});
+}
+
 async function getOwnerInfo(email: string) {
   if (!email) return null;
+  await ensureBarbershipCols();
   const rows = await sql`
     SELECT u.role, u.barbershop_id,
            b.id AS bs_id, b.name AS bs_name, b.slug,

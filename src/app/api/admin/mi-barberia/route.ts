@@ -16,7 +16,7 @@ async function ensureBarbershipCols() {
     `ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS email_fiscal TEXT DEFAULT ''`,
     `ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS iva_pct NUMERIC(5,2) DEFAULT 21`,
   ];
-  for (const c of cols) await sql.unsafe(c).catch(() => {});
+  for (const c of cols) { try { await sql.unsafe(c); } catch (_) {} }
 }
 
 async function getOwnerInfo(email: string) {

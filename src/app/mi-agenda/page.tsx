@@ -141,7 +141,7 @@ export default function MiAgenda() {
       <div style={{ backgroundColor: "#0a0806", borderBottom: "1px solid rgba(92,58,30,0.45)", padding: "0 24px", position: "sticky", top: 0, zIndex: 10 }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto", height: "64px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <a href="/" style={{ textDecoration: "none" }}>
+            <a href="/empleado" style={{ textDecoration: "none" }}>
               <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.2rem", color: "#c8921a" }}>BarberOS</span>
             </a>
             <span style={{ color: "rgba(92,58,30,0.5)" }}>|</span>
@@ -150,9 +150,13 @@ export default function MiAgenda() {
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <a href="/empleado"
+              style={{ fontSize: "0.65rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", textDecoration: "none", fontFamily: "var(--font-barlow)" }}>
+              ← Hub
+            </a>
             <a href="/caja"
               style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "#c8921a", border: "1px solid rgba(200,146,26,0.4)", padding: "6px 14px", textDecoration: "none" }}>
-              + Registrar Venta
+              Caja →
             </a>
             {session && (
               <span style={{ fontSize: "0.72rem", letterSpacing: "0.2em", color: "rgba(184,168,138,0.5)" }}>

@@ -133,11 +133,6 @@ export default function StaffPage() {
             </button>
           </div>
 
-          <p style={{ textAlign: "center", marginTop: "32px" }}>
-            <Link href="/" style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.3)", textDecoration: "none" }}>
-              ← Volver al inicio
-            </Link>
-          </p>
         </div>
       </div>
     );
@@ -188,11 +183,6 @@ export default function StaffPage() {
           </button>
         </form>
 
-        <p style={{ textAlign: "center", marginTop: "20px" }}>
-          <Link href="/" style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.25)", textDecoration: "none" }}>
-            ← Volver al inicio
-          </Link>
-        </p>
       </div>
     </div>
   );

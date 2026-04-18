@@ -123,10 +123,11 @@ export default function CajaPage() {
       <div style={{ backgroundColor: "#0a0806", borderBottom: "1px solid rgba(92,58,30,0.45)", padding: "0 24px" }}>
         <div style={{ maxWidth: "960px", margin: "0 auto", height: "64px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <a href="/mi-agenda" style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", textDecoration: "none", fontFamily: "var(--font-barlow)" }}>← Mi Agenda</a>
+            <a href="/empleado" style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.4)", textDecoration: "none", fontFamily: "var(--font-barlow)" }}>← Hub</a>
             <span style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1rem", color: "#c8921a" }}>Caja · Registro de Ventas</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <a href="/mi-agenda" style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(167,139,250,0.8)", border: "1px solid rgba(167,139,250,0.3)", padding: "6px 14px", textDecoration: "none", fontFamily: "var(--font-barlow)" }}>Agenda →</a>
             <span style={{ fontFamily: "var(--font-barlow)", fontSize: "0.72rem", color: "rgba(184,168,138,0.5)", letterSpacing: "0.1em" }}>{session?.barberName ?? session?.name}</span>
             <button onClick={() => logout("/staff")} style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(239,68,68,0.5)", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-barlow)" }}>Salir</button>
           </div>

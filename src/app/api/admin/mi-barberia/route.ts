@@ -4,7 +4,9 @@ import sql from "@/lib/db";
 async function getOwnerInfo(email: string) {
   if (!email) return null;
   const rows = await sql`
-    SELECT u.role, u.barbershop_id, b.id AS bs_id, b.name AS bs_name, b.slug
+    SELECT u.role, u.barbershop_id,
+           b.id AS bs_id, b.name AS bs_name, b.slug,
+           b.address, b.phone, b.description
     FROM users u
     LEFT JOIN barbershops b ON b.id = u.barbershop_id
     WHERE u.email = ${email.toLowerCase()}
@@ -13,32 +15,48 @@ async function getOwnerInfo(email: string) {
   return rows[0];
 }
 
-// GET — devuelve info de la barbería del owner
 export async function GET(req: NextRequest) {
   const email = req.headers.get("x-caller-email") ?? "";
   const info = await getOwnerInfo(email);
   if (!info) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   return NextResponse.json({
-    id:   info.bs_id,
-    name: info.bs_name,
-    slug: info.slug,
+    id:          info.bs_id,
+    name:        info.bs_name,
+    slug:        info.slug,
+    address:     info.address ?? "",
+    phone:       info.phone ?? "",
+    description: info.description ?? "",
   });
 }
 
-// PUT — actualiza el nombre de la barbería
 export async function PUT(req: NextRequest) {
   const email = req.headers.get("x-caller-email") ?? "";
   const info = await getOwnerInfo(email);
   if (!info) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const { name } = await req.json();
-  if (!name || String(name).trim().length < 2) {
+  const body = await req.json();
+  const { name, address, phone, description } = body;
+
+  if (name !== undefined && String(name).trim().length < 2) {
     return NextResponse.json({ error: "El nombre debe tener al menos 2 caracteres" }, { status: 400 });
   }
 
-  const cleanName = String(name).trim();
-  await sql`UPDATE barbershops SET name = ${cleanName} WHERE id = ${info.bs_id}`;
+  await sql`
+    UPDATE barbershops SET
+      name        = COALESCE(${name ? String(name).trim() : null}, name),
+      address     = COALESCE(${address !== undefined ? String(address) : null}, address),
+      phone       = COALESCE(${phone !== undefined ? String(phone) : null}, phone),
+      description = COALESCE(${description !== undefined ? String(description) : null}, description)
+    WHERE id = ${info.bs_id}
+  `;
 
-  return NextResponse.json({ ok: true, name: cleanName });
+  const updated = await getOwnerInfo(email);
+  return NextResponse.json({
+    ok:          true,
+    name:        updated?.bs_name ?? "",
+    address:     updated?.address ?? "",
+    phone:       updated?.phone ?? "",
+    description: updated?.description ?? "",
+  });
 }

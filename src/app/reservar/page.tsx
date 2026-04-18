@@ -117,66 +117,11 @@ const IconCrown = ({ active }: { active: boolean }) => (
   </svg>
 );
 
-/* ── Datos de servicios ───────────────────────────────── */
-
-const servicios = [
-  {
-    id: 1,
-    nombre: "Corte del Guerrero",
-    descripcion: "Corte clásico con tijera y máquina. Lavado y secado incluidos.",
-    precio: "€80",
-    duracion: "45 min",
-    Icon: IconScissors,
-    popular: false,
-  },
-  {
-    id: 2,
-    nombre: "Ritual de Navaja",
-    descripcion: "Afeitado completo con navaja recta, toalla caliente y bálsamo.",
-    precio: "€120",
-    duracion: "60 min",
-    Icon: IconRazorBlade,
-    popular: true,
-  },
-  {
-    id: 3,
-    nombre: "Corte & Barba",
-    descripcion: "La combinación completa. Corte de cabello más escultura de barba.",
-    precio: "€150",
-    duracion: "75 min",
-    Icon: IconCombScissors,
-    popular: false,
-  },
-  {
-    id: 4,
-    nombre: "La Barba del Norte",
-    descripcion: "Tratamiento completo de barba: lavado, acondicionado y aceite vikingo.",
-    precio: "€100",
-    duracion: "45 min",
-    Icon: IconBeard,
-    popular: false,
-  },
-  {
-    id: 5,
-    nombre: "Corte de Niño Guerrero",
-    descripcion: "Para los pequeños valientes. Corte suave y paciencia garantizada.",
-    precio: "€60",
-    duracion: "30 min",
-    Icon: IconChildScissors,
-    popular: false,
-  },
-  {
-    id: 6,
-    nombre: "El Paquete del Jarl",
-    descripcion: "Corte, navaja completa, tratamiento de barba y aceite premium.",
-    precio: "€220",
-    duracion: "120 min",
-    Icon: IconCrown,
-    popular: false,
-  },
-];
+/* ── Iconos por índice (rotación) ─────────────────────── */
+const ICONS = [IconScissors, IconRazorBlade, IconCombScissors, IconBeard, IconChildScissors, IconCrown];
 
 interface Barbero { id: number; name: string; specialty: string; rune: string; }
+interface DbService { id: number; name: string; price: string; duration_min: number; description: string; }
 
 const horas = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
 
@@ -186,6 +131,7 @@ export default function ReservarPage() {
   const [paso, setPaso] = useState<1 | 2 | 3>(1);
   const [servicioId, setServicioId] = useState<number | null>(null);
   const [barberoId, setBarberoId] = useState<number | null>(null);
+  const [servicios, setServicios] = useState<DbService[]>([]);
   const [barberos, setBarberos] = useState<Barbero[]>([
     { id: 0, name: "El que más pronto me pueda atender", specialty: "Cualquier maestro disponible", rune: "᛭" },
   ]);
@@ -200,12 +146,10 @@ export default function ReservarPage() {
   const [errorReserva, setErrorReserva] = useState("");
   const [horasOcupadas, setHorasOcupadas] = useState<string[]>([]);
 
-  // Cargar barberos desde la DB
+  // Cargar servicios y barberos desde la DB
   useEffect(() => {
-    fetch("/api/barbers")
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data) && data.length > 0) setBarberos(data); })
-      .catch(() => {});
+    fetch("/api/services").then(r => r.json()).then((data: DbService[]) => { if (Array.isArray(data)) setServicios(data); }).catch(() => {});
+    fetch("/api/barbers").then(r => r.json()).then(data => { if (Array.isArray(data) && data.length > 0) setBarberos(data); }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -229,7 +173,7 @@ export default function ReservarPage() {
   }, [barberoId, fecha]);
 
   const servicio = servicios.find((s) => s.id === servicioId);
-  const barbero = barberos.find((b) => b.id === barberoId);
+  const barbero  = barberos.find((b) => b.id === barberoId);
 
   /* Pantalla de confirmación */
   if (confirmado) {
@@ -249,7 +193,7 @@ export default function ReservarPage() {
           <div style={{ border: "1px solid rgba(200,146,26,0.4)", padding: "32px", textAlign: "left", backgroundColor: "#0e0b07", marginBottom: "32px", position: "relative" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, #c8921a 30%, #e8b84b 50%, #c8921a 70%, transparent)" }} />
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <Row label="Servicio"  value={`${servicio?.nombre} — ${servicio?.precio}`} />
+              <Row label="Servicio"  value={`${servicio?.name} — ${servicio?.price}`} />
               <Row label="Maestro"   value={barbero?.name ?? ""} />
               <Row label="Fecha"     value={`${fecha} a las ${hora}`} />
               <Row label="Nombre"    value={nombre} />
@@ -440,9 +384,15 @@ export default function ReservarPage() {
                 style={{ background: "radial-gradient(ellipse, rgba(200,146,26,0.07) 0%, transparent 70%)" }}
               />
 
+              {servicios.length === 0 && (
+                <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(184,168,138,0.3)", fontFamily: "var(--font-barlow)", fontSize: "0.8rem", letterSpacing: "0.3em" }}>
+                  CARGANDO SERVICIOS...
+                </div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-                {servicios.map((s) => {
+                {servicios.map((s, idx) => {
                   const isSelected = servicioId === s.id;
+                  const Icon = ICONS[idx % ICONS.length];
                   return (
                     <button
                       key={s.id}
@@ -450,28 +400,33 @@ export default function ReservarPage() {
                       className={`service-card${isSelected ? " selected" : ""} p-6 border text-left`}
                       style={{ backgroundColor: isSelected ? "#2a1c0c" : "#141209" }}
                     >
-                      {/* Línea superior brillante */}
                       <div className={`absolute top-0 left-0 right-0 h-px transition-all duration-500
                         ${isSelected
                           ? "bg-gradient-to-r from-transparent via-[#c8921a] to-transparent opacity-100"
                           : "bg-gradient-to-r from-transparent via-[#c8921a]/30 to-transparent opacity-60"
                         }`}
                       />
+                      <div className={`icon-glow-idle mb-4 ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]/65"}`}>
+                        <Icon active={isSelected} />
+                      </div>
 
-                      {/* Badge popular */}
-                      {s.popular && (
-                        <span
-                          className="badge-pulse absolute -top-3 left-4 bg-[#c8921a] text-[#0f0d0a] text-[9px] tracking-widest uppercase px-3 py-0.5 font-bold"
-                          style={{ fontFamily: "var(--font-barlow)" }}
-                        >
-                          El Más Pedido
-                        </span>
+                      <p className={`font-bold mb-1 transition-colors duration-300 ${isSelected ? "text-[#e8b84b]" : "text-[#f0e6c8]"}`}
+                        style={{ fontFamily: "var(--font-oswald)", fontSize: "1.05rem", textShadow: isSelected ? "0 0 10px rgba(200,146,26,0.6)" : "none" }}>
+                        {s.name}
+                      </p>
+                      {s.description && (
+                        <p className="text-[#b8a882]/50 text-xs leading-relaxed mb-3" style={{ fontFamily: "var(--font-lato)" }}>
+                          {s.description}
+                        </p>
                       )}
-
-
-                      {/* Ícono SVG con glow */}
-                      <div className={`icon-glow-idle ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]/65"}`}>
-                        <s.Icon active={isSelected} />
+                      <div className="flex justify-between items-center mt-2">
+                        <span className={`font-black text-lg ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]"}`}
+                          style={{ fontFamily: "var(--font-barlow)" }}>
+                          {s.price}
+                        </span>
+                        <span className="text-[#b8a882]/35 text-[10px] tracking-wider" style={{ fontFamily: "var(--font-barlow)" }}>
+                          {s.duration_min} min
+                        </span>
                       </div>
                     </button>
                   );
@@ -588,7 +543,7 @@ export default function ReservarPage() {
               <div>
                 <span className="text-[#c8921a]/70 text-[9px] uppercase tracking-widest block mb-1" style={{ fontFamily: "var(--font-barlow)" }}>Servicio</span>
                 <span className="text-[#e8b84b] text-sm font-bold" style={{ fontFamily: "var(--font-barlow)", textShadow: "0 0 8px rgba(200,146,26,0.5)" }}>
-                  {servicio?.nombre} — {servicio?.precio}
+                  {servicio?.name} — {servicio?.price}
                 </span>
               </div>
               <div>
@@ -743,7 +698,7 @@ export default function ReservarPage() {
                     }
                     if (servicio && barbero) {
                       try {
-                        saveReservation(sessionEmail, sessionNombre, { servicio: servicio.nombre, precio: servicio.precio, barbero: barbero.name, fecha, hora });
+                        saveReservation(sessionEmail, sessionNombre, { servicio: servicio.name, precio: servicio.price, barbero: barbero.name, fecha, hora });
                         setErrorReserva("");
                         setConfirmado(true);
                       } catch (e) {

@@ -115,8 +115,7 @@ export default function MiAgenda() {
   }
 
   function handleLogout() {
-    logout();
-    router.push("/");
+    logout("/staff");
   }
 
   function semanaAnterior() { setLunes(prev => addDays(prev, -7)); }
@@ -150,7 +149,11 @@ export default function MiAgenda() {
               Mi Agenda
             </span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <a href="/caja"
+              style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "#c8921a", border: "1px solid rgba(200,146,26,0.4)", padding: "6px 14px", textDecoration: "none" }}>
+              + Registrar Venta
+            </a>
             {session && (
               <span style={{ fontSize: "0.72rem", letterSpacing: "0.2em", color: "rgba(184,168,138,0.5)" }}>
                 {session.name}

@@ -24,8 +24,8 @@ export default function Footer() {
           <a href="/reservar" className="text-[#b8a882]/30 hover:text-[#c8921a]/60 text-[9px] tracking-[0.3em] uppercase transition-colors" style={{ fontFamily: "var(--font-barlow)" }}>
             Reservar
           </a>
-          <a href="/login" className="text-[#b8a882]/30 hover:text-[#c8921a]/60 text-[9px] tracking-[0.35em] uppercase transition-colors" style={{ fontFamily: "var(--font-barlow)" }}>
-            Acceso
+          <a href="/staff" className="text-[#b8a882]/30 hover:text-[#c8921a]/60 text-[9px] tracking-[0.35em] uppercase transition-colors" style={{ fontFamily: "var(--font-barlow)" }}>
+            Staff
           </a>
         </div>
       </div>

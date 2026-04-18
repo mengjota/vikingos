@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { getSession, logout, type Session } from "@/lib/auth";
 
 const navLinks = [
@@ -10,8 +9,11 @@ const navLinks = [
   { label: "Productos", href: "/tienda" },
 ];
 
+// Solo muestra links de cliente cuando NO hay sesión activa o la sesión es de cliente
+const isClientOrGuest = (s: Session | null | undefined) =>
+  s === null || s?.role === "client";
+
 export default function Navbar({ transparentOnTop = false }: { transparentOnTop?: boolean }) {
-  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [session, setSession] = useState<Session | null | undefined>(undefined);
@@ -23,7 +25,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
   }, []);
 
   useEffect(() => {
-    getSession().then(setSession);
+    getSession().then(s => setSession(s ?? null));
   }, []);
 
   async function handleLogout() {
@@ -32,6 +34,9 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
     setMenuOpen(false);
     await logout(dest);
   }
+
+  // Mientras carga la sesión, no renderizamos nada en el área de nav/auth
+  const loaded = session !== undefined;
 
   return (
     <nav
@@ -47,22 +52,16 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
           className="flex flex-col leading-none transition-all duration-500"
           style={{ opacity: transparentOnTop && !scrolled ? 0 : 1, pointerEvents: transparentOnTop && !scrolled ? "none" : "auto" }}
         >
-          <span
-            className="text-[#c8921a] text-3xl font-black tracking-[0.2em] uppercase"
-            style={{ fontFamily: "var(--font-cinzel-decorative)" }}
-          >
+          <span className="text-[#c8921a] text-3xl font-black tracking-[0.2em] uppercase" style={{ fontFamily: "var(--font-cinzel-decorative)" }}>
             BarberOS
           </span>
-          <span
-            className="text-[#b8a882] text-[10px] tracking-[0.5em] uppercase"
-            style={{ fontFamily: "var(--font-barlow)" }}
-          >
+          <span className="text-[#b8a882] text-[10px] tracking-[0.5em] uppercase" style={{ fontFamily: "var(--font-barlow)" }}>
             by Narvek
           </span>
         </a>
 
-        {/* Links desktop — solo para clientes y visitantes */}
-        {(!session || session.role === "client") && (
+        {/* Links desktop — SOLO para clientes y visitantes sin sesión */}
+        {loaded && isClientOrGuest(session) && (
           <ul className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -78,46 +77,55 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
           </ul>
         )}
 
-        {/* CTAs desktop & mobile */}
+        {/* Área derecha: auth + CTA */}
         <div className="flex items-center gap-3 md:gap-4">
-          {session === undefined ? null : session ? (
-            /* --- LOGUEADO --- */
-            <>
+          {loaded && (
+            session ? (
+              /* --- LOGUEADO (employee / owner / client) --- */
+              <>
+                {/* Nombre + enlace a su zona */}
+                <a
+                  href={session.role === "owner" ? "/admin/dashboard" : session.role === "employee" ? "/mi-agenda" : "/mis-reservas"}
+                  className="flex items-center gap-2 text-[#c8921a] hover:text-[#f0c040] text-sm tracking-[0.2em] uppercase transition-colors duration-300 md:px-3 md:py-2 py-2"
+                  style={{ fontFamily: "var(--font-barlow)", fontWeight: 600 }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  <span className="hidden md:inline">
+                    {session.role === "owner"
+                      ? "Panel Admin"
+                      : session.role === "employee"
+                      ? (session.barberName ?? session.name).split(" ")[0]
+                      : "Mis Reservas"}
+                  </span>
+                </a>
+                {/* Salir — visible en desktop */}
+                <button
+                  onClick={handleLogout}
+                  className="hidden md:block text-[#b8a882]/60 hover:text-red-400 text-xs tracking-[0.3em] uppercase transition-colors duration-300 px-2 py-2"
+                  style={{ fontFamily: "var(--font-barlow)" }}
+                >
+                  Salir
+                </button>
+              </>
+            ) : (
+              /* --- NO LOGUEADO --- */
               <a
-                href={session.role === "owner" ? "/admin/dashboard" : session.role === "employee" ? "/mi-agenda" : "/mis-reservas"}
-                className="flex items-center gap-2 text-[#c8921a] hover:text-[#f0c040] text-sm tracking-[0.2em] uppercase transition-colors duration-300 md:px-3 md:py-2 py-2"
-                style={{ fontFamily: "var(--font-barlow)", fontWeight: 600 }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-                <span className="hidden md:inline">
-                  {session.role === "owner" ? "Panel Admin" : session.role === "employee" ? "Mi Agenda" : "Mis Reservas"}
-                </span>
-              </a>
-              <button
-                onClick={handleLogout}
-                className="hidden md:block text-[#b8a882]/60 hover:text-red-400 text-xs tracking-[0.3em] uppercase transition-colors duration-300 px-2 py-2"
+                href="/login"
+                className="flex items-center gap-2 text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors duration-300 md:px-3 md:py-3 py-2"
                 style={{ fontFamily: "var(--font-barlow)" }}
               >
-                Salir
-              </button>
-            </>
-          ) : (
-            /* --- NO LOGUEADO --- */
-            <a
-              href="/login"
-              className="flex items-center gap-2 text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors duration-300 md:px-3 md:py-3 py-2"
-              style={{ fontFamily: "var(--font-barlow)" }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m0 0l3-3m-3 3l3 3" />
-              </svg>
-              <span className="hidden md:inline">Iniciar Sesión</span>
-            </a>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m0 0l3-3m-3 3l3 3" />
+                </svg>
+                <span className="hidden md:inline">Iniciar Sesión</span>
+              </a>
+            )
           )}
-          {/* Reservar solo para clientes y visitantes, no empleados ni owners */}
-          {session?.role !== "employee" && session?.role !== "owner" && (
+
+          {/* Botón "Reservar Servicio" — SOLO clientes y visitantes */}
+          {loaded && isClientOrGuest(session) && (
             <a
               href="/reservar"
               className="hidden md:flex btn-glow border border-[#c8921a] text-[#c8921a] hover:bg-[#c8921a] hover:text-[#0f0d0a] text-sm tracking-[0.3em] uppercase px-6 py-3 transition-colors duration-300"
@@ -144,10 +152,10 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
       </div>
 
       {/* Menú mobile */}
-      {menuOpen && (
+      {menuOpen && loaded && (
         <div className="md:hidden bg-[#0f0d0a]/98 border-t border-[#c8921a]/20 px-6 py-6 flex flex-col gap-6">
-          {/* Links de marketing solo para clientes y visitantes */}
-          {(!session || session.role === "client") && navLinks.map((link) => (
+          {/* Links de marketing — SOLO para clientes y visitantes */}
+          {isClientOrGuest(session) && navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -159,7 +167,7 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
             </a>
           ))}
 
-          {session === undefined ? null : session ? (
+          {session ? (
             <>
               <a
                 href={session.role === "owner" ? "/admin/dashboard" : session.role === "employee" ? "/mi-agenda" : "/mis-reservas"}
@@ -170,7 +178,11 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                {session.role === "owner" ? "Panel Admin" : session.role === "employee" ? "Mi Agenda" : `Mi Cuenta — ${session.name.split(" ")[0]}`}
+                {session.role === "owner"
+                  ? "Panel Admin"
+                  : session.role === "employee"
+                  ? (session.barberName ?? session.name).split(" ")[0]
+                  : `Mi Cuenta — ${session.name.split(" ")[0]}`}
               </a>
               <button
                 onClick={handleLogout}
@@ -194,8 +206,8 @@ export default function Navbar({ transparentOnTop = false }: { transparentOnTop?
             </a>
           )}
 
-          {/* Reservar solo para clientes y visitantes */}
-          {(!session || session.role === "client") && (
+          {/* Botón reservar — SOLO clientes y visitantes */}
+          {isClientOrGuest(session) && (
             <a
               href="/reservar"
               onClick={() => setMenuOpen(false)}

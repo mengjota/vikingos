@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
 import { verifySession } from "@/lib/session";
 
+let _tablesReady = false;
 async function ensureTables() {
+  if (_tablesReady) return;
   await sql`
     CREATE TABLE IF NOT EXISTS barber_schedules (
       id            SERIAL PRIMARY KEY,
@@ -17,6 +19,7 @@ async function ensureTables() {
   `;
   try { await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_barber BOOLEAN DEFAULT true`; } catch (_) {}
   try { await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS barber_specialty TEXT`; } catch (_) {}
+  _tablesReady = true;
 }
 
 const DEFAULT_SCHEDULE = Array.from({ length: 7 }, (_, i) => ({

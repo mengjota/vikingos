@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
 import { verifySession } from "@/lib/session";
 
+let _colsReady = false;
 async function ensureBarbershipCols() {
+  if (_colsReady) return;
   try { await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS address TEXT DEFAULT ''`; } catch (_) {}
   try { await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS phone TEXT DEFAULT ''`; } catch (_) {}
   try { await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS description TEXT DEFAULT ''`; } catch (_) {}
@@ -14,6 +16,7 @@ async function ensureBarbershipCols() {
   try { await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS ciudad_fiscal TEXT DEFAULT ''`; } catch (_) {}
   try { await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS email_fiscal TEXT DEFAULT ''`; } catch (_) {}
   try { await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS iva_pct NUMERIC(5,2) DEFAULT 21`; } catch (_) {}
+  _colsReady = true;
 }
 
 async function getOwnerInfo(email: string) {

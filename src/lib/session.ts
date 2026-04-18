@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import sql from "@/lib/db";
 
 const secretKey = process.env.JWT_SECRET || "fallback-secret-para-desarrollo-solo";
 const key = new TextEncoder().encode(secretKey);
@@ -52,7 +53,18 @@ export async function createSession(payload: SessionPayload) {
 export async function verifySession() {
   const cookieStore = await cookies();
   const session = cookieStore.get("inv_session_token")?.value;
-  return await decrypt(session);
+  const payload = await decrypt(session);
+  if (!payload) return null;
+
+  // Verifica que el usuario siga existiendo en BD (cubre casos de empleado eliminado)
+  if (payload.userId) {
+    try {
+      const rows = await sql`SELECT id FROM users WHERE id = ${payload.userId}`;
+      if (rows.length === 0) return null;
+    } catch (_) {}
+  }
+
+  return payload;
 }
 
 export async function deleteSession() {

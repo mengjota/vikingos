@@ -84,14 +84,20 @@ export async function POST(req: NextRequest) {
   `;
   // Enviar email de confirmación (no bloqueante)
   if (row.client_email) {
-    sendConfirmacion({
-      to:       String(row.client_email),
-      nombre:   String(row.client_name),
-      servicio: String(row.service),
-      barbero:  String(row.barber),
-      fecha:    String(row.date),
-      hora:     String(row.time),
-    }).catch(() => {});
+    sql`SELECT nombre_comercial, email_fiscal FROM barbershops WHERE id = ${finalBid}`
+      .then(bs => {
+        const b = bs[0];
+        sendConfirmacion({
+          to:             String(row.client_email),
+          nombre:         String(row.client_name),
+          servicio:       String(row.service),
+          barbero:        String(row.barber),
+          fecha:          String(row.date),
+          hora:           String(row.time),
+          barberiaNombre: b?.nombre_comercial ? String(b.nombre_comercial) : undefined,
+          barberiaEmail:  b?.email_fiscal     ? String(b.email_fiscal)     : undefined,
+        });
+      }).catch(() => {});
   }
 
   return NextResponse.json(toRes(row), { status: 201 });

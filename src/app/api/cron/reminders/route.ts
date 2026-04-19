@@ -13,24 +13,29 @@ export async function GET(req: NextRequest) {
   const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
   const reservations = await sql`
-    SELECT client_name, client_email, service, barber, date::text AS date, time
-    FROM reservations
-    WHERE date = ${tomorrowStr}::date
-      AND status = 'pendiente'
-      AND client_email IS NOT NULL
-      AND client_email != ''
+    SELECT r.client_name, r.client_email, r.service, r.barber,
+           r.date::text AS date, r.time,
+           b.nombre_comercial, b.email_fiscal
+    FROM reservations r
+    LEFT JOIN barbershops b ON b.id = r.barbershop_id
+    WHERE r.date = ${tomorrowStr}::date
+      AND r.status = 'pendiente'
+      AND r.client_email IS NOT NULL
+      AND r.client_email != ''
   `;
 
   let sent = 0;
   for (const r of reservations) {
     try {
       await sendRecordatorio({
-        to:       String(r.client_email),
-        nombre:   String(r.client_name),
-        servicio: String(r.service),
-        barbero:  String(r.barber),
-        fecha:    String(r.date),
-        hora:     String(r.time),
+        to:             String(r.client_email),
+        nombre:         String(r.client_name),
+        servicio:       String(r.service),
+        barbero:        String(r.barber),
+        fecha:          String(r.date),
+        hora:           String(r.time),
+        barberiaNombre: r.nombre_comercial ? String(r.nombre_comercial) : undefined,
+        barberiaEmail:  r.email_fiscal     ? String(r.email_fiscal)     : undefined,
       });
       sent++;
     } catch (_) {}

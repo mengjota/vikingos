@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM = process.env.EMAIL_FROM ?? "BarberOS <noreply@resend.dev>";
+const SENDING_ADDRESS = process.env.EMAIL_FROM ?? "onboarding@resend.dev";
 
 function formatFecha(fecha: string) {
   return new Date(fecha + "T12:00:00").toLocaleDateString("es-ES", {
@@ -35,11 +35,14 @@ function emailHtml({ title, lines, footer }: { title: string; lines: string[]; f
 export async function sendConfirmacion(params: {
   to: string; nombre: string; servicio: string;
   barbero: string; fecha: string; hora: string;
+  barberiaNombre?: string; barberiaEmail?: string;
 }) {
   if (!process.env.RESEND_API_KEY || !params.to) return;
   const fechaFmt = formatFecha(params.fecha);
+  const fromName = params.barberiaNombre ?? "BarberOS";
   await resend.emails.send({
-    from: FROM,
+    from: `${fromName} <${SENDING_ADDRESS}>`,
+    ...(params.barberiaEmail ? { replyTo: params.barberiaEmail } : {}),
     to: params.to,
     subject: `Cita confirmada — ${params.hora} · ${fechaFmt}`,
     html: emailHtml({
@@ -59,11 +62,14 @@ export async function sendConfirmacion(params: {
 export async function sendRecordatorio(params: {
   to: string; nombre: string; servicio: string;
   barbero: string; fecha: string; hora: string;
+  barberiaNombre?: string; barberiaEmail?: string;
 }) {
   if (!process.env.RESEND_API_KEY || !params.to) return;
   const fechaFmt = formatFecha(params.fecha);
+  const fromName = params.barberiaNombre ?? "BarberOS";
   await resend.emails.send({
-    from: FROM,
+    from: `${fromName} <${SENDING_ADDRESS}>`,
+    ...(params.barberiaEmail ? { replyTo: params.barberiaEmail } : {}),
     to: params.to,
     subject: `Recordatorio — Mañana tienes cita a las ${params.hora}`,
     html: emailHtml({

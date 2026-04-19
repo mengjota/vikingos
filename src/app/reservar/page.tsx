@@ -207,6 +207,7 @@ export default function ReservarPage() {
   async function confirmar() {
     if (!nombre.trim()) { setErrorReserva(t.reservar.errorNombre); return; }
     if (!telefono.trim()) { setErrorReserva(t.reservar.errorTelefono); return; }
+    if (!email.trim()) { setErrorReserva(t.reservar.errorEmail); return; }
     if (!fecha) { setErrorReserva(t.reservar.errorFecha); return; }
     if (!hora) { setErrorReserva(t.reservar.errorHora); return; }
     setSubmitting(true);
@@ -521,10 +522,10 @@ export default function ReservarPage() {
                   fontFamily: "var(--font-barlow)", fontSize: "0.9rem", fontWeight: 900,
                   letterSpacing: "0.4em", textTransform: "uppercase",
                   padding: "20px 52px", border: "none",
-                  cursor: (!fecha || !hora || !nombre.trim() || !telefono.trim() || submitting) ? "not-allowed" : "pointer",
-                  background: (!fecha || !hora || !nombre.trim() || !telefono.trim()) ? "rgba(92,58,30,0.35)" : "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)",
-                  color: (!fecha || !hora || !nombre.trim() || !telefono.trim()) ? "rgba(184,168,138,0.25)" : "#080604",
-                  boxShadow: (!fecha || !hora || !nombre.trim() || !telefono.trim()) ? "none" : "0 0 50px rgba(200,146,26,0.6)",
+                  cursor: (!fecha || !hora || !nombre.trim() || !telefono.trim() || !email.trim() || submitting) ? "not-allowed" : "pointer",
+                  background: (!fecha || !hora || !nombre.trim() || !telefono.trim() || !email.trim()) ? "rgba(92,58,30,0.35)" : "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)",
+                  color: (!fecha || !hora || !nombre.trim() || !telefono.trim() || !email.trim()) ? "rgba(184,168,138,0.25)" : "#080604",
+                  boxShadow: (!fecha || !hora || !nombre.trim() || !telefono.trim() || !email.trim()) ? "none" : "0 0 50px rgba(200,146,26,0.6)",
                 }}>
                 {submitting ? t.reservar.confirmando : t.reservar.confirmarCita}
               </button>

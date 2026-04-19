@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
+import { sendConfirmacion } from "@/lib/email";
 
 const BID = () => process.env.BARBERSHOP_ID ?? "narvek";
 
@@ -81,5 +82,17 @@ export async function POST(req: NextRequest) {
     RETURNING id, client_name, client_email, client_phone, service, price, barber,
               date::text AS date, time, status, invoice_id, created_at
   `;
+  // Enviar email de confirmación (no bloqueante)
+  if (row.client_email) {
+    sendConfirmacion({
+      to:       String(row.client_email),
+      nombre:   String(row.client_name),
+      servicio: String(row.service),
+      barbero:  String(row.barber),
+      fecha:    String(row.date),
+      hora:     String(row.time),
+    }).catch(() => {});
+  }
+
   return NextResponse.json(toRes(row), { status: 201 });
 }

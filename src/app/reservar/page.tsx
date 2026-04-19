@@ -177,6 +177,7 @@ export default function ReservarPage() {
 
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [email, setEmail] = useState("");
 
   const [schedule, setSchedule] = useState<DaySchedule[]>([]);
   const [serviciosLoaded, setServiciosLoaded] = useState(false);
@@ -221,7 +222,7 @@ export default function ReservarPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           clienteNombre: nombre.trim(),
-          clienteEmail:  null,
+          clienteEmail:  email.trim() || null,
           clientePhone:  telefono.trim(),
           servicio:      servicio?.name ?? "Sin especificar",
           precio:        servicio?.price ?? "—",
@@ -266,13 +267,14 @@ export default function ReservarPage() {
               <Row label="Fecha"    value={`${fecha} a las ${hora}`} />
               <Row label="Nombre"   value={nombre} />
               <Row label="Teléfono" value={telefono} />
+              {email && <Row label="Email" value={email} />}
             </div>
           </div>
           <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", color: "rgba(184,168,138,0.35)", marginBottom: "28px", letterSpacing: "0.1em" }}>
-            Te contactaremos para confirmar tu cita.
+            {email ? "Te hemos enviado la confirmación por email. También recibirás un recordatorio el día anterior." : "Te contactaremos para confirmar tu cita."}
           </p>
           <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
-            <button onClick={() => { setConfirmado(false); setPaso(1); setServicioId(null); setBarberoId(null); setFecha(""); setHora(""); setNombre(""); setTelefono(""); setSlots([]); }}
+            <button onClick={() => { setConfirmado(false); setPaso(1); setServicioId(null); setBarberoId(null); setFecha(""); setHora(""); setNombre(""); setTelefono(""); setEmail(""); setSlots([]); }}
               style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 700, color: "#c8921a", border: "1px solid rgba(200,146,26,0.5)", backgroundColor: "transparent", padding: "14px 28px", cursor: "pointer" }}>
               Nueva Reserva
             </button>
@@ -479,8 +481,13 @@ export default function ReservarPage() {
                     style={{ width: "100%", padding: "14px 16px", backgroundColor: "#141209", border: telefono ? "1px solid rgba(200,146,26,0.5)" : "1px solid rgba(92,58,30,0.5)", color: "#f0e6c8", fontFamily: "var(--font-barlow)", fontSize: "1rem", outline: "none", boxSizing: "border-box" }} />
                 </div>
               </div>
+              <div style={{ marginTop: "16px" }}>
+                <label style={{ display: "block", fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.7)", marginBottom: "8px" }}>Email (opcional — para recordatorio)</label>
+                <input type="email" placeholder="carlos@correo.com" value={email} onChange={e => setEmail(e.target.value)}
+                  style={{ width: "100%", padding: "14px 16px", backgroundColor: "#141209", border: email ? "1px solid rgba(200,146,26,0.5)" : "1px solid rgba(92,58,30,0.5)", color: "#f0e6c8", fontFamily: "var(--font-barlow)", fontSize: "1rem", outline: "none", boxSizing: "border-box" }} />
+              </div>
               <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", color: "rgba(184,168,138,0.25)", marginTop: "12px", letterSpacing: "0.1em" }}>
-                Sin registro · Sin contraseña · Te avisaremos por teléfono
+                Sin registro · Sin contraseña · Si añades email te mandamos confirmación y recordatorio
               </p>
             </div>
 

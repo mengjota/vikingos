@@ -55,10 +55,23 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#080604" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#080604", paddingTop: barbershopId === "demo" ? "40px" : 0 }}>
       <div style={{ background: "radial-gradient(ellipse 80% 40% at 50% 0%, rgba(200,146,26,0.08) 0%, transparent 60%)", position: "fixed", inset: 0, pointerEvents: "none" }} />
 
       <PushPrompt barbershopId={barbershopId} userEmail={sessionEmail} variant="staff" />
+
+      {/* Demo banner */}
+      {barbershopId === "demo" && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999, backgroundColor: "#c8921a", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px" }}>
+          <span style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", fontWeight: 800, letterSpacing: "0.4em", textTransform: "uppercase", color: "#080604" }}>
+            ⚠ MODO DEMO — Solo lectura. Los cambios no están permitidos.
+          </span>
+          <a href="https://wa.me/34TUNUMERO?text=Hola,%20quiero%20mi%20propia%20instancia%20de%20BarberOS" target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#080604", textDecoration: "underline" }}>
+            Contactar →
+          </a>
+        </div>
+      )}
 
       {/* Header */}
       <div style={{ borderBottom: "1px solid rgba(92,58,30,0.4)", backgroundColor: "#0e0b07", padding: "0 24px" }}>

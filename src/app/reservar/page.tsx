@@ -162,6 +162,40 @@ function ReservarContent() {
   const { t } = useT();
   const searchParams = useSearchParams();
   const barbershopId = searchParams.get("barbershopId") ?? "";
+
+  // ── Puerta de código de acceso ──
+  const [codeGate, setCodeGate] = useState<"checking" | "required" | "ok">(barbershopId ? "checking" : "ok");
+  const [shopInfo, setShopInfo] = useState<{ name: string; phone: string } | null>(null);
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [codeVerifying, setCodeVerifying] = useState(false);
+
+  useEffect(() => {
+    if (!barbershopId) { setCodeGate("ok"); return; }
+    fetch(`/api/barbershop?id=${barbershopId}`)
+      .then(r => r.json())
+      .then((d: { name?: string; phone?: string; has_booking_code?: boolean }) => {
+        setShopInfo({ name: d.name ?? barbershopId, phone: d.phone ?? "" });
+        setCodeGate(d.has_booking_code ? "required" : "ok");
+      })
+      .catch(() => setCodeGate("ok"));
+  }, [barbershopId]);
+
+  async function verifyCode() {
+    if (!codeInput.trim()) { setCodeError("Introduce el código de acceso"); return; }
+    setCodeVerifying(true); setCodeError("");
+    try {
+      const res = await fetch("/api/verify-booking-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ barbershopId, code: codeInput.trim() }),
+      });
+      if (res.ok) { setCodeGate("ok"); }
+      else { const d = await res.json().catch(() => ({})); setCodeError(d.error ?? "Código incorrecto"); }
+    } catch { setCodeError("Error de conexión"); }
+    finally { setCodeVerifying(false); }
+  }
+
   const [paso, setPaso] = useState<1 | 2 | 3>(1);
   const [servicioId, setServicioId] = useState<number | null>(null);
   const [barberoId, setBarberoId] = useState<number | null>(null);
@@ -189,10 +223,11 @@ function ReservarContent() {
   const bidQ = barbershopId ? `?barbershopId=${barbershopId}` : "";
 
   useEffect(() => {
+    if (codeGate !== "ok") return;
     fetch(`/api/services${bidQ}`).then(r => r.json()).then((d: DbService[]) => { if (Array.isArray(d)) setServicios(d); }).catch(() => {}).finally(() => setServiciosLoaded(true));
     fetch(`/api/barbers${bidQ}`).then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setBarberos(d); }).catch(() => {});
     fetch(`/api/availability?schedule=true${bid}`).then(r => r.json()).then(setSchedule).catch(() => {});
-  }, [barbershopId]);
+  }, [barbershopId, codeGate]);
 
   const fetchSlots = useCallback(() => {
     if (!fecha) { setSlots([]); return; }
@@ -245,6 +280,67 @@ function ReservarContent() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  /* ── Puerta de código ── */
+  if (codeGate === "checking") {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#080604" }}>
+        <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", letterSpacing: "0.4em", color: "rgba(184,168,138,0.3)", textTransform: "uppercase" }}>Cargando...</p>
+      </div>
+    );
+  }
+
+  if (codeGate === "required") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "#080604" }}>
+        <div className="fixed inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(200,146,26,0.1) 0%, transparent 65%)" }} />
+        <div style={{ maxWidth: "440px", width: "100%", position: "relative" }}>
+          <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.6em", textTransform: "uppercase", color: "rgba(200,146,26,0.6)", textAlign: "center", marginBottom: "16px" }}>— Acceso Exclusivo —</p>
+          <h1 style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "clamp(1.8rem,6vw,2.8rem)", fontWeight: 900, color: "#f0e6c8", textAlign: "center", marginBottom: "8px" }}>
+            {shopInfo?.name ?? "Barbería"}
+          </h1>
+          <p style={{ fontFamily: "var(--font-lato)", fontSize: "0.88rem", color: "rgba(184,168,138,0.5)", textAlign: "center", marginBottom: "36px", fontStyle: "italic" }}>
+            Esta barbería requiere un código para reservar online.
+          </p>
+
+          <div style={{ border: "1px solid rgba(200,146,26,0.3)", backgroundColor: "#0e0b07", padding: "32px", position: "relative" }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, #c8921a, transparent)" }} />
+
+            <label style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(200,146,26,0.7)", display: "block", marginBottom: "10px" }}>
+              Código de acceso
+            </label>
+            <input
+              value={codeInput}
+              onChange={e => { setCodeInput(e.target.value); setCodeError(""); }}
+              onKeyDown={e => e.key === "Enter" && verifyCode()}
+              placeholder="Introduce el código..."
+              autoFocus
+              style={{ width: "100%", padding: "14px 16px", backgroundColor: "#0a0806", border: `1px solid ${codeError ? "rgba(248,113,113,0.5)" : "rgba(92,58,30,0.5)"}`, color: "#f0e6c8", fontFamily: "var(--font-barlow)", fontSize: "1rem", outline: "none", boxSizing: "border-box" as const, marginBottom: "8px", letterSpacing: "0.1em" }}
+            />
+            {codeError && <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.72rem", color: "#f87171", marginBottom: "16px" }}>⚠ {codeError}</p>}
+
+            <button onClick={verifyCode} disabled={codeVerifying}
+              style={{ width: "100%", padding: "14px", marginTop: "8px", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", border: "none", cursor: codeVerifying ? "not-allowed" : "pointer", fontFamily: "var(--font-barlow)", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "0.4em", textTransform: "uppercase", color: "#080604" }}>
+              {codeVerifying ? "Verificando..." : "Entrar →"}
+            </button>
+          </div>
+
+          {shopInfo?.phone && (
+            <div style={{ marginTop: "24px", textAlign: "center", padding: "20px", border: "1px solid rgba(92,58,30,0.25)", backgroundColor: "rgba(200,146,26,0.03)" }}>
+              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.5)", marginBottom: "8px" }}>¿No tienes el código?</p>
+              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.82rem", color: "rgba(184,168,138,0.6)", marginBottom: "6px" }}>
+                Llama a la barbería y te lo darán:
+              </p>
+              <a href={`tel:${shopInfo.phone}`}
+                style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "1.2rem", color: "#c8921a", textDecoration: "none", letterSpacing: "0.05em" }}>
+                {shopInfo.phone}
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   }
 
   /* ── Confirmación ── */

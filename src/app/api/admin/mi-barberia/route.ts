@@ -16,6 +16,7 @@ async function ensureBarbershipCols() {
   try { await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS ciudad_fiscal TEXT DEFAULT ''`; } catch (_) {}
   try { await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS email_fiscal TEXT DEFAULT ''`; } catch (_) {}
   try { await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS iva_pct NUMERIC(5,2) DEFAULT 21`; } catch (_) {}
+  try { await sql`ALTER TABLE barbershops ADD COLUMN IF NOT EXISTS booking_code TEXT DEFAULT NULL`; } catch (_) {}
   _colsReady = true;
 }
 
@@ -28,7 +29,7 @@ async function getOwnerInfo(email: string) {
            b.address, b.phone, b.description,
            b.cif, b.razon_social, b.nombre_comercial,
            b.direccion_fiscal, b.codigo_postal, b.ciudad_fiscal,
-           b.email_fiscal, b.iva_pct
+           b.email_fiscal, b.iva_pct, b.booking_code
     FROM users u
     LEFT JOIN barbershops b ON b.id = u.barbershop_id
     WHERE u.email = ${email.toLowerCase()}
@@ -58,6 +59,7 @@ export async function GET(req: NextRequest) {
     ciudad_fiscal:    info.ciudad_fiscal ?? "",
     email_fiscal:     info.email_fiscal ?? "",
     iva_pct:          info.iva_pct ?? 21,
+    booking_code:     info.booking_code ?? "",
   });
 }
 
@@ -73,6 +75,7 @@ export async function PUT(req: NextRequest) {
       name, address, phone, description,
       cif, razon_social, nombre_comercial,
       direccion_fiscal, codigo_postal, ciudad_fiscal, email_fiscal, iva_pct,
+      booking_code,
     } = body;
 
     if (name !== undefined && String(name).trim().length < 2) {
@@ -95,7 +98,8 @@ export async function PUT(req: NextRequest) {
         codigo_postal    = COALESCE(${s(codigo_postal)}, codigo_postal),
         ciudad_fiscal    = COALESCE(${s(ciudad_fiscal)}, ciudad_fiscal),
         email_fiscal     = COALESCE(${s(email_fiscal)}, email_fiscal),
-        iva_pct          = COALESCE(${n(iva_pct)}, iva_pct)
+        iva_pct          = COALESCE(${n(iva_pct)}, iva_pct),
+        booking_code     = ${typeof booking_code === "string" ? (booking_code.trim() || null) : null}
       WHERE id = ${info.bs_id}
     `;
 
@@ -114,6 +118,7 @@ export async function PUT(req: NextRequest) {
       ciudad_fiscal:    updated?.ciudad_fiscal ?? "",
       email_fiscal:     updated?.email_fiscal ?? "",
       iva_pct:          updated?.iva_pct ?? 21,
+      booking_code:     updated?.booking_code ?? "",
     });
   } catch (err) {
     console.error("[mi-barberia PUT]", err);

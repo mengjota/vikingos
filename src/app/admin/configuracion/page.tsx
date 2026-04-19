@@ -9,14 +9,14 @@ interface BarbershopData {
   address: string; phone: string; description: string;
   cif: string; razon_social: string; nombre_comercial: string;
   direccion_fiscal: string; codigo_postal: string; ciudad_fiscal: string;
-  email_fiscal: string; iva_pct: number;
+  email_fiscal: string; iva_pct: number; booking_code: string;
 }
 
 const EMPTY: BarbershopData = {
   id: "", name: "", slug: "", address: "", phone: "", description: "",
   cif: "", razon_social: "", nombre_comercial: "",
   direccion_fiscal: "", codigo_postal: "", ciudad_fiscal: "",
-  email_fiscal: "", iva_pct: 21,
+  email_fiscal: "", iva_pct: 21, booking_code: "",
 };
 
 const inp: React.CSSProperties = {
@@ -178,6 +178,26 @@ export default function AdminConfiguracion() {
                   <input type="number" min="0" max="100" step="0.01" value={form.iva_pct} onChange={e => set("iva_pct", parseFloat(e.target.value) || 21)} style={{ ...inp, fontFamily: "monospace" }} />
                   <p style={hint}>Servicios de barbería en España → 21% (Régimen General)</p>
                 </div>
+              </div>
+            </div>
+
+            {/* ── Código de acceso a reservas ── */}
+            <div style={sectionStyle}>
+              <Bar />
+              <h2 style={{ fontFamily: "var(--font-barlow)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#f0e6c8", marginBottom: "8px" }}>Código de Acceso a Reservas</h2>
+              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.72rem", color: "rgba(184,168,138,0.4)", marginBottom: "24px" }}>
+                Si lo activas, los clientes necesitarán este código para poder hacer una reserva online. Dáselo tú personalmente o por teléfono. Déjalo vacío para que cualquiera pueda reservar sin código.
+              </p>
+              <div>
+                <label style={lbl}>Código de acceso</label>
+                <input
+                  value={form.booking_code}
+                  onChange={e => set("booking_code", e.target.value)}
+                  placeholder="Ej: VIKINGOS2025  ·  déjalo vacío para deshabilitar"
+                  maxLength={40}
+                  style={inp}
+                />
+                <p style={hint}>Insensible a mayúsculas · Compártelo con tus clientes de confianza</p>
               </div>
             </div>
 

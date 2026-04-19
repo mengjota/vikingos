@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BarberOS — Sin conexión</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #080604;
+      color: #f0e6c8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, sans-serif;
+      text-align: center;
+      padding: 24px;
+    }
+    .rune { font-size: 4rem; color: #c8921a; margin-bottom: 24px; }
+    h1 { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.1em; margin-bottom: 12px; color: #f0e6c8; }
+    p { color: rgba(184,168,138,0.6); font-size: 0.95rem; line-height: 1.7; max-width: 340px; }
+    button {
+      margin-top: 32px;
+      background: linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010);
+      color: #080604;
+      border: none;
+      padding: 14px 36px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="rune">᛭</div>
+  <h1>Sin conexión</h1>
+  <p>No hay red disponible. Conéctate a Internet para reservar tu cita.</p>
+  <button onclick="location.reload()">REINTENTAR</button>
+</body>
+</html>

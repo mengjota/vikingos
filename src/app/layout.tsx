@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import NavbarWrapper from "@/components/NavbarWrapper";
+import PwaManager from "@/components/PwaManager";
 import { LangProvider } from "@/lib/i18n";
 import {
   Cinzel_Decorative,
@@ -49,9 +50,26 @@ const imFell = IM_Fell_English({
 
 export const metadata: Metadata = {
   title: "BarberOS",
-  description: "La plataforma para barberías",
+  description: "Reserva tu cita en tu barbería favorita",
   manifest: "/manifest.json",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "BarberOS" },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "BarberOS",
+    startupImage: "/api/icon?size=512",
+  },
+  icons: {
+    apple: "/api/icon?size=192",
+    icon: [
+      { url: "/api/icon?size=192", sizes: "192x192", type: "image/png" },
+      { url: "/api/icon?size=512", sizes: "512x512", type: "image/png" },
+    ],
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+    "msapplication-TileColor": "#080604",
+    "msapplication-TileImage": "/api/icon?size=192",
+  },
 };
 
 export default function RootLayout({
@@ -68,6 +86,7 @@ export default function RootLayout({
         <LangProvider>
           <NavbarWrapper />
           {children}
+          <PwaManager />
         </LangProvider>
       </body>
     </html>

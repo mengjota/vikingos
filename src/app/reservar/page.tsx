@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useT } from "@/lib/i18n";
 
 /* ── Iconos SVG ────────────────────────────────────────── */
 const IconScissors = ({ active }: { active: boolean }) => (
@@ -52,9 +53,6 @@ interface Barbero { id: number; name: string; specialty: string; rune: string; s
 interface DbService { id: number; name: string; price: string; duration_min: number; description: string; }
 interface DaySchedule { day_of_week: number; active: boolean; }
 
-const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-const DAY_LABELS  = ["Lu","Ma","Mi","Ju","Vi","Sá","Do"];
-
 /* ── Helpers de calendario ──────────────────────────────── */
 function toISO(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
@@ -62,11 +60,13 @@ function toISO(d: Date) {
 function todayISO() { return toISO(new Date()); }
 
 /* ── Componente calendario ─────────────────────────────── */
-function MiniCal({ value, onChange, schedule, barberSchedule }: {
+function MiniCal({ value, onChange, schedule, barberSchedule, meses, diasSemana }: {
   value: string;
   onChange: (d: string) => void;
   schedule: DaySchedule[];
   barberSchedule?: { day_of_week: number; is_working: boolean }[] | null;
+  meses: string[];
+  diasSemana: string[];
 }) {
   const [month, setMonth] = useState(() => {
     const n = new Date();
@@ -75,7 +75,7 @@ function MiniCal({ value, onChange, schedule, barberSchedule }: {
 
   const today = todayISO();
 
-  const firstDow = (month.getDay() + 6) % 7; // Mon=0
+  const firstDow = (month.getDay() + 6) % 7;
   const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
   const cells: (number | null)[] = [...Array(firstDow).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)];
   while (cells.length % 7 !== 0) cells.push(null);
@@ -93,8 +93,7 @@ function MiniCal({ value, onChange, schedule, barberSchedule }: {
     return true;
   }
   function isPast(day: number) {
-    const iso = toISO(new Date(month.getFullYear(), month.getMonth(), day));
-    return iso < today;
+    return toISO(new Date(month.getFullYear(), month.getMonth(), day)) < today;
   }
   function isoOf(day: number) {
     return toISO(new Date(month.getFullYear(), month.getMonth(), day));
@@ -102,14 +101,13 @@ function MiniCal({ value, onChange, schedule, barberSchedule }: {
 
   return (
     <div>
-      {/* Navegación de mes */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
         <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
           style={{ background: "none", border: "1px solid rgba(92,58,30,0.4)", color: "rgba(184,168,138,0.6)", cursor: "pointer", padding: "6px 12px", fontFamily: "var(--font-barlow)", fontSize: "0.85rem" }}>
           ‹
         </button>
         <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 700, color: "#f0e6c8", letterSpacing: "0.15em", textTransform: "uppercase" }}>
-          {MONTH_NAMES[month.getMonth()]} {month.getFullYear()}
+          {meses[month.getMonth()]} {month.getFullYear()}
         </p>
         <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
           style={{ background: "none", border: "1px solid rgba(92,58,30,0.4)", color: "rgba(184,168,138,0.6)", cursor: "pointer", padding: "6px 12px", fontFamily: "var(--font-barlow)", fontSize: "0.85rem" }}>
@@ -117,14 +115,12 @@ function MiniCal({ value, onChange, schedule, barberSchedule }: {
         </button>
       </div>
 
-      {/* Cabecera días */}
       <div className="cal-grid" style={{ marginBottom: "4px" }}>
-        {DAY_LABELS.map(d => (
+        {diasSemana.map(d => (
           <div key={d} style={{ textAlign: "center", fontFamily: "var(--font-barlow)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "rgba(200,146,26,0.5)", paddingBottom: "4px" }}>{d}</div>
         ))}
       </div>
 
-      {/* Grid días */}
       <div className="cal-grid">
         {cells.map((day, i) => {
           if (!day) return <div key={i} />;
@@ -162,12 +158,13 @@ function MiniCal({ value, onChange, schedule, barberSchedule }: {
 
 /* ── Página principal ────────────────────────────────── */
 export default function ReservarPage() {
+  const { t } = useT();
   const [paso, setPaso] = useState<1 | 2 | 3>(1);
   const [servicioId, setServicioId] = useState<number | null>(null);
   const [barberoId, setBarberoId] = useState<number | null>(null);
   const [servicios, setServicios] = useState<DbService[]>([]);
   const [barberos, setBarberos] = useState<Barbero[]>([
-    { id: 0, name: "El que más pronto me pueda atender", specialty: "Cualquier maestro disponible", rune: "᛭", schedule: null },
+    { id: 0, name: t.reservar.cualquierMaestro, specialty: t.reservar.cualquierMaestroSub, rune: "᛭", schedule: null },
   ]);
 
   const [fecha, setFecha] = useState("");
@@ -185,14 +182,12 @@ export default function ReservarPage() {
   const [errorReserva, setErrorReserva] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Cargar datos iniciales
   useEffect(() => {
     fetch("/api/services").then(r => r.json()).then((d: DbService[]) => { if (Array.isArray(d)) setServicios(d); }).catch(() => {}).finally(() => setServiciosLoaded(true));
     fetch("/api/barbers").then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setBarberos(d); }).catch(() => {});
     fetch("/api/availability?schedule=true").then(r => r.json()).then(setSchedule).catch(() => {});
   }, []);
 
-  // Cargar slots cuando cambia fecha o barbero
   const fetchSlots = useCallback(() => {
     if (!fecha) { setSlots([]); return; }
     const b = barberos.find(b => b.id === barberoId);
@@ -210,10 +205,10 @@ export default function ReservarPage() {
   const barbero  = barberos.find(b => b.id === barberoId);
 
   async function confirmar() {
-    if (!nombre.trim()) { setErrorReserva("Introduce tu nombre."); return; }
-    if (!telefono.trim()) { setErrorReserva("Introduce tu teléfono."); return; }
-    if (!fecha) { setErrorReserva("Selecciona una fecha."); return; }
-    if (!hora) { setErrorReserva("Selecciona una hora."); return; }
+    if (!nombre.trim()) { setErrorReserva(t.reservar.errorNombre); return; }
+    if (!telefono.trim()) { setErrorReserva(t.reservar.errorTelefono); return; }
+    if (!fecha) { setErrorReserva(t.reservar.errorFecha); return; }
+    if (!hora) { setErrorReserva(t.reservar.errorHora); return; }
     setSubmitting(true);
     setErrorReserva("");
     try {
@@ -224,21 +219,21 @@ export default function ReservarPage() {
           clienteNombre: nombre.trim(),
           clienteEmail:  email.trim() || null,
           clientePhone:  telefono.trim(),
-          servicio:      servicio?.name ?? "Sin especificar",
+          servicio:      servicio?.name ?? t.reservar.sinEspecificar,
           precio:        servicio?.price ?? "—",
-          barbero:       barbero?.name ?? "El que más pronto me pueda atender",
+          barbero:       barbero?.id === 0 ? "El que más pronto me pueda atender" : (barbero?.name ?? "El que más pronto me pueda atender"),
           fecha,
           hora,
         }),
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
-        setErrorReserva(d.error ?? `Error ${res.status} al confirmar la reserva.`);
+        setErrorReserva(d.error ?? `Error ${res.status}`);
         return;
       }
       setConfirmado(true);
     } catch (_) {
-      setErrorReserva("Error de conexión. Inténtalo de nuevo.");
+      setErrorReserva(t.reservar.errorConexion);
     } finally {
       setSubmitting(false);
     }
@@ -246,6 +241,7 @@ export default function ReservarPage() {
 
   /* ── Confirmación ── */
   if (confirmado) {
+    const barberoNombre = barbero?.id === 0 ? t.reservar.cualquierMaestro : (barbero?.name ?? t.reservar.cualquierMaestro);
     return (
       <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "#080604" }}>
         <div className="fixed inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(200,146,26,0.15) 0%, transparent 65%)" }} />
@@ -254,33 +250,33 @@ export default function ReservarPage() {
             <IconCrown active />
           </div>
           <h2 style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "clamp(2rem,6vw,3.5rem)", fontWeight: 900, color: "#f5ead0", textShadow: "0 0 60px rgba(200,146,26,0.5)", marginBottom: "16px" }}>
-            ¡Pacto Sellado!
+            {t.reservar.pactoCita}
           </h2>
           <p style={{ fontFamily: "var(--font-barlow)", fontSize: "1.1rem", color: "rgba(184,168,138,0.7)", marginBottom: "36px", fontStyle: "italic" }}>
-            Tu silla en el salón te espera.
+            {t.reservar.sillaEspera}
           </p>
           <div style={{ border: "1px solid rgba(200,146,26,0.4)", padding: "32px", textAlign: "left", backgroundColor: "#0e0b07", marginBottom: "32px", position: "relative" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(to right, transparent, #c8921a 30%, #e8b84b 50%, #c8921a 70%, transparent)" }} />
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <Row label="Servicio" value={`${servicio?.name ?? "—"} — ${servicio?.price ?? ""}`} />
-              <Row label="Maestro"  value={barbero?.name ?? "El que más pronto me pueda atender"} />
-              <Row label="Fecha"    value={`${fecha} a las ${hora}`} />
-              <Row label="Nombre"   value={nombre} />
-              <Row label="Teléfono" value={telefono} />
-              {email && <Row label="Email" value={email} />}
+              <Row label={t.reservar.labelServicio} value={`${servicio?.name ?? "—"} — ${servicio?.price ?? ""}`} />
+              <Row label={t.reservar.labelMaestro}  value={barberoNombre} />
+              <Row label={t.reservar.labelFecha}    value={`${fecha} ${t.reservar.aLas} ${hora}`} />
+              <Row label={t.reservar.labelNombre}   value={nombre} />
+              <Row label={t.reservar.labelTelefono} value={telefono} />
+              {email && <Row label={t.reservar.labelEmail} value={email} />}
             </div>
           </div>
           <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", color: "rgba(184,168,138,0.35)", marginBottom: "28px", letterSpacing: "0.1em" }}>
-            {email ? "Te hemos enviado la confirmación por email. También recibirás un recordatorio el día anterior." : "Te contactaremos para confirmar tu cita."}
+            {email ? t.reservar.textoEmail : t.reservar.textoNoEmail}
           </p>
           <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
             <button onClick={() => { setConfirmado(false); setPaso(1); setServicioId(null); setBarberoId(null); setFecha(""); setHora(""); setNombre(""); setTelefono(""); setEmail(""); setSlots([]); }}
               style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 700, color: "#c8921a", border: "1px solid rgba(200,146,26,0.5)", backgroundColor: "transparent", padding: "14px 28px", cursor: "pointer" }}>
-              Nueva Reserva
+              {t.reservar.nuevaReserva}
             </button>
             <Link href="/"
               style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 700, color: "#080604", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", padding: "14px 28px", display: "inline-block", boxShadow: "0 0 30px rgba(200,146,26,0.4)", textDecoration: "none" }}>
-              Volver al inicio
+              {t.reservar.volverInicio}
             </Link>
           </div>
         </div>
@@ -288,8 +284,8 @@ export default function ReservarPage() {
     );
   }
 
-  const stepTitles = ["", "¿Qué Servicio Deseas?", "¿Con Quién Quieres la Experiencia?", "Elige tu Momento"];
-  const stepSubs   = ["", "Selecciona el servicio que buscas", "Elige tu maestro o deja que el destino decida", "Calendario · Hora · Tus datos"];
+  const stepTitles = ["", t.reservar.queServicio, t.reservar.conQuien, t.reservar.eligeTuMomento];
+  const stepSubs   = ["", t.reservar.subServicio, t.reservar.subMaestro, t.reservar.subConfirmar];
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#080604", paddingTop: "100px" }}>
@@ -297,9 +293,9 @@ export default function ReservarPage() {
 
       {/* Hero */}
       <div style={{ textAlign: "center", padding: "48px 24px 56px" }}>
-        <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.7em", textTransform: "uppercase", color: "#c8921a", marginBottom: "20px" }}>— Tu Experiencia Comienza Aquí —</p>
+        <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.7em", textTransform: "uppercase", color: "#c8921a", marginBottom: "20px" }}>{t.reservar.tuExperiencia}</p>
         <h1 style={{ fontFamily: "var(--font-cinzel-decorative)", fontSize: "clamp(2.4rem,7vw,5.5rem)", fontWeight: 900, color: "#f5ead0", lineHeight: 1.1, textShadow: "0 0 80px rgba(200,146,26,0.55)", letterSpacing: "0.04em", marginBottom: "24px" }}>
-          Reserva tu Cita
+          {t.reservar.reservaTuCita}
         </h1>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "20px", marginBottom: "16px" }}>
           <div style={{ height: "1px", width: "80px", background: "linear-gradient(to right, transparent, rgba(200,146,26,0.8))" }} />
@@ -307,14 +303,18 @@ export default function ReservarPage() {
           <div style={{ height: "1px", width: "80px", background: "linear-gradient(to left, transparent, rgba(200,146,26,0.8))" }} />
         </div>
         <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", color: "rgba(184,168,138,0.4)", letterSpacing: "0.3em" }}>
-          Sin cuenta. Sin contraseña. Solo tu nombre y número.
+          {t.reservar.sinCuenta}
         </p>
       </div>
 
       {/* Steps */}
       <div style={{ borderTop: "1px solid rgba(92,58,30,0.3)", borderBottom: "1px solid rgba(92,58,30,0.3)", padding: "24px", backgroundColor: "rgba(14,11,7,0.8)" }}>
         <div className="step-bar" style={{ maxWidth: "600px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          {[{ num: 1, label: "Servicio" }, { num: 2, label: "Maestro" }, { num: 3, label: "Confirmar" }].map((p, i) => (
+          {[
+            { num: 1, label: t.reservar.step1Label },
+            { num: 2, label: t.reservar.step2Label },
+            { num: 3, label: t.reservar.step3Label },
+          ].map((p, i) => (
             <div key={p.num} style={{ display: "flex", alignItems: "center" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
                 <div style={{
@@ -352,12 +352,12 @@ export default function ReservarPage() {
         {paso === 1 && (
           <div>
             {!serviciosLoaded && (
-              <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(184,168,138,0.3)", fontFamily: "var(--font-barlow)", fontSize: "0.8rem", letterSpacing: "0.3em" }}>CARGANDO SERVICIOS...</div>
+              <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(184,168,138,0.3)", fontFamily: "var(--font-barlow)", fontSize: "0.8rem", letterSpacing: "0.3em" }}>{t.reservar.cargandoServicios}</div>
             )}
             {serviciosLoaded && servicios.length === 0 && (
               <div style={{ textAlign: "center", padding: "60px 0", border: "1px solid rgba(92,58,30,0.3)", backgroundColor: "#0e0b07" }}>
-                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.3)", marginBottom: "8px" }}>Sin servicios disponibles</p>
-                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", color: "rgba(184,168,138,0.2)" }}>El equipo está configurando el catálogo</p>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(184,168,138,0.3)", marginBottom: "8px" }}>{t.reservar.sinServicios}</p>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", color: "rgba(184,168,138,0.2)" }}>{t.reservar.configurandoCatalogo}</p>
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
@@ -389,23 +389,25 @@ export default function ReservarPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
               {barberos.map(b => {
                 const isSelected = barberoId === b.id;
+                const displayName = b.id === 0 ? t.reservar.cualquierMaestro : b.name;
+                const displaySub  = b.id === 0 ? t.reservar.cualquierMaestroSub : b.specialty;
                 return (
                   <button key={b.id} onClick={() => setBarberoId(b.id)}
                     className={`service-card${isSelected ? " selected" : ""} p-6 border text-center`}
                     style={{ backgroundColor: isSelected ? "#2a1c0c" : "#141209" }}>
                     <div className={`absolute top-0 left-0 right-0 h-px ${isSelected ? "bg-gradient-to-r from-transparent via-[#c8921a] to-transparent" : "bg-gradient-to-r from-transparent via-[#c8921a]/30 to-transparent opacity-60"}`} />
                     <span className={`icon-glow-idle text-5xl block mb-4 ${isSelected ? "text-[#e8b84b]" : "text-[#c8921a]/55"}`}>{b.rune}</span>
-                    <p className={`text-sm font-bold mb-1 ${isSelected ? "text-[#e8b84b]" : "text-[#f0e6c8]"}`} style={{ fontFamily: "var(--font-oswald)" }}>{b.name}</p>
-                    <p className={`text-[10px] uppercase tracking-widest ${isSelected ? "text-[#c8921a]/80" : "text-[#b8a882]/40"}`} style={{ fontFamily: "var(--font-barlow)" }}>{b.specialty}</p>
+                    <p className={`text-sm font-bold mb-1 ${isSelected ? "text-[#e8b84b]" : "text-[#f0e6c8]"}`} style={{ fontFamily: "var(--font-oswald)" }}>{displayName}</p>
+                    <p className={`text-[10px] uppercase tracking-widest ${isSelected ? "text-[#c8921a]/80" : "text-[#b8a882]/40"}`} style={{ fontFamily: "var(--font-barlow)" }}>{displaySub}</p>
                   </button>
                 );
               })}
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
-              <button onClick={() => setPaso(1)} style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.35em", textTransform: "uppercase", padding: "16px 32px", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.5)", color: "rgba(184,168,138,0.6)", cursor: "pointer" }}>← Atrás</button>
+              <button onClick={() => setPaso(1)} style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.35em", textTransform: "uppercase", padding: "16px 32px", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.5)", color: "rgba(184,168,138,0.6)", cursor: "pointer" }}>{t.reservar.atras}</button>
               <button onClick={() => barberoId !== null && setPaso(3)} disabled={barberoId === null}
                 style={{ fontFamily: "var(--font-barlow)", fontSize: "0.85rem", fontWeight: 800, letterSpacing: "0.4em", textTransform: "uppercase", padding: "18px 48px", border: "none", cursor: barberoId === null ? "not-allowed" : "pointer", background: barberoId === null ? "rgba(92,58,30,0.4)" : "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", color: barberoId === null ? "rgba(184,168,138,0.3)" : "#080604", boxShadow: barberoId === null ? "none" : "0 0 40px rgba(200,146,26,0.5)" }}>
-                Siguiente →
+                {t.reservar.siguiente}
               </button>
             </div>
           </div>
@@ -417,32 +419,47 @@ export default function ReservarPage() {
             {/* Resumen */}
             <div style={{ border: "1px solid rgba(200,146,26,0.35)", backgroundColor: "#141209", padding: "20px 24px", marginBottom: "32px", position: "relative", display: "flex", gap: "32px", flexWrap: "wrap" }}>
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "1px", background: "linear-gradient(to right, transparent, #c8921a, transparent)" }} />
-              <div><p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.6)", marginBottom: "4px" }}>Servicio</p><p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.9rem", fontWeight: 700, color: "#e8b84b" }}>{servicio?.name} — {servicio?.price}</p></div>
-              <div><p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.6)", marginBottom: "4px" }}>Maestro</p><p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.9rem", fontWeight: 700, color: "#e8b84b" }}>{barbero?.name}</p></div>
+              <div>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.6)", marginBottom: "4px" }}>{t.reservar.labelServicio}</p>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.9rem", fontWeight: 700, color: "#e8b84b" }}>{servicio?.name} — {servicio?.price}</p>
+              </div>
+              <div>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.6)", marginBottom: "4px" }}>{t.reservar.labelMaestro}</p>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.9rem", fontWeight: 700, color: "#e8b84b" }}>
+                  {barbero?.id === 0 ? t.reservar.cualquierMaestro : barbero?.name}
+                </p>
+              </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "32px", alignItems: "start" }} className="grid-cols-1 md:grid-cols-2">
 
               {/* Calendario */}
               <div>
-                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "#c8921a", marginBottom: "16px" }}>Elige una Fecha</p>
+                <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "#c8921a", marginBottom: "16px" }}>{t.reservar.eligeFecha}</p>
                 <div style={{ border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "#0e0b07", padding: "20px" }}>
-                  <MiniCal value={fecha} onChange={f => { setFecha(f); setHora(""); }} schedule={schedule} barberSchedule={barbero?.schedule ?? null} />
+                  <MiniCal
+                    value={fecha}
+                    onChange={f => { setFecha(f); setHora(""); }}
+                    schedule={schedule}
+                    barberSchedule={barbero?.schedule ?? null}
+                    meses={t.reservar.meses}
+                    diasSemana={t.reservar.diasSemana}
+                  />
                 </div>
               </div>
 
               {/* Slots de hora */}
               <div>
                 <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "#c8921a", marginBottom: "16px" }}>
-                  {fecha ? `Horas disponibles — ${fecha}` : "Selecciona primero una fecha"}
+                  {fecha ? `${t.reservar.horasDisponibles} ${fecha}` : t.reservar.seleccionaFecha}
                 </p>
                 <div style={{ border: "1px solid rgba(92,58,30,0.4)", backgroundColor: "#0e0b07", padding: "20px", minHeight: "200px" }}>
-                  {!fecha && <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", color: "rgba(184,168,138,0.25)", textAlign: "center", paddingTop: "60px" }}>← Elige un día</p>}
-                  {fecha && slotsLoading && <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", color: "rgba(184,168,138,0.25)", textAlign: "center", paddingTop: "60px", letterSpacing: "0.3em" }}>CARGANDO...</p>}
+                  {!fecha && <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", color: "rgba(184,168,138,0.25)", textAlign: "center", paddingTop: "60px" }}>{t.reservar.eligeUnDia}</p>}
+                  {fecha && slotsLoading && <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.75rem", color: "rgba(184,168,138,0.25)", textAlign: "center", paddingTop: "60px", letterSpacing: "0.3em" }}>{t.reservar.cargando}</p>}
                   {fecha && !slotsLoading && slots.length === 0 && (
                     <div style={{ textAlign: "center", paddingTop: "40px" }}>
-                      <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", color: "rgba(184,168,138,0.3)", marginBottom: "8px" }}>Sin horas disponibles</p>
-                      <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", color: "rgba(184,168,138,0.2)", letterSpacing: "0.15em" }}>Prueba con otro día</p>
+                      <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", color: "rgba(184,168,138,0.3)", marginBottom: "8px" }}>{t.reservar.sinHoras}</p>
+                      <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", color: "rgba(184,168,138,0.2)", letterSpacing: "0.15em" }}>{t.reservar.pruebaDia}</p>
                     </div>
                   )}
                   {fecha && !slotsLoading && slots.length > 0 && (
@@ -468,26 +485,26 @@ export default function ReservarPage() {
 
             {/* Datos del cliente */}
             <div style={{ marginTop: "32px", border: "1px solid rgba(92,58,30,0.3)", backgroundColor: "#0e0b07", padding: "28px" }}>
-              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "#c8921a", marginBottom: "20px" }}>Tus Datos</p>
+              <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.7rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "#c8921a", marginBottom: "20px" }}>{t.reservar.tusDatos}</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }} className="grid-cols-1 md:grid-cols-2">
                 <div>
-                  <label style={{ display: "block", fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.7)", marginBottom: "8px" }}>Tu Nombre *</label>
+                  <label style={{ display: "block", fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.7)", marginBottom: "8px" }}>{t.reservar.tuNombre}</label>
                   <input type="text" placeholder="Carlos García" value={nombre} onChange={e => setNombre(e.target.value)}
                     style={{ width: "100%", padding: "14px 16px", backgroundColor: "#141209", border: nombre ? "1px solid rgba(200,146,26,0.5)" : "1px solid rgba(92,58,30,0.5)", color: "#f0e6c8", fontFamily: "var(--font-barlow)", fontSize: "1rem", outline: "none", boxSizing: "border-box" }} />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.7)", marginBottom: "8px" }}>Teléfono *</label>
-                  <input type="tel" placeholder="Número de contacto" value={telefono} onChange={e => setTelefono(e.target.value)}
+                  <label style={{ display: "block", fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.7)", marginBottom: "8px" }}>{t.reservar.telefono}</label>
+                  <input type="tel" placeholder={t.reservar.telefonoPlaceholder} value={telefono} onChange={e => setTelefono(e.target.value)}
                     style={{ width: "100%", padding: "14px 16px", backgroundColor: "#141209", border: telefono ? "1px solid rgba(200,146,26,0.5)" : "1px solid rgba(92,58,30,0.5)", color: "#f0e6c8", fontFamily: "var(--font-barlow)", fontSize: "1rem", outline: "none", boxSizing: "border-box" }} />
                 </div>
               </div>
               <div style={{ marginTop: "16px" }}>
-                <label style={{ display: "block", fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.7)", marginBottom: "8px" }}>Email (opcional — para recordatorio)</label>
+                <label style={{ display: "block", fontFamily: "var(--font-barlow)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(200,146,26,0.7)", marginBottom: "8px" }}>{t.reservar.emailLabel}</label>
                 <input type="email" placeholder="carlos@correo.com" value={email} onChange={e => setEmail(e.target.value)}
                   style={{ width: "100%", padding: "14px 16px", backgroundColor: "#141209", border: email ? "1px solid rgba(200,146,26,0.5)" : "1px solid rgba(92,58,30,0.5)", color: "#f0e6c8", fontFamily: "var(--font-barlow)", fontSize: "1rem", outline: "none", boxSizing: "border-box" }} />
               </div>
               <p style={{ fontFamily: "var(--font-barlow)", fontSize: "0.65rem", color: "rgba(184,168,138,0.25)", marginTop: "12px", letterSpacing: "0.1em" }}>
-                Sin registro · Sin contraseña · Si añades email te mandamos confirmación y recordatorio
+                {t.reservar.sinRegistro}
               </p>
             </div>
 
@@ -498,7 +515,7 @@ export default function ReservarPage() {
             )}
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px", marginTop: "24px" }}>
-              <button onClick={() => setPaso(2)} style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.35em", textTransform: "uppercase", padding: "16px 32px", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.5)", color: "rgba(184,168,138,0.6)", cursor: "pointer" }}>← Atrás</button>
+              <button onClick={() => setPaso(2)} style={{ fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.35em", textTransform: "uppercase", padding: "16px 32px", backgroundColor: "transparent", border: "1px solid rgba(92,58,30,0.5)", color: "rgba(184,168,138,0.6)", cursor: "pointer" }}>{t.reservar.atras}</button>
               <button onClick={confirmar} disabled={!fecha || !hora || !nombre.trim() || !telefono.trim() || submitting}
                 style={{
                   fontFamily: "var(--font-barlow)", fontSize: "0.9rem", fontWeight: 900,
@@ -509,7 +526,7 @@ export default function ReservarPage() {
                   color: (!fecha || !hora || !nombre.trim() || !telefono.trim()) ? "rgba(184,168,138,0.25)" : "#080604",
                   boxShadow: (!fecha || !hora || !nombre.trim() || !telefono.trim()) ? "none" : "0 0 50px rgba(200,146,26,0.6)",
                 }}>
-                {submitting ? "Confirmando..." : "Confirmar Cita ᚢ"}
+                {submitting ? t.reservar.confirmando : t.reservar.confirmarCita}
               </button>
             </div>
           </div>

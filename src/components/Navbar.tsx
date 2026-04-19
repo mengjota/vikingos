@@ -3,14 +3,9 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { getSession, logout, type Session } from "@/lib/auth";
+import { useT } from "@/lib/i18n";
+import LanguageSwitcher from "./LanguageSwitcher";
 
-const navLinks = [
-  { label: "Reservar", href: "/reservar" },
-  { label: "Servicios", href: "/#elegir-barberia" },
-  { label: "Productos", href: "/tienda" },
-];
-
-// Solo muestra links de cliente cuando NO hay sesión activa o la sesión es de cliente
 const isClientOrGuest = (s: Session | null | undefined) =>
   s === null || s?.role === "client";
 
@@ -19,6 +14,13 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
   const [menuOpen, setMenuOpen] = useState(false);
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const pathname = usePathname();
+  const { t } = useT();
+
+  const navLinks = [
+    { label: t.nav.reservar, href: "/reservar" },
+    { label: t.nav.servicios, href: "/#elegir-barberia" },
+    { label: t.nav.productos, href: "/tienda" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -38,7 +40,6 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
     await logout(dest);
   }
 
-  // Mientras carga la sesión, no renderizamos nada en el área de nav/auth
   const loaded = session !== undefined;
 
   return (
@@ -80,13 +81,16 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
           </ul>
         )}
 
-        {/* Área derecha: auth + CTA */}
+        {/* Área derecha: language switcher + auth + CTA */}
         <div className="flex items-center gap-3 md:gap-4">
+          {/* Language switcher — desktop only */}
+          <div className="hidden md:flex">
+            <LanguageSwitcher />
+          </div>
+
           {!staffPage && loaded && (
             session ? (
-              /* --- LOGUEADO (employee / owner / client) --- */
               <>
-                {/* Nombre + enlace a su zona */}
                 <a
                   href={session.role === "owner" ? "/admin/dashboard" : session.role === "employee" ? "/mi-agenda" : "/mis-reservas"}
                   className="flex items-center gap-2 text-[#c8921a] hover:text-[#f0c040] text-sm tracking-[0.2em] uppercase transition-colors duration-300 md:px-3 md:py-2 py-2"
@@ -97,23 +101,21 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
                   </svg>
                   <span className="hidden md:inline">
                     {session.role === "owner"
-                      ? "Panel Admin"
+                      ? t.nav.panelAdmin
                       : session.role === "employee"
                       ? (session.barberName ?? session.name).split(" ")[0]
-                      : "Mis Reservas"}
+                      : t.nav.misReservas}
                   </span>
                 </a>
-                {/* Salir — visible en desktop */}
                 <button
                   onClick={handleLogout}
                   className="hidden md:block text-[#b8a882]/60 hover:text-red-400 text-xs tracking-[0.3em] uppercase transition-colors duration-300 px-2 py-2"
                   style={{ fontFamily: "var(--font-barlow)" }}
                 >
-                  Salir
+                  {t.nav.salir}
                 </button>
               </>
             ) : (
-              /* --- NO LOGUEADO --- */
               <a
                 href="/login"
                 className="flex items-center gap-2 text-[#b8a882] hover:text-[#c8921a] text-sm tracking-[0.3em] uppercase transition-colors duration-300 md:px-3 md:py-3 py-2"
@@ -122,12 +124,11 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m0 0l3-3m-3 3l3 3" />
                 </svg>
-                <span className="hidden md:inline">Iniciar Sesión</span>
+                <span className="hidden md:inline">{t.nav.iniciarSesion}</span>
               </a>
             )
           )}
 
-          {/* Botón "Reservar Servicio" — SOLO clientes y visitantes */}
           {!staffPage && loaded && isClientOrGuest(session) && (
             <a
               href="/reservar"
@@ -137,7 +138,7 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
                 boxShadow: "0 0 10px rgba(200,146,26,0.45), 0 0 24px rgba(200,146,26,0.15), 0 4px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(200,146,26,0.18)",
               }}
             >
-              Reservar Servicio
+              {t.nav.reservarServicio}
             </a>
           )}
         </div>
@@ -146,7 +147,7 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
         <button
           className="md:hidden text-[#c8921a] flex flex-col gap-1.5 p-2"
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Abrir menú"
+          aria-label={t.nav.abrirMenu}
         >
           <span className={`block w-7 h-0.5 bg-current transition-transform duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
           <span className={`block w-7 h-0.5 bg-current transition-opacity duration-300 ${menuOpen ? "opacity-0" : ""}`} />
@@ -157,7 +158,11 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
       {/* Menú mobile */}
       {menuOpen && loaded && (
         <div className="md:hidden bg-[#0f0d0a]/98 border-t border-[#c8921a]/20 px-6 py-6 flex flex-col gap-6">
-          {/* Links de marketing — SOLO para clientes y visitantes */}
+          {/* Language switcher mobile */}
+          <div className="flex">
+            <LanguageSwitcher />
+          </div>
+
           {!staffPage && isClientOrGuest(session) && navLinks.map((link) => (
             <a
               key={link.href}
@@ -182,17 +187,17 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
                 {session.role === "owner"
-                  ? "Panel Admin"
+                  ? t.nav.panelAdmin
                   : session.role === "employee"
                   ? (session.barberName ?? session.name).split(" ")[0]
-                  : `Mi Cuenta — ${session.name.split(" ")[0]}`}
+                  : `${t.nav.miCuenta} — ${session.name.split(" ")[0]}`}
               </a>
               <button
                 onClick={handleLogout}
                 className="text-left text-red-400/70 text-base tracking-[0.3em] uppercase transition-colors"
                 style={{ fontFamily: "var(--font-barlow)" }}
               >
-                Cerrar Sesión
+                {t.nav.cerrarSesion}
               </button>
             </>
           ) : (
@@ -205,11 +210,10 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m0 0l3-3m-3 3l3 3" />
               </svg>
-              Iniciar Sesión
+              {t.nav.iniciarSesion}
             </a>
           )}
 
-          {/* Botón reservar — SOLO clientes y visitantes */}
           {!staffPage && isClientOrGuest(session) && (
             <a
               href="/reservar"
@@ -217,7 +221,7 @@ export default function Navbar({ transparentOnTop = false, staffPage = false }: 
               className="border border-[#c8921a] text-[#c8921a] text-sm tracking-[0.3em] uppercase px-6 py-3 text-center"
               style={{ fontFamily: "var(--font-barlow)" }}
             >
-              Reservar Servicio
+              {t.nav.reservarServicio}
             </a>
           )}
         </div>

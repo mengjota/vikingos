@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import NavbarWrapper from "@/components/NavbarWrapper";
+import { LangProvider } from "@/lib/i18n";
 import {
   Cinzel_Decorative,
   Oswald,
@@ -64,8 +65,10 @@ export default function RootLayout({
       className={`${cinzelDecorative.variable} ${oswald.variable} ${barlowCondensed.variable} ${lato.variable} ${imFell.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-viking-black">
-        <NavbarWrapper />
-        {children}
+        <LangProvider>
+          <NavbarWrapper />
+          {children}
+        </LangProvider>
       </body>
     </html>
   );

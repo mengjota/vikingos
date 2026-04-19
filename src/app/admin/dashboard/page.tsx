@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSession } from "@/lib/auth";
+import PushPrompt from "@/components/PushPrompt";
 
 export default function AdminDashboard() {
   const router = useRouter();
   const [stats, setStats] = useState({ pendientes: 0, completadas: 0, canceladas: 0 });
   const [barbershopName, setBarbershopName] = useState("");
+  const [barbershopId, setBarbershopId] = useState("");
+  const [sessionEmail, setSessionEmail] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,6 +20,8 @@ export default function AdminDashboard() {
         return; 
       }
       setBarbershopName(s.barbershopName ?? "");
+      setBarbershopId(s.barbershopId ?? "");
+      setSessionEmail(s.email ?? "");
     });
 
     fetch("/api/reservations")
@@ -52,6 +57,8 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#080604" }}>
       <div style={{ background: "radial-gradient(ellipse 80% 40% at 50% 0%, rgba(200,146,26,0.08) 0%, transparent 60%)", position: "fixed", inset: 0, pointerEvents: "none" }} />
+
+      <PushPrompt barbershopId={barbershopId} userEmail={sessionEmail} variant="staff" />
 
       {/* Header */}
       <div style={{ borderBottom: "1px solid rgba(92,58,30,0.4)", backgroundColor: "#0e0b07", padding: "0 24px" }}>

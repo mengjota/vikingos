@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
 import { sendConfirmacion } from "@/lib/email";
+import { sendPushToBarberShop } from "@/lib/push";
 
 const BID = () => process.env.BARBERSHOP_ID ?? "narvek";
 
@@ -109,6 +110,14 @@ export async function POST(req: NextRequest) {
         });
       }).catch(() => {});
   }
+
+  // Push al staff de la barbería (no bloqueante)
+  sendPushToBarberShop(finalBid, {
+    title: "Nueva cita 📅",
+    body: `${d.clienteNombre} · ${d.servicio} · ${d.hora}`,
+    url: "/admin/reservas",
+    tag: "nueva-cita",
+  }).catch(() => {});
 
   return NextResponse.json(toRes(row), { status: 201 });
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import sql from "@/lib/db";
 import { sendRecordatorio } from "@/lib/email";
+import { sendPushToEmail } from "@/lib/push";
 
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("authorization");
@@ -39,6 +40,13 @@ export async function GET(req: NextRequest) {
         barberiaPhone:  r.phone            ? String(r.phone)            : undefined,
         cancelToken:    r.cancel_token     ? String(r.cancel_token)     : undefined,
       });
+      // Push si el cliente tiene suscripción activa
+      sendPushToEmail(String(r.client_email), {
+        title: "Recuerda tu cita mañana 💈",
+        body: `${r.service} con ${r.barber} a las ${r.time}`,
+        url: "/mis-reservas",
+        tag: "recordatorio",
+      }).catch(() => {});
       sent++;
     } catch (_) {}
   }

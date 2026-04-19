@@ -34,13 +34,15 @@ export async function POST(req: NextRequest) {
       SELECT COUNT(*)::int AS count FROM login_attempts
       WHERE email = ${normalizedEmail} AND attempted_at > now() - interval '15 minutes'
     `;
-    if (count >= 5) {
+    if (Number(count) >= 5) {
       return NextResponse.json(
         { error: "Demasiados intentos fallidos. Espera 15 minutos e inténtalo de nuevo." },
         { status: 429 }
       );
     }
-  } catch (_) {}
+  } catch (err) {
+    console.error("[rate-limit] BD no disponible, omitiendo rate limit:", err);
+  }
 
   const rows = await sql`
     SELECT u.id, u.name, u.email, u.password_hash, u.role, u.barber_name,

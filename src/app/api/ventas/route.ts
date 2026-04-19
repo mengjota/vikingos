@@ -38,6 +38,10 @@ export async function GET(req: NextRequest) {
   const hasta = searchParams.get("hasta");
   const bid   = session.barbershopId ?? process.env.BARBERSHOP_ID ?? "narvek";
 
+  const isValidDate = (d: string) => /^\d{4}-\d{2}-\d{2}$/.test(d) && !isNaN(Date.parse(d));
+  if (desde && !isValidDate(desde)) return NextResponse.json({ error: "Formato de fecha inválido" }, { status: 400 });
+  if (hasta && !isValidDate(hasta)) return NextResponse.json({ error: "Formato de fecha inválido" }, { status: 400 });
+
   let rows;
   if (session.role === "employee") {
     rows = await sql`

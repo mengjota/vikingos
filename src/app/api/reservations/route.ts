@@ -67,6 +67,11 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Validar formato email si se proporciona
+  if (d.clienteEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(d.clienteEmail).trim())) {
+    return NextResponse.json({ error: "Formato de email inválido." }, { status: 400 });
+  }
+
   const finalBid = d.barbershopId ?? bid;
 
   // Auto-add missing columns if schema is behind migrations

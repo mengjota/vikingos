@@ -8,13 +8,15 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
+  const bid = session.barbershopId ?? process.env.BARBERSHOP_ID ?? "narvek";
+
   try {
     // Buscar si hay un turno activo ('active')
     const result = await sql`
-      SELECT id, clock_in 
-      FROM time_logs 
-      WHERE employee_email = ${session.email} 
-      AND barbershop_id = ${session.barbershopId}
+      SELECT id, clock_in
+      FROM time_logs
+      WHERE employee_email = ${session.email}
+      AND barbershop_id = ${bid}
       AND status = 'active'
       ORDER BY clock_in DESC
       LIMIT 1
@@ -30,7 +32,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ active: false, currentLog: null });
   } catch (error) {
     console.error("Error fetching clock status:", error);
-    return NextResponse.json({ error: "Error intero del servidor" }, { status: 500 });
+    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
   }
 }
 
@@ -40,12 +42,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
+  const bid = session.barbershopId ?? process.env.BARBERSHOP_ID ?? "narvek";
+
   try {
     // Buscar si hay un turno activo
     const result = await sql`
-      SELECT id FROM time_logs 
-      WHERE employee_email = ${session.email} 
-      AND barbershop_id = ${session.barbershopId}
+      SELECT id FROM time_logs
+      WHERE employee_email = ${session.email}
+      AND barbershop_id = ${bid}
       AND status = 'active'
       ORDER BY clock_in DESC
       LIMIT 1
@@ -67,7 +71,7 @@ export async function POST(req: NextRequest) {
       // Registrar entrada (Clock In)
       const insertResult = await sql`
         INSERT INTO time_logs (barbershop_id, employee_email, employee_name, clock_in, status)
-        VALUES (${session.barbershopId}, ${session.email}, ${empName}, NOW(), 'active')
+        VALUES (${bid}, ${session.email}, ${empName}, NOW(), 'active')
         RETURNING id, clock_in
       `;
       

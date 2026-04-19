@@ -57,9 +57,8 @@ export default function CajaPage() {
   const [error, setError]         = useState("");
   const [ok, setOk]               = useState(false);
 
-  const hoyStr = new Date().toISOString().split("T")[0];
-  const [filtroDesde, setFiltroDesde] = useState(hoyStr);
-  const [filtroHasta, setFiltroHasta] = useState(hoyStr);
+  const [filtroDesde, setFiltroDesde] = useState(() => new Date().toISOString().split("T")[0]);
+  const [filtroHasta, setFiltroHasta] = useState(() => new Date().toISOString().split("T")[0]);
 
   const total = parseFloat(precio) || 0;
   const { base, iva } = calcIva(total);
@@ -80,7 +79,10 @@ export default function CajaPage() {
       const bid = s.barbershopId ?? "narvek";
       fetch(`/api/services?barbershopId=${bid}`)
         .then(r => r.json()).then(setServices).catch(() => {});
-      cargarVentas(hoyStr, hoyStr);
+      const today = new Date().toISOString().split("T")[0];
+      setFiltroDesde(today);
+      setFiltroHasta(today);
+      cargarVentas(today, today);
     });
   }, [router, cargarVentas]);
 

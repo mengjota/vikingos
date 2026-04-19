@@ -64,7 +64,7 @@ export default function DemoPage() {
           ) : (
             <Link href="/reservar?barbershopId=demo"
               style={{ display: "block", textAlign: "center", background: "linear-gradient(135deg,#a06010,#c8921a,#f0c040,#c8921a,#a06010)", color: "#080604", fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 800, letterSpacing: "0.4em", textTransform: "uppercase", padding: "16px 32px", textDecoration: "none", boxShadow: "0 0 30px rgba(200,146,26,0.4)" }}>
-              Probar como Cliente →
+              Hacer una Reserva →
             </Link>
           )}
         </div>
@@ -96,7 +96,7 @@ export default function DemoPage() {
             </p>
           </div>
 
-          <Link href="/login"
+          <Link href="/staff"
             style={{ display: "block", textAlign: "center", color: "#c8921a", fontFamily: "var(--font-barlow)", fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.4em", textTransform: "uppercase", padding: "16px 32px", textDecoration: "none", border: "1px solid rgba(200,146,26,0.4)" }}>
             Entrar al Panel →
           </Link>

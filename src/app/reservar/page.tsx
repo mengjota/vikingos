@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useT } from "@/lib/i18n";
 
@@ -157,8 +158,10 @@ function MiniCal({ value, onChange, schedule, barberSchedule, meses, diasSemana 
 }
 
 /* ── Página principal ────────────────────────────────── */
-export default function ReservarPage() {
+function ReservarContent() {
   const { t } = useT();
+  const searchParams = useSearchParams();
+  const barbershopId = searchParams.get("barbershopId") ?? "";
   const [paso, setPaso] = useState<1 | 2 | 3>(1);
   const [servicioId, setServicioId] = useState<number | null>(null);
   const [barberoId, setBarberoId] = useState<number | null>(null);
@@ -182,18 +185,21 @@ export default function ReservarPage() {
   const [errorReserva, setErrorReserva] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const bid = barbershopId ? `&barbershopId=${barbershopId}` : "";
+  const bidQ = barbershopId ? `?barbershopId=${barbershopId}` : "";
+
   useEffect(() => {
-    fetch("/api/services").then(r => r.json()).then((d: DbService[]) => { if (Array.isArray(d)) setServicios(d); }).catch(() => {}).finally(() => setServiciosLoaded(true));
-    fetch("/api/barbers").then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setBarberos(d); }).catch(() => {});
-    fetch("/api/availability?schedule=true").then(r => r.json()).then(setSchedule).catch(() => {});
-  }, []);
+    fetch(`/api/services${bidQ}`).then(r => r.json()).then((d: DbService[]) => { if (Array.isArray(d)) setServicios(d); }).catch(() => {}).finally(() => setServiciosLoaded(true));
+    fetch(`/api/barbers${bidQ}`).then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setBarberos(d); }).catch(() => {});
+    fetch(`/api/availability?schedule=true${bid}`).then(r => r.json()).then(setSchedule).catch(() => {});
+  }, [barbershopId]);
 
   const fetchSlots = useCallback(() => {
     if (!fecha) { setSlots([]); return; }
     const b = barberos.find(b => b.id === barberoId);
     const barberoName = b?.name ?? "";
     setSlotsLoading(true);
-    fetch(`/api/availability?fecha=${fecha}&barbero=${encodeURIComponent(barberoName)}`)
+    fetch(`/api/availability?fecha=${fecha}&barbero=${encodeURIComponent(barberoName)}${bid}`)
       .then(r => r.json())
       .then(data => { setSlots(data.slots ?? []); setSlotsLoading(false); })
       .catch(() => { setSlots([]); setSlotsLoading(false); });
@@ -225,6 +231,7 @@ export default function ReservarPage() {
           barbero:       barbero?.id === 0 ? "El que más pronto me pueda atender" : (barbero?.name ?? "El que más pronto me pueda atender"),
           fecha,
           hora,
+          ...(barbershopId ? { barbershopId } : {}),
         }),
       });
       if (!res.ok) {
@@ -534,6 +541,14 @@ export default function ReservarPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ReservarPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", backgroundColor: "#080604" }} />}>
+      <ReservarContent />
+    </Suspense>
   );
 }
 

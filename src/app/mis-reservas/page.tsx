@@ -10,6 +10,7 @@ export default function MisReservas() {
   const [reservas, setReservas] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [nombre, setNombre] = useState("");
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   useEffect(() => {
     getSession().then(async (s) => {
@@ -28,6 +29,20 @@ export default function MisReservas() {
   const pendientes   = reservas.filter(r => !r.estado || r.estado === "pendiente");
   const completadas  = reservas.filter(r => r.estado === "completada");
   const canceladas   = reservas.filter(r => r.estado === "cancelada");
+
+  async function cancelarReserva(id: string) {
+    if (!confirm("¿Cancelar esta cita?")) return;
+    setCancellingId(id);
+    try {
+      await fetch(`/api/reservations/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ estado: "cancelada", facturaId: null }),
+      });
+      setReservas(prev => prev.map(r => r.id === id ? { ...r, estado: "cancelada" } : r));
+    } catch (_) {}
+    finally { setCancellingId(null); }
+  }
 
   function statusColor(estado?: string) {
     if (estado === "completada") return "#4ade80";
@@ -68,7 +83,18 @@ export default function MisReservas() {
                     {r.fecha} · {r.hora} · {r.barbero}
                   </p>
                 </div>
-                <span style={{ fontFamily: "var(--font-barlow)", fontSize: "1rem", fontWeight: 900, color: "#c8921a", flexShrink: 0 }}>{r.precio}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
+                  <span style={{ fontFamily: "var(--font-barlow)", fontSize: "1rem", fontWeight: 900, color: "#c8921a" }}>{r.precio}</span>
+                  {(!r.estado || r.estado === "pendiente") && (
+                    <button
+                      onClick={() => cancelarReserva(r.id)}
+                      disabled={cancellingId === r.id}
+                      style={{ fontFamily: "var(--font-barlow)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(239,68,68,0.6)", border: "1px solid rgba(239,68,68,0.25)", backgroundColor: "transparent", padding: "4px 10px", cursor: "pointer" }}
+                    >
+                      {cancellingId === r.id ? "..." : "Cancelar"}
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>

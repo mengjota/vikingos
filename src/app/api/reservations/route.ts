@@ -77,19 +77,22 @@ export async function POST(req: NextRequest) {
   // Auto-add missing columns if schema is behind migrations
   await sql`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS client_phone TEXT`.catch(() => {});
   await sql`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS barbershop_id TEXT`.catch(() => {});
+  await sql`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS cancel_token TEXT`.catch(() => {});
+
+  const cancelToken = crypto.randomUUID();
 
   const [row] = await sql`
     INSERT INTO reservations
-      (client_name, client_email, client_phone, service, price, barber, date, time, status, barbershop_id)
+      (client_name, client_email, client_phone, service, price, barber, date, time, status, barbershop_id, cancel_token)
     VALUES
       (${d.clienteNombre}, ${d.clienteEmail ?? null}, ${d.clientePhone ?? null}, ${d.servicio}, ${d.precio},
-       ${d.barbero}, ${d.fecha}::date, ${d.hora}, 'pendiente', ${finalBid})
+       ${d.barbero}, ${d.fecha}::date, ${d.hora}, 'pendiente', ${finalBid}, ${cancelToken})
     RETURNING id, client_name, client_email, client_phone, service, price, barber,
-              date::text AS date, time, status, invoice_id, created_at
+              date::text AS date, time, status, invoice_id, cancel_token, created_at
   `;
   // Enviar email de confirmación (no bloqueante)
   if (row.client_email) {
-    sql`SELECT nombre_comercial, email_fiscal FROM barbershops WHERE id = ${finalBid}`
+    sql`SELECT nombre_comercial, email_fiscal, phone FROM barbershops WHERE id = ${finalBid}`
       .then(bs => {
         const b = bs[0];
         sendConfirmacion({
@@ -101,6 +104,8 @@ export async function POST(req: NextRequest) {
           hora:           String(row.time),
           barberiaNombre: b?.nombre_comercial ? String(b.nombre_comercial) : undefined,
           barberiaEmail:  b?.email_fiscal     ? String(b.email_fiscal)     : undefined,
+          barberiaPhone:  b?.phone            ? String(b.phone)            : undefined,
+          cancelToken:    String(row.cancel_token),
         });
       }).catch(() => {});
   }

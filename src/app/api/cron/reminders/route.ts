@@ -14,8 +14,8 @@ export async function GET(req: NextRequest) {
 
   const reservations = await sql`
     SELECT r.client_name, r.client_email, r.service, r.barber,
-           r.date::text AS date, r.time,
-           b.nombre_comercial, b.email_fiscal
+           r.date::text AS date, r.time, r.cancel_token,
+           b.nombre_comercial, b.email_fiscal, b.phone
     FROM reservations r
     LEFT JOIN barbershops b ON b.id = r.barbershop_id
     WHERE r.date = ${tomorrowStr}::date
@@ -36,6 +36,8 @@ export async function GET(req: NextRequest) {
         hora:           String(r.time),
         barberiaNombre: r.nombre_comercial ? String(r.nombre_comercial) : undefined,
         barberiaEmail:  r.email_fiscal     ? String(r.email_fiscal)     : undefined,
+        barberiaPhone:  r.phone            ? String(r.phone)            : undefined,
+        cancelToken:    r.cancel_token     ? String(r.cancel_token)     : undefined,
       });
       sent++;
     } catch (_) {}
